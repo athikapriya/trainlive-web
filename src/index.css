@@ -2,20 +2,28 @@
     --bg: #eef4f1;
     --surface: #ffffff;
     --surface-2: #f5f8f6;
-    --ink: #122019;
-    --ink-soft: #4c5c54;
-    --ink-faint: #8b9a92;
+    
+    --text: #122019;
+    --text-soft: #4c5c54;
+    --text-faint: #8b9a92;
+
     --line: #dce6e0;
     --line-strong: #c4d3cb;
+
     --green: #1e8a5b;
     --green-soft: #e4f3ea;
+
     --amber: #d68a1e;
     --amber-soft: #fbeeda;
+
     --red: #c9463d;
     --red-soft: #fbe4e2;
+
     --teal: #2e6f8e;
     --teal-soft: #e4eff4;
+
     --shadow: 0 1px 2px rgba(18, 32, 25, 0.04), 0 6px 20px -8px rgba(18, 32, 25, 0.12);
+
     --radius-card: 16px;
     --radius-pill: 999px;
     --radius-sheet: 22px;
@@ -25,19 +33,26 @@
     --bg: #0a1310;
     --surface: #101b16;
     --surface-2: #152119;
-    --ink: #e9f2ec;
-    --ink-soft: #a9bbb1;
-    --ink-faint: #6e8177;
+
+    --text: #e9f2ec;
+    --text-soft: #a9bbb1;
+    --text-faint: #6e8177;
+
     --line: #1f2f27;
     --line-strong: #2b3f34;
+
     --green: #3fbe87;
     --green-soft: #123424;
+
     --amber: #e7ad4e;
     --amber-soft: #382a10;
+
     --red: #e2726a;
     --red-soft: #3a1815;
+
     --teal: #6fb4d6;
     --teal-soft: #102631;
+
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
@@ -57,7 +72,10 @@ body {
 }
 
 .btn {
+    background: var(--bg);
+    color : var(--text);
     font-family: "Noto Sans Bengali", sans-serif;
+    transition: background 0.25s ease, color 0.25s ease;
 }
 
 .num {
