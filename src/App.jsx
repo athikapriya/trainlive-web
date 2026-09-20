@@ -1,13 +1,14 @@
 import './App.css'
-import ThemeToggle from './components/theme/themeToggle'
+import Home from './pages/Home'
+
+
 
 function App() {
 
   return (
     <>
       <div className="app">
-        <h1>TrainLive-web</h1>
-          <ThemeToggle />
+        <Home />
       </div>
     
     </>

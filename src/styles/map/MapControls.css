@@ -1,0 +1,65 @@
+.map-controls {
+    position: absolute;
+    right: 16px;
+    bottom: 96px;
+
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.map-control {
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+
+    background: var(--surface);
+    color: var(--text);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+    font-weight: 500;
+
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+.map-control svg{
+    height : 16px;
+}
+
+.map-control:hover {
+    background: var(--surface-2);
+}
+
+.map-control:active {
+    transform: scale(0.94);
+}
+
+.zoom-control {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.zoom-control .map-control {
+    border-radius: 0;
+}
+
+.zoom-button + .zoom-button {
+    border-top: 1px solid var(--line);
+}
