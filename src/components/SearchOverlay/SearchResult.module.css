@@ -1,0 +1,109 @@
+.searchResult {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.15s ease;
+}
+
+.searchResult:hover {
+    background: var(--surface-2);
+}
+
+.searchResult:active {
+    background: var(--surface-2);
+}
+
+.searchResultIcon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text-soft);
+}
+
+.searchResultIcon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.searchResultContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.searchResultName {
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: -0.15px;
+    color: var(--text);
+}
+
+.searchResultSecondary {
+    margin-top: 2px;
+    color: var(--text-soft);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.searchResultMeta {
+    margin-top: 3px;
+    color: var(--text-faint);
+    font-size: 10.5px;
+    font-weight: 700;
+}
+
+.searchResultRoute {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    margin-top: 4px;
+    color: var(--text-soft);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.searchResultRoute span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.searchResultRouteArrow {
+    flex-shrink: 0;
+    color: var(--text-faint);
+    font-size: 12px;
+}
+
+.searchResultReports {
+    margin-top: 4px;
+    color: var(--text-faint);
+    font-size: 10.5px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.searchResultArrow {
+    flex-shrink: 0;
+    margin-left: 4px;
+    color: var(--text-faint);
+    font-size: 22px;
+    line-height: 1;
+}
