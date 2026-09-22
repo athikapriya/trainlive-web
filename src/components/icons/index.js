@@ -9,6 +9,7 @@ export { default as TrainIcon } from "./TrainIcon";
 export { default as UserIcon } from "./UserIcon";
 
 export { default as SearchIcon } from "./SearchIcon";
+export {default as SavedIcon } from './SavedIcon'
 
 // react icons
 export { ShowLiveIcon, ShareLiveIcon, MyLocationIcon, LayersIcon, SearchTrainIcon, StationIcon } from "./ReactIcons";
