@@ -29,3 +29,23 @@ export function getTrainRoute(trainNumber) {
         `/api/trains/${encodeURIComponent(trainNumber)}/route/`
     );
 }
+
+
+export function getTrainReports(
+    trainId,
+    { accessToken = null, signal } = {}
+) {
+    const headers = {};
+
+    if (accessToken) {
+        headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return apiFetchAll(
+        `/api/reports/?train=${encodeURIComponent(trainId)}`,
+        {
+            headers,
+            signal,
+        }
+    );
+}
