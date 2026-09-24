@@ -1,9 +1,16 @@
-import { MapContainer, TileLayer } from "react-leaflet";
+import {
+    MapContainer,
+    TileLayer,
+} from "react-leaflet";
 
 import MapControls from "./MapControls";
 import UserLocation from "./UserLocation";
+import FlyToStation from "./FlyToStation";
+import StationMarker from "./StationMarker";
 
-function MapView() {
+
+function MapView({ selectedStation, selectedTrainStation }) {
+    const mapStation = selectedTrainStation || selectedStation;
     return (
         <MapContainer
             center={[23.8103, 90.4125]}
@@ -20,6 +27,12 @@ function MapView() {
             />
 
             <UserLocation />
+
+            <FlyToStation station={mapStation} />
+
+            {mapStation && (
+                <StationMarker station={mapStation} />
+            )}
 
             <MapControls />
         </MapContainer>

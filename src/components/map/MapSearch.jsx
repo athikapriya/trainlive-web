@@ -5,9 +5,12 @@ import { getStations } from "../../services/stationApi";
 import { getTrains } from "../../services/trainApi";
 
 import SearchOverlay from "../SearchOverlay/SearchOverlay";
+import useAuth from "../../hooks/useAuth";
 
 
-function MapSearch() {
+function MapSearch({onStationSelect, onTrainSelect}) {
+    const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+
     const [isOpen, setIsOpen] = useState(false);
 
     const [searchType, setSearchType] = useState("stations");
@@ -20,14 +23,25 @@ function MapSearch() {
     const [error, setError] = useState(null);
 
 
+    // ====================== user avatar section ========================
+    const getUserInitial = () => {
+        if (!user) {
+            return "";
+        }
+        const name = user.full_name?.trim() || user.email?.trim() || "";
+        return name.charAt(0).toUpperCase();
+    };
+    const userInitial = getUserInitial();
+
+
     // ====================== search api section ========================
+
     useEffect(() => {
         if (!isOpen) {
             return;
         }
 
         const controller = new AbortController();
-
         const timeoutId = setTimeout(async () => {
             try {
                 setIsLoading(true);
@@ -82,19 +96,16 @@ function MapSearch() {
         };
     }, [isOpen, searchType, query]);
 
-
     // ================ open/close section ==================
     const handleOpen = () => {
         setIsOpen(true);
     };
-
 
     const handleClose = () => {
         setIsOpen(false);
         setQuery("");
         setError(null);
     };
-
 
     // ================ change search type section ==================
     const handleSearchTypeChange = (type) => {
@@ -104,14 +115,21 @@ function MapSearch() {
     };
 
 
-    // ================ result selecttioin section ==================
+    // ================ result selection section ==================
     const handleStationSelect = (station) => {
-        console.log("Selected station:", station);
+        setIsOpen(false);
+        setQuery("");
+        setError(null);
+
+        onStationSelect(station);
     };
 
-
     const handleTrainSelect = (train) => {
-        console.log("Selected train:", train);
+        setIsOpen(false);
+        setQuery("");
+        setError(null);
+
+        onTrainSelect(train);
     };
 
 
@@ -124,10 +142,17 @@ function MapSearch() {
                         <span className="map-search-placeholder">
                             Search a station or train
                         </span>
+
+                        {!isAuthLoading &&
+                            isAuthenticated &&
+                            userInitial && (
+                                <span className="map-search-avatar" aria-label="Account" >
+                                    {userInitial}
+                                </span>
+                            )}
                     </button>
                 </div>
             )}
-
 
             {isOpen && (
                 <SearchOverlay

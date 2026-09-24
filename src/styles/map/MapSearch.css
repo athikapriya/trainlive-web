@@ -36,3 +36,20 @@
     color: var(--text-faint);
     font-size: 15px;
 }
+
+.map-search-avatar {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    border-radius: 50%;
+    background: var(--accent, #1e8a5b);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    user-select: none;
+}
