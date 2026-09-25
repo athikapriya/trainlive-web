@@ -1,4 +1,8 @@
 :root {
+    --rail: #0B3D2E;
+    --rail2: #1a5c42;
+    --rail3: #2d7a5a;
+
     --bg: #eef4f1;
     --surface: #ffffff;
     --surface-2: #f5f8f6;
@@ -82,11 +86,15 @@ body {
     font-family: "JetBrains Mono", monospace;
 }
 
-html,
-body,
 #root {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background: var(--bg);
+    color: var(--text);
 }
