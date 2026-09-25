@@ -8,11 +8,21 @@
     overflow: hidden;
 }
 
+/* =========================================================
+   Header
+   ========================================================= */
+
 .header {
+    width: 100%;
     flex: 0 0 auto;
-    padding: 18px 16px 0;
     background: var(--rail2);
     color: #ffffff;
+}
+
+.headerInner {
+    width: 80%;
+    margin: 0 auto;
+    padding: 18px 0 0;
 }
 
 .headerTitle {
@@ -54,15 +64,24 @@
     font-weight: 700;
 }
 
+/* =========================================================
+   Content
+   ========================================================= */
+
 .content {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 14px;
+    padding: 14px 0;
     background: var(--bg);
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
+}
+
+.contentInner {
+    width: 80%;
+    margin: 0 auto;
 }
 
 .content::-webkit-scrollbar {
@@ -73,6 +92,10 @@
     background: var(--line-strong);
     border-radius: 999px;
 }
+
+/* =========================================================
+   Saved list
+   ========================================================= */
 
 .list {
     display: flex;
@@ -183,6 +206,10 @@
     font-weight: 700;
 }
 
+/* =========================================================
+   Star button
+   ========================================================= */
+
 .starButton {
     width: 32px;
     height: 32px;
@@ -213,6 +240,10 @@
     opacity: 0.45;
     cursor: default;
 }
+
+/* =========================================================
+   Card footer
+   ========================================================= */
 
 .cardFooter {
     display: flex;
@@ -245,6 +276,10 @@
     flex: 0 0 auto;
     color: var(--line-strong);
 }
+
+/* =========================================================
+   Empty states
+   ========================================================= */
 
 .emptyState {
     display: flex;
@@ -287,6 +322,10 @@
     font-size: 11px;
     line-height: 1.55;
 }
+
+/* =========================================================
+   Authentication state
+   ========================================================= */
 
 .authState {
     min-height: 100%;
@@ -340,9 +379,12 @@
     background: var(--surface-2);
 }
 
+/* =========================================================
+   Loading
+   ========================================================= */
+
 .loadingState {
     min-height: 100%;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -368,15 +410,34 @@
 }
 
 /* =========================================================
-   Responsive
+   Large screens
    ========================================================= */
+
+@media (min-width: 900px) {
+    .headerInner,
+    .contentInner {
+        width: 60%;
+        max-width: 900px;
+    }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
 @media (max-width: 480px) {
-    .header {
+    .headerInner {
+        width: 100%;
         padding: 17px 14px 0;
     }
 
     .content {
-        padding: 12px 14px;
+        padding: 12px 0;
+    }
+
+    .contentInner {
+        width: 100%;
+        padding: 0 14px;
     }
 
     .card {

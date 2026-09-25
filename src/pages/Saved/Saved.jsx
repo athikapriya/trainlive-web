@@ -24,7 +24,6 @@ function Saved() {
 
     const [deletingId, setDeletingId] = useState(null);
 
-
     useEffect(() => {
         if (authLoading) {
             return;
@@ -92,7 +91,6 @@ function Saved() {
         };
     }, [accessToken, isAuthenticated, authLoading]);
 
-
     const handleStationClick = (savedStation) => {
         const station = savedStation.station_details;
 
@@ -112,7 +110,6 @@ function Saved() {
 
         navigate(`/?train=${train.number}`);
     };
-
 
     const handleRemoveStation = async (event, savedStation) => {
         event.stopPropagation();
@@ -135,7 +132,6 @@ function Saved() {
             setDeletingId(null);
         }
     };
-
 
     const handleRemoveTrain = async (event, savedTrain) => {
         event.stopPropagation();
@@ -163,61 +159,72 @@ function Saved() {
         return (
             <main className={styles.page}>
                 <div className={styles.header}>
-                    <div className={styles.headerTitle}>Saved</div>
+                    <div className={styles.headerInner}>
+                        <div className={styles.headerTitle}>Saved</div>
 
-                    <div className={styles.headerSubtitle}>Your stations & trains</div>
+                        <div className={styles.headerSubtitle}>Your stations & trains</div>
 
-                    <div className={styles.tabs}>
-                        <button type="button" className={`${styles.tab} ${styles.tabActive}`}>
-                            Stations
-                        </button>
+                        <div className={styles.tabs}>
+                            <button type="button" className={`${styles.tab} ${styles.tabActive}`}>
+                                Stations
+                            </button>
 
-                        <button type="button" className={styles.tab}>
-                            Trains
-                        </button>
+                            <button type="button" className={styles.tab}>
+                                Trains
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <div className={styles.content}>
-                    <div className={styles.loadingState}>
-                        <div className={styles.spinner} />
+                    <div className={styles.contentInner}>
+                        <div className={styles.loadingState}>
+                            <div className={styles.spinner} />
 
-                        <span>Loading saved items...</span>
+                            <span>Loading saved items...</span>
+                        </div>
                     </div>
                 </div>
             </main>
         );
     }
 
-
     if (!isAuthenticated) {
         return (
             <main className={styles.page}>
                 <div className={styles.header}>
-                    <div className={styles.headerTitle}>Saved</div>
+                    <div className={styles.headerInner}>
+                        <div className={styles.headerTitle}>Saved</div>
 
-                    <div className={styles.headerSubtitle}>Your stations & trains</div>
+                        <div className={styles.headerSubtitle}>Your stations & trains</div>
+                    </div>
                 </div>
 
                 <div className={styles.content}>
-                    <div className={styles.authState}>
-                        <div className={styles.stateIcon}>
-                            <FiStar size={25} />
+                    <div className={styles.contentInner}>
+                        <div className={styles.authState}>
+                            <div className={styles.stateIcon}>
+                                <FiStar size={25} />
+                            </div>
+
+                            <h2 className={styles.stateTitle}>Sign in to save</h2>
+
+                            <p className={styles.stateText}>
+                                Save stations and trains to keep them close for your next journey.
+                            </p>
+
+                            <button type="button" className={styles.primaryButton} onClick={() => navigate("/login")}>
+                                Sign in
+                            </button>
+
+                            <button
+                                type="button"
+                                className={styles.secondaryButton}
+                                onClick={() => navigate("/register")}
+                            >
+                                Create account
+                            </button>
                         </div>
-
-                        <h2 className={styles.stateTitle}>Sign in to save</h2>
-
-                        <p className={styles.stateText}>
-                            Save stations and trains to keep them close for your next journey.
-                        </p>
-
-                        <button type="button" className={styles.primaryButton} onClick={() => navigate("/login")}>
-                            Sign in
-                        </button>
-
-                        <button type="button" className={styles.secondaryButton} onClick={() => navigate("/register")}>
-                            Create account
-                        </button>
                     </div>
                 </div>
             </main>
@@ -228,20 +235,24 @@ function Saved() {
         return (
             <main className={styles.page}>
                 <div className={styles.header}>
-                    <div className={styles.headerTitle}>Saved</div>
+                    <div className={styles.headerInner}>
+                        <div className={styles.headerTitle}>Saved</div>
 
-                    <div className={styles.headerSubtitle}>Your stations & trains</div>
+                        <div className={styles.headerSubtitle}>Your stations & trains</div>
+                    </div>
                 </div>
 
                 <div className={styles.content}>
-                    <div className={styles.emptyState}>
-                        <div className={styles.stateIcon}>
-                            <FiStar size={25} />
+                    <div className={styles.contentInner}>
+                        <div className={styles.emptyState}>
+                            <div className={styles.stateIcon}>
+                                <FiStar size={25} />
+                            </div>
+
+                            <h2 className={styles.stateTitle}>Something went wrong</h2>
+
+                            <p className={styles.stateText}>{error}</p>
                         </div>
-
-                        <h2 className={styles.stateTitle}>Something went wrong</h2>
-
-                        <p className={styles.stateText}>{error}</p>
                     </div>
                 </div>
             </main>
@@ -251,178 +262,187 @@ function Saved() {
     return (
         <main className={styles.page}>
             <div className={styles.header}>
-                <div className={styles.headerTitle}>Saved</div>
+                <div className={styles.headerInner}>
+                    <div className={styles.headerTitle}>Saved</div>
 
-                <div className={styles.headerSubtitle}>Your stations & trains</div>
+                    <div className={styles.headerSubtitle}>Your stations & trains</div>
 
-                <div className={styles.tabs}>
-                    <button
-                        type="button"
-                        className={`${styles.tab} ${activeTab === "stations" ? styles.tabActive : ""}`}
-                        onClick={() => setActiveTab("stations")}
-                    >
-                        Stations
-                    </button>
+                    <div className={styles.tabs}>
+                        <button
+                            type="button"
+                            className={`${styles.tab} ${activeTab === "stations" ? styles.tabActive : ""}`}
+                            onClick={() => setActiveTab("stations")}
+                        >
+                            Stations
+                        </button>
 
-                    <button
-                        type="button"
-                        className={`${styles.tab} ${activeTab === "trains" ? styles.tabActive : ""}`}
-                        onClick={() => setActiveTab("trains")}
-                    >
-                        Trains
-                    </button>
+                        <button
+                            type="button"
+                            className={`${styles.tab} ${activeTab === "trains" ? styles.tabActive : ""}`}
+                            onClick={() => setActiveTab("trains")}
+                        >
+                            Trains
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div className={styles.content}>
+                <div className={styles.contentInner}>
+                    {activeTab === "stations" && (
+                        <>
+                            {stations.length === 0 ? (
+                                <div className={styles.emptyState}>
+                                    <div className={styles.stateIcon}>
+                                        <FiMapPin size={25} />
+                                    </div>
 
-                {activeTab === "stations" && (
-                    <>
-                        {stations.length === 0 ? (
-                            <div className={styles.emptyState}>
-                                <div className={styles.stateIcon}>
-                                    <FiMapPin size={25} />
+                                    <h2 className={styles.stateTitle}>No saved stations yet</h2>
+
+                                    <p className={styles.stateText}>
+                                        Save a station from search results to pin it here.
+                                    </p>
                                 </div>
+                            ) : (
+                                <div className={styles.list}>
+                                    {stations.map((savedStation) => {
+                                        const station = savedStation.station_details;
 
-                                <h2 className={styles.stateTitle}>No saved stations yet</h2>
+                                        if (!station) {
+                                            return null;
+                                        }
 
-                                <p className={styles.stateText}>Save a station from search results to pin it here.</p>
-                            </div>
-                        ) : (
-                            <div className={styles.list}>
-                                {stations.map((savedStation) => {
-                                    const station = savedStation.station_details;
+                                        const isDeleting = deletingId === `station-${savedStation.id}`;
 
-                                    if (!station) {
-                                        return null;
-                                    }
+                                        return (
+                                            <article
+                                                key={savedStation.id}
+                                                className={styles.card}
+                                                onClick={() => handleStationClick(savedStation)}
+                                            >
+                                                <div className={styles.cardTop}>
+                                                    <div className={styles.cardMain}>
+                                                        <div className={styles.stationIcon}>
+                                                            <FiMapPin size={18} />
+                                                        </div>
 
-                                    const isDeleting = deletingId === `station-${savedStation.id}`;
+                                                        <div className={styles.cardText}>
+                                                            <div className={styles.primaryText}>{station.name}</div>
 
-                                    return (
-                                        <article
-                                            key={savedStation.id}
-                                            className={styles.card}
-                                            onClick={() => handleStationClick(savedStation)}
-                                        >
-                                            <div className={styles.cardTop}>
-                                                <div className={styles.cardMain}>
-                                                    <div className={styles.stationIcon}>
-                                                        <FiMapPin size={18} />
-                                                    </div>
-
-                                                    <div className={styles.cardText}>
-                                                        <div className={styles.primaryText}>{station.name}</div>
-
-                                                        {station.name_en && (
-                                                            <div className={styles.secondaryText}>
-                                                                {station.name_en}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                <button
-                                                    type="button"
-                                                    className={styles.starButton}
-                                                    disabled={isDeleting}
-                                                    onClick={(event) => handleRemoveStation(event, savedStation)}
-                                                    aria-label="Remove saved station"
-                                                >
-                                                    <FiStar size={18} fill="currentColor" />
-                                                </button>
-                                            </div>
-
-                                            <div className={styles.cardFooter}>
-                                                <span>{savedStation.report_count_today ?? 0} reports today</span>
-
-                                                <FiChevronRight size={17} />
-                                            </div>
-                                        </article>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </>
-                )}
-
-                {activeTab === "trains" && (
-                    <>
-                        {trains.length === 0 ? (
-                            <div className={styles.emptyState}>
-                                <div className={`${styles.stateIcon} ${styles.trainStateIcon}`}>
-                                    <MdTrain size={27} />
-                                </div>
-
-                                <h2 className={styles.stateTitle}>No saved trains yet</h2>
-
-                                <p className={styles.stateText}>Save a train from search results to pin it here.</p>
-                            </div>
-                        ) : (
-                            <div className={styles.list}>
-                                {trains.map((savedTrain) => {
-                                    const train = savedTrain.train_details;
-
-                                    if (!train) {
-                                        return null;
-                                    }
-
-                                    const isDeleting = deletingId === `train-${savedTrain.id}`;
-
-                                    return (
-                                        <article
-                                            key={savedTrain.id}
-                                            className={styles.card}
-                                            onClick={() => handleTrainClick(savedTrain)}
-                                        >
-                                            <div className={styles.cardTop}>
-                                                <div className={styles.cardMain}>
-                                                    <div className={`${styles.stationIcon} ${styles.trainIcon}`}>
-                                                        <MdTrain size={21} />
-                                                    </div>
-
-                                                    <div className={styles.cardText}>
-                                                        <div className={styles.primaryText}>{train.name}</div>
-
-                                                        {train.name_bn && (
-                                                            <div className={styles.secondaryText}>{train.name_bn}</div>
-                                                        )}
-
-                                                        <div className={styles.trainMeta}>
-                                                            <span className={styles.trainNumber}>#{train.number}</span>
-
-                                                            {train.direction && (
-                                                                <span className={styles.direction}>
-                                                                    {train.direction === "UP" ? "↑ UP" : "↓ DOWN"}
-                                                                </span>
+                                                            {station.name_en && (
+                                                                <div className={styles.secondaryText}>
+                                                                    {station.name_en}
+                                                                </div>
                                                             )}
                                                         </div>
                                                     </div>
+
+                                                    <button
+                                                        type="button"
+                                                        className={styles.starButton}
+                                                        disabled={isDeleting}
+                                                        onClick={(event) => handleRemoveStation(event, savedStation)}
+                                                        aria-label="Remove saved station"
+                                                    >
+                                                        <FiStar size={18} fill="currentColor" />
+                                                    </button>
                                                 </div>
 
-                                                <button
-                                                    type="button"
-                                                    className={styles.starButton}
-                                                    disabled={isDeleting}
-                                                    onClick={(event) => handleRemoveTrain(event, savedTrain)}
-                                                    aria-label="Remove saved train"
-                                                >
-                                                    <FiStar size={18} fill="currentColor" />
-                                                </button>
-                                            </div>
+                                                <div className={styles.cardFooter}>
+                                                    <span>{savedStation.report_count_today ?? 0} reports today</span>
 
-                                            <div className={styles.cardFooter}>
-                                                <span>{savedTrain.report_count_today ?? 0} reports today</span>
+                                                    <FiChevronRight size={17} />
+                                                </div>
+                                            </article>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </>
+                    )}
 
-                                                <FiChevronRight size={17} />
-                                            </div>
-                                        </article>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </>
-                )}
+                    {activeTab === "trains" && (
+                        <>
+                            {trains.length === 0 ? (
+                                <div className={styles.emptyState}>
+                                    <div className={`${styles.stateIcon} ${styles.trainStateIcon}`}>
+                                        <MdTrain size={27} />
+                                    </div>
+
+                                    <h2 className={styles.stateTitle}>No saved trains yet</h2>
+
+                                    <p className={styles.stateText}>Save a train from search results to pin it here.</p>
+                                </div>
+                            ) : (
+                                <div className={styles.list}>
+                                    {trains.map((savedTrain) => {
+                                        const train = savedTrain.train_details;
+
+                                        if (!train) {
+                                            return null;
+                                        }
+
+                                        const isDeleting = deletingId === `train-${savedTrain.id}`;
+
+                                        return (
+                                            <article
+                                                key={savedTrain.id}
+                                                className={styles.card}
+                                                onClick={() => handleTrainClick(savedTrain)}
+                                            >
+                                                <div className={styles.cardTop}>
+                                                    <div className={styles.cardMain}>
+                                                        <div className={`${styles.stationIcon} ${styles.trainIcon}`}>
+                                                            <MdTrain size={21} />
+                                                        </div>
+
+                                                        <div className={styles.cardText}>
+                                                            <div className={styles.primaryText}>{train.name}</div>
+
+                                                            {train.name_bn && (
+                                                                <div className={styles.secondaryText}>
+                                                                    {train.name_bn}
+                                                                </div>
+                                                            )}
+
+                                                            <div className={styles.trainMeta}>
+                                                                <span className={styles.trainNumber}>
+                                                                    #{train.number}
+                                                                </span>
+
+                                                                {train.direction && (
+                                                                    <span className={styles.direction}>
+                                                                        {train.direction === "UP" ? "↑ UP" : "↓ DOWN"}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <button
+                                                        type="button"
+                                                        className={styles.starButton}
+                                                        disabled={isDeleting}
+                                                        onClick={(event) => handleRemoveTrain(event, savedTrain)}
+                                                        aria-label="Remove saved train"
+                                                    >
+                                                        <FiStar size={18} fill="currentColor" />
+                                                    </button>
+                                                </div>
+
+                                                <div className={styles.cardFooter}>
+                                                    <span>{savedTrain.report_count_today ?? 0} reports today</span>
+
+                                                    <FiChevronRight size={17} />
+                                                </div>
+                                            </article>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
             </div>
         </main>
     );
