@@ -1,0 +1,43 @@
+.header {
+    width: 100%;
+    flex: 0 0 auto;
+    background: var(--rail2);
+    color: #ffffff;
+}
+
+.inner {
+    width: 80%;
+    margin: 0 auto;
+    padding: 18px 0 0;
+}
+
+.title {
+    font-size: 19px;
+    line-height: 1.25;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.bottom {
+    margin-top: 16px;
+}
+
+@media (min-width: 481px) and (max-width: 899px) {
+    .inner {
+        width: 60%;
+    }
+}
+
+@media (max-width: 480px) {
+    .inner {
+        width: 100%;
+        padding: 17px 14px 0;
+    }
+}

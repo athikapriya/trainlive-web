@@ -69,10 +69,20 @@ html,
 body {
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: 100%;
 }
 
 body {
     font-family: "Inter", sans-serif;
+    overflow: hidden;
+}
+
+#root {
+    width: 100%;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
 }
 
 .btn {
@@ -84,17 +94,4 @@ body {
 
 .num {
     font-family: "JetBrains Mono", monospace;
-}
-
-#root {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: "Inter", sans-serif;
-    background: var(--bg);
-    color: var(--text);
 }

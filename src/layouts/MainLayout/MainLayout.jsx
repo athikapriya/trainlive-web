@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 
-import BottomNav from "../components/navigation/BottomNav";
+import BottomNav from "../../components/navigation/BottomNav";
+import Style from './MainLayout.module.css';
 
 function MainLayout() {
     const handleReport = () => {
@@ -9,7 +10,9 @@ function MainLayout() {
 
     return (
         <div className="app">
-            <Outlet />
+            <main className={Style.appContent}>
+                <Outlet />
+            </main>
 
             <BottomNav onReport={handleReport} />
         </div>
