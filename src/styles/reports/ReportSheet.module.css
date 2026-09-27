@@ -189,6 +189,109 @@
     font-weight: 800;
 }
 
+.headingTitleRow {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.infoWrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.infoIcon {
+    width: 13px;
+    height: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--text-faint);
+    border-radius: 50%;
+
+    color: var(--text-faint);
+    font-size: 9px;
+    font-weight: 900;
+    line-height: 1;
+
+    cursor: help;
+    outline: none;
+
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+
+.infoIcon:hover,
+.infoIcon:focus-visible {
+    color: var(--green);
+    border-color: var(--green);
+    background: var(--surface-2);
+}
+
+.infoTooltip {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+
+    width: 260px;
+    padding: 11px 12px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    border: 1px solid var(--line);
+    border-radius: 11px;
+
+    background: var(--surface);
+    color: var(--text-soft);
+
+    box-shadow: 0 6px 20px rgba(18, 32, 25, 0.14);
+
+    font-size: 9.5px;
+    font-weight: 500;
+    line-height: 1.45;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        visibility 0.15s ease;
+
+    z-index: 20;
+}
+
+.infoTooltip strong {
+    color: var(--text);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.infoBangla {
+    margin-top: 2px;
+
+    color: var(--text);
+    font-family: "Noto Sans Bengali", sans-serif;
+    font-size: 9.5px;
+    font-weight: 700;
+}
+
+.infoWrapper:hover .infoTooltip,
+.infoIcon:focus-visible + .infoTooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
 .headingSubtitle {
     display: block;
     margin-top: 2px;
@@ -657,6 +760,42 @@
     }
 }
 
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutLeft {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -675,17 +814,37 @@
     }
 }
 
+.closing .sheet {
+    animation: slideDown 0.7s cubic-bezier(0.3, 0.85, 0.3, 1) forwards;
+}
+
 /* Desktop */
 @media (min-width: 768px) {
     .wrapper {
-        left: 50%;
+        top: 0;
+        bottom: 0;
+        left: 0;
         right: auto;
-        width: min(520px, 100%);
-        transform: translateX(-50%);
+        width: min(370px, 100%);
+        align-items: stretch;
     }
 
     .sheet {
-        border-radius: 22px 22px 0 0;
+        width: 100%;
+        max-height: none;
+        height: 100%;
+
+        border-top: none;
+        border-right: 1px solid var(--line);
+        border-radius: 0 22px 22px 0;
+
+        box-shadow: 8px 0 28px rgba(18, 32, 25, 0.14);
+
+        animation: slideInLeft 0.3s cubic-bezier(0.3, 0.85, 0.3, 1);
+    }
+
+    .closing .sheet {
+        animation: slideOutLeft 0.7s cubic-bezier(0.3, 0.85, 0.3, 1) forwards;
     }
 }
 

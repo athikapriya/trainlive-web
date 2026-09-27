@@ -49,6 +49,7 @@ function TrainReportSheet({ train, reports: initialReports = [], onClose }) {
     const [savedTrainId, setSavedTrainId] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
     const [votingReport, setVotingReport] = useState(null);
+    const [isClosing, setIsClosing] = useState(false);
 
   
     useEffect(() => {
@@ -351,10 +352,18 @@ function TrainReportSheet({ train, reports: initialReports = [], onClose }) {
         setExpandedReport((current) => (current === reportId ? null : reportId));
     };
 
+    const handleClose = () => {
+        setIsClosing(true);
+
+        setTimeout(() => {
+            onClose();
+        }, 300);
+    };
+
     const reportCount = reports.length;
 
     return (
-        <div className={styles.wrapper}>
+        <div className={`${styles.wrapper} ${isClosing ? styles.closing : ""}`}>
             <section className={styles.sheet}>
                 <div className={styles.handle} />
 
@@ -385,7 +394,7 @@ function TrainReportSheet({ train, reports: initialReports = [], onClose }) {
                             {isSaved ? "★" : "☆"}
                         </button>
 
-                        <button  type="button" className={styles.closeButton} onClick={onClose} aria-label="Close train details">
+                        <button  type="button" className={styles.closeButton} onClick={handleClose} aria-label="Close train details">
                             <FiChevronDown size={18} strokeWidth={2} />
                         </button>
                     </div>
@@ -394,8 +403,43 @@ function TrainReportSheet({ train, reports: initialReports = [], onClose }) {
                 <div className={styles.content}>
                     <div className={styles.reportHeading}>
                         <div>
-                            <span className={styles.headingTitle}>Live reports</span>
-                            <span className={styles.headingSubtitle}>Community updates</span>
+                            <div className={styles.headingTitleRow}>
+                                <span className={styles.headingTitle}>Live reports</span>
+
+                                <span className={styles.infoWrapper}>
+                                    <span
+                                        className={styles.infoIcon}
+                                        tabIndex={0}
+                                        aria-label="About community reports"
+                                    >
+                                        i
+                                    </span>
+
+                                    <span className={styles.infoTooltip}>
+                                        <strong>Community-based reports</strong>
+
+                                        <span>
+                                            These reports are shared by TrainLive users and may not always be accurate.
+                                            <br />
+                                            Please vote ✓ if the report is correct and ✕ if it is incorrect.
+                                        </span>
+
+                                        <span className={styles.infoBangla}>
+                                            কমিউনিটি-ভিত্তিক রিপোর্ট
+                                        </span>
+
+                                        <span>
+                                            এই রিপোর্টগুলো TrainLive ব্যবহারকারীদের শেয়ার করা তথ্যের ভিত্তিতে তৈরি এবং সবসময় সঠিক নাও হতে পারে।
+                                            <br />
+                                            রিপোর্টটি সঠিক হলে ✓ এবং ভুল হলে ✕ ভোট দিন।
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>
+
+                            <span className={styles.headingSubtitle}>
+                                Community updates
+                            </span>
                         </div>
 
                         <span className={styles.reportCount}>{reportCount}</span>
