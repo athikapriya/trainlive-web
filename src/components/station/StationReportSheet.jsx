@@ -576,6 +576,14 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                             )}
                                         </div>
 
+                                        <div className={styles.reportBangla}>
+                                            {report.status_summary?.text && (
+                                                    <div className={styles.statusSummary}>
+                                                        {report.status_summary.text}
+                                                    </div>
+                                                )}
+                                        </div>
+
                                         <div className={styles.voteRow}>
                                             <span className={styles.voteLabel}>Accurate?</span>
 
