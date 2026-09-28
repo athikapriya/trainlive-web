@@ -227,7 +227,27 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
         const data = error?.data;
 
         if (data?.detail) {
-            return data.detail;
+            const detail = data.detail;
+            const match = detail.match(
+                /Expected available in (\d+) seconds?/i
+            );
+
+            if (match) {
+                const seconds = Number(match[1]);
+                if (seconds < 60) {
+                    return `Too many requests. Please try again in ${seconds} seconds.`;
+                }
+
+                const minutes = Math.ceil(seconds / 60);
+                if (minutes < 60) {
+                    return `You've submitted reports too quickly. Please try again in about ${minutes} minute${minutes === 1 ? "" : "s"}.`;
+                }
+
+                const hours = Math.ceil(minutes / 60);
+                return `Too many requests. Please try again in about ${hours} hour${hours === 1 ? "" : "s"}.`;
+            }
+
+            return detail;
         }
 
         if (typeof data === "object" && data) {
