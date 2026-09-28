@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 
 import MapView from "../../components/map/MapView";
 import MapSearch from "../../components/map/MapSearch";
 import StationReportSheet from "../../components/station/StationReportSheet";
 import TrainReportSheet from "../../components/train/TrainReportSheet";
-import BottomNav from "../../components/navigation/BottomNav";
 
 import { getStation } from "../../services/stationApi";
 import { getTrain, getTrainReports } from "../../services/trainApi";
@@ -16,12 +15,15 @@ import "../../styles/map/MapSearch.css";
 
 function Home() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const location = useLocation();
+    const navigate = useNavigate();
     const [selectedStation, setSelectedStation] = useState(null);
     const [selectedTrain, setSelectedTrain] = useState(null);
     const [selectedTrainReports, setSelectedTrainReports] = useState([]);
+    const [highlightStationReportId, setHighlightStationReportId] = useState(null);
+    const [highlightTrainReportId, setHighlightTrainReportId] = useState(null);
     const [isRestoringStation, setIsRestoringStation] = useState(false);
     const [isRestoringTrain, setIsRestoringTrain] = useState(false);
-
 
     useEffect(() => {
         const stationId = searchParams.get("station");
@@ -76,7 +78,6 @@ function Home() {
             isMounted = false;
         };
     }, [searchParams, selectedStation, setSearchParams]);
-
 
     useEffect(() => {
         const trainNumber = searchParams.get("train");
@@ -148,16 +149,60 @@ function Home() {
         };
     }, [searchParams, selectedTrain, setSearchParams]);
 
+    useEffect(() => {
+        const submittedReport = location.state?.submittedReport;
+
+        if (!submittedReport) {
+            return;
+        }
+
+        const { report, train, station } = submittedReport;
+
+        const reportId = report?.id || null;
+
+        if (station) {
+            setSelectedTrain(null);
+            setSelectedTrainReports([]);
+
+            setHighlightTrainReportId(null);
+            setHighlightStationReportId(reportId);
+
+            setSelectedStation(station);
+        } else if (train) {
+            setSelectedStation(null);
+
+            setHighlightStationReportId(null);
+            setHighlightTrainReportId(reportId);
+
+            setSelectedTrain(train);
+            setSelectedTrainReports([]);
+        }
+
+        navigate("/", {
+            replace: true,
+            state: null,
+        });
+    }, [location.state, navigate]);
+
     const handleStationSelect = (station) => {
+        setHighlightStationReportId(null);
+        setHighlightTrainReportId(null);
+
         setSelectedTrain(null);
         setSelectedTrainReports([]);
+
         setSelectedStation(station);
     };
+
     const handleCloseStationSheet = () => {
         setSelectedStation(null);
+        setHighlightStationReportId(null);
     };
 
     const handleTrainSelect = async (train) => {
+        setHighlightStationReportId(null);
+        setHighlightTrainReportId(null);
+
         setSelectedStation(null);
         setSelectedTrain(train);
         setSelectedTrainReports([]);
@@ -176,16 +221,12 @@ function Home() {
     const handleCloseTrainSheet = () => {
         setSelectedTrain(null);
         setSelectedTrainReports([]);
+        setHighlightTrainReportId(null);
     };
 
     const latestTrainReport = selectedTrainReports.length > 0 ? selectedTrainReports[0] : null;
 
     const selectedTrainStation = latestTrainReport?.station || null;
-
-    // report btn
-    const handleReport = () => {
-        console.log("Open report sheet");
-    };
 
     return (
         <main className="home">
@@ -193,17 +234,22 @@ function Home() {
 
             <MapSearch onStationSelect={handleStationSelect} onTrainSelect={handleTrainSelect} />
 
-            {selectedStation && <StationReportSheet station={selectedStation} onClose={handleCloseStationSheet} />}
+            {selectedStation && (
+                <StationReportSheet
+                    station={selectedStation}
+                    highlightReportId={highlightStationReportId}
+                    onClose={handleCloseStationSheet}
+                />
+            )}
 
             {selectedTrain && (
                 <TrainReportSheet
                     train={selectedTrain}
                     reports={selectedTrainReports}
+                    highlightReportId={highlightTrainReportId}
                     onClose={handleCloseTrainSheet}
                 />
             )}
-
-            <BottomNav onReport={handleReport} />
 
             {(isRestoringStation || isRestoringTrain) && <div className="station-restore-loading" aria-hidden="true" />}
         </main>

@@ -9,7 +9,7 @@ import styles from "../../styles/reports/ReportSheet.module.css";
 import { getEventLabel, getEventClass, getDelayInfo } from "../../components/reports/reportUtils";
 import RelativeTime from "../../components/common/RelativeTime";
 
-function StationReportSheet({ station, onClose }) {
+function StationReportSheet({ station, highlightReportId = null, onClose }) {
     const navigate = useNavigate();
     const { isAuthenticated, accessToken } = useAuth();
 
@@ -42,6 +42,10 @@ function StationReportSheet({ station, onClose }) {
                     accessToken,
                     signal: controller.signal,
                 });
+                
+                if (controller.signal.aborted) {
+                    return;
+                }
 
                 setReports(data.results || []);
             } catch (error) {
@@ -64,6 +68,18 @@ function StationReportSheet({ station, onClose }) {
             controller.abort();
         };
     }, [station, accessToken]);
+
+    useEffect(() => {
+        if (!highlightReportId || !reports.length || !isAuthenticated) {
+            return;
+        }
+
+        const reportExists = reports.some((report) => report.id === highlightReportId);
+
+        if (reportExists) {
+            setExpandedReport(highlightReportId);
+        }
+    }, [highlightReportId, reports, isAuthenticated]);
 
     useEffect(() => {
         if (!isAuthenticated || !accessToken || !reports.length) {
@@ -345,25 +361,25 @@ function StationReportSheet({ station, onClose }) {
                             {isSaved ? "★" : "☆"}
                         </button>
 
-                        <button type="button" className={styles.closeButton} onClick={handleClose} aria-label="Close station details" >
+                        <button
+                            type="button"
+                            className={styles.closeButton}
+                            onClick={handleClose}
+                            aria-label="Close station details"
+                        >
                             <FiChevronDown size={18} strokeWidth={2} />
                         </button>
                     </div>
                 </div>
 
                 <div className={styles.content}>
-                    
                     <div className={styles.reportHeading}>
                         <div>
                             <div className={styles.headingTitleRow}>
                                 <span className={styles.headingTitle}>Live reports</span>
 
                                 <span className={styles.infoWrapper}>
-                                    <span
-                                        className={styles.infoIcon}
-                                        tabIndex={0}
-                                        aria-label="About community reports"
-                                    >
+                                    <span className={styles.infoIcon} tabIndex={0} aria-label="About community reports">
                                         i
                                     </span>
 
@@ -376,12 +392,11 @@ function StationReportSheet({ station, onClose }) {
                                             Please vote ✓ if the report is correct and ✕ if it is incorrect.
                                         </span>
 
-                                        <span className={styles.infoBangla}>
-                                            কমিউনিটি-ভিত্তিক রিপোর্ট
-                                        </span>
+                                        <span className={styles.infoBangla}>কমিউনিটি-ভিত্তিক রিপোর্ট</span>
 
                                         <span>
-                                            এই রিপোর্টগুলো TrainLive ব্যবহারকারীদের শেয়ার করা তথ্যের ভিত্তিতে তৈরি এবং সবসময় সঠিক নাও হতে পারে।
+                                            এই রিপোর্টগুলো TrainLive ব্যবহারকারীদের শেয়ার করা তথ্যের ভিত্তিতে তৈরি এবং
+                                            সবসময় সঠিক নাও হতে পারে।
                                             <br />
                                             রিপোর্টটি সঠিক হলে ✓ এবং ভুল হলে ✕ ভোট দিন।
                                         </span>
@@ -389,14 +404,11 @@ function StationReportSheet({ station, onClose }) {
                                 </span>
                             </div>
 
-                            <span className={styles.headingSubtitle}>
-                                Community updates
-                            </span>
+                            <span className={styles.headingSubtitle}>Community updates</span>
                         </div>
 
                         <span className={styles.reportCount}>{reportCount}</span>
                     </div>
-
 
                     {isLoading && (
                         <div className={styles.loadingState}>
@@ -470,7 +482,6 @@ function StationReportSheet({ station, onClose }) {
                                     );
                                 }
 
-                                /* Authenticated report */
                                 const isExpanded = expandedReport === report.id;
                                 const delay = getDelayInfo(report, styles);
                                 const myVote = votes[report.id];
@@ -487,8 +498,15 @@ function StationReportSheet({ station, onClose }) {
                                           : null;
 
                                 return (
-                                    <article key={report.id} className={`${styles.reportCard} ${isExpanded ? styles.expanded : ""}`}>
-                                        <button type="button" className={styles.reportMain} onClick={() => toggleReport(report.id)}>
+                                    <article
+                                        key={report.id}
+                                        className={`${styles.reportCard} ${isExpanded ? styles.expanded : ""}`}
+                                    >
+                                        <button
+                                            type="button"
+                                            className={styles.reportMain}
+                                            onClick={() => toggleReport(report.id)}
+                                        >
                                             <div className={styles.trainIcon}>
                                                 <span>{report.train?.number}</span>
                                             </div>
@@ -505,7 +523,12 @@ function StationReportSheet({ station, onClose }) {
                                                         )}
                                                     </div>
 
-                                                    <span className={`${styles.eventPill} ${getEventClass(report.event_type, styles)}`}>
+                                                    <span
+                                                        className={`${styles.eventPill} ${getEventClass(
+                                                            report.event_type,
+                                                            styles
+                                                        )}`}
+                                                    >
                                                         {getEventLabel(report.event_type)}
                                                     </span>
                                                 </div>
@@ -531,11 +554,16 @@ function StationReportSheet({ station, onClose }) {
                                             </div>
 
                                             <div className={styles.expandButton}>
-                                                <FiChevronDown size={18} strokeWidth={2} className={ isExpanded ? styles.expandIconExpanded : styles.expandIcon } />
+                                                <FiChevronDown
+                                                    size={18}
+                                                    strokeWidth={2}
+                                                    className={
+                                                        isExpanded ? styles.expandIconExpanded : styles.expandIcon
+                                                    }
+                                                />
                                             </div>
                                         </button>
 
-                                        {/* Delay */}
                                         <div className={styles.statusRow}>
                                             <span className={`${styles.delayBadge} ${delay.className}`}>
                                                 {delay.label}
@@ -548,11 +576,14 @@ function StationReportSheet({ station, onClose }) {
                                             )}
                                         </div>
 
-                                        {/* Vote row */}
                                         <div className={styles.voteRow}>
                                             <span className={styles.voteLabel}>Accurate?</span>
 
-                                            <button type="button" className={`${styles.voteButton} ${myVote === "RIGHT" ? styles.rightSelected : ""}`}
+                                            <button
+                                                type="button"
+                                                className={`${styles.voteButton} ${
+                                                    myVote === "RIGHT" ? styles.rightSelected : ""
+                                                }`}
                                                 disabled={votingReport === report.id}
                                                 onClick={(event) => {
                                                     event.stopPropagation();
@@ -563,7 +594,11 @@ function StationReportSheet({ station, onClose }) {
                                                 <b>{rightVotes}</b>
                                             </button>
 
-                                            <button type="button" className={`${styles.voteButton} ${myVote === "WRONG" ? styles.wrongSelected : ""}`}
+                                            <button
+                                                type="button"
+                                                className={`${styles.voteButton} ${
+                                                    myVote === "WRONG" ? styles.wrongSelected : ""
+                                                }`}
                                                 disabled={votingReport === report.id}
                                                 onClick={(event) => {
                                                     event.stopPropagation();
@@ -575,7 +610,6 @@ function StationReportSheet({ station, onClose }) {
                                             </button>
                                         </div>
 
-                                        {/* Expanded details */}
                                         {isExpanded && (
                                             <div className={styles.expandedContent}>
                                                 <div className={styles.detailGrid}>
@@ -600,7 +634,6 @@ function StationReportSheet({ station, onClose }) {
                                                     </div>
                                                 </div>
 
-                                                {/* Traveller note */}
                                                 {report.note?.trim() && (
                                                     <div className={styles.note}>
                                                         <span>Traveller note</span>
@@ -608,7 +641,6 @@ function StationReportSheet({ station, onClose }) {
                                                     </div>
                                                 )}
 
-                                                {/* Community trust */}
                                                 <div className={styles.trustCard}>
                                                     <div className={styles.trustHeader}>
                                                         <div>
@@ -630,6 +662,7 @@ function StationReportSheet({ station, onClose }) {
 
                                                     <div className={styles.trustStats}>
                                                         <span>✓ {rightVotes} সঠিক</span>
+
                                                         <span>✕ {wrongVotes} ভুল</span>
                                                     </div>
                                                 </div>

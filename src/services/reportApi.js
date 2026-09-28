@@ -1,7 +1,4 @@
-const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL ||
-    "http://127.0.0.1:8000";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 function getAuthHeaders(accessToken) {
     if (!accessToken) {
@@ -13,11 +10,8 @@ function getAuthHeaders(accessToken) {
     };
 }
 
-
 async function parseError(response) {
-    const error = new Error(
-        `API request failed: ${response.status} ${response.statusText}`
-    );
+    const error = new Error(`API request failed: ${response.status} ${response.statusText}`);
 
     error.status = response.status;
 
@@ -30,27 +24,15 @@ async function parseError(response) {
     return error;
 }
 
-
-export async function getStationReports(
-    stationId,
-    {
-        accessToken = null,
+export async function getStationReports(stationId, { accessToken = null, signal } = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/reports/?station=${encodeURIComponent(stationId)}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            ...getAuthHeaders(accessToken),
+        },
         signal,
-    } = {}
-) {
-    const response = await fetch(
-        `${API_BASE_URL}/api/reports/?station=${encodeURIComponent(
-            stationId
-        )}`,
-        {
-            method: "GET",
-            credentials: "include",
-            headers: {
-                ...getAuthHeaders(accessToken),
-            },
-            signal,
-        }
-    );
+    });
 
     if (!response.ok) {
         throw await parseError(response);
@@ -59,25 +41,15 @@ export async function getStationReports(
     return response.json();
 }
 
-
-export async function getReportVote(
-    reportId,
-    {
-        accessToken = null,
+export async function getReportVote(reportId, { accessToken = null, signal } = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/reports/${reportId}/vote/`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            ...getAuthHeaders(accessToken),
+        },
         signal,
-    } = {}
-) {
-    const response = await fetch(
-        `${API_BASE_URL}/api/reports/${reportId}/vote/`,
-        {
-            method: "GET",
-            credentials: "include",
-            headers: {
-                ...getAuthHeaders(accessToken),
-            },
-            signal,
-        }
-    );
+    });
 
     if (!response.ok) {
         throw await parseError(response);
@@ -86,30 +58,47 @@ export async function getReportVote(
     return response.json();
 }
 
-
-export async function voteOnReport(
-    reportId,
-    vote,
-    {
-        accessToken = null,
+export async function voteOnReport(reportId, vote, { accessToken = null, signal } = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/reports/${reportId}/vote/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeaders(accessToken),
+        },
+        body: JSON.stringify({
+            vote,
+        }),
         signal,
-    } = {}
+    });
+
+    if (!response.ok) {
+        throw await parseError(response);
+    }
+
+    return response.json();
+}
+
+export async function createReport(
+    { trainId, stationId, eventTime, eventType, note = "" },
+    { accessToken = null, signal } = {}
 ) {
-    const response = await fetch(
-        `${API_BASE_URL}/api/reports/${reportId}/vote/`,
-        {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-                ...getAuthHeaders(accessToken),
-            },
-            body: JSON.stringify({
-                vote,
-            }),
-            signal,
-        }
-    );
+    const response = await fetch(`${API_BASE_URL}/api/reports/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeaders(accessToken),
+        },
+        body: JSON.stringify({
+            train_id: trainId,
+            station_id: stationId,
+            event_time: eventTime,
+            event_type: eventType,
+            note,
+        }),
+        signal,
+    });
 
     if (!response.ok) {
         throw await parseError(response);

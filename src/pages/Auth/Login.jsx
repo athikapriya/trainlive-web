@@ -3,7 +3,6 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
 
 import useAuth from "../../hooks/useAuth";
-
 import styles from "./auth.module.css";
 
 function Login() {
@@ -13,7 +12,7 @@ function Login() {
 
     const stationId = searchParams.get("station");
     const trainNumber = searchParams.get("train");
-
+    const reportIntent = searchParams.get("report") === "true";
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +27,12 @@ function Login() {
 
         try {
             await login(email, password);
-            if (trainNumber) {
+
+            if (reportIntent) {
+                navigate("/?report=true", {
+                    replace: true,
+                });
+            } else if (trainNumber) {
                 navigate(`/?train=${encodeURIComponent(trainNumber)}`, {
                     replace: true,
                 });
@@ -50,6 +54,38 @@ function Login() {
         }
     }
 
+    const forgotPasswordPath = (() => {
+        const params = new URLSearchParams();
+
+        if (reportIntent) {
+            params.set("report", "true");
+        } else if (trainNumber) {
+            params.set("train", trainNumber);
+        } else if (stationId) {
+            params.set("station", stationId);
+        }
+
+        const query = params.toString();
+
+        return query ? `/forgot-password?${query}` : "/forgot-password";
+    })();
+
+    const registerPath = (() => {
+        const params = new URLSearchParams();
+
+        if (reportIntent) {
+            params.set("report", "true");
+        } else if (trainNumber) {
+            params.set("train", trainNumber);
+        } else if (stationId) {
+            params.set("station", stationId);
+        }
+
+        const query = params.toString();
+
+        return query ? `/register?${query}` : "/register";
+    })();
+
     return (
         <main className={styles.authPage}>
             <button type="button" className={styles.backButton} onClick={() => navigate(-1)} aria-label="Go back">
@@ -58,7 +94,6 @@ function Login() {
 
             <div className={styles.authWrap}>
                 <div className={styles.authHeader}>
-
                     <h1>Sign in</h1>
 
                     <p>Welcome back to TrainLive</p>
@@ -85,17 +120,7 @@ function Login() {
                         <div className={styles.passwordLabel}>
                             <label htmlFor="login-password">Password</label>
 
-                            <Link
-                                to={
-                                    stationId
-                                        ? `/forgot-password?station=${encodeURIComponent(stationId)}`
-                                        : trainNumber
-                                          ? `/forgot-password?train=${encodeURIComponent(trainNumber)}`
-                                          : "/forgot-password"
-                                }
-                            >
-                                Forgot password?
-                            </Link>
+                            <Link to={forgotPasswordPath}>Forgot password?</Link>
                         </div>
 
                         <div className={styles.passwordInput}>
@@ -132,18 +157,7 @@ function Login() {
                 </form>
 
                 <div className={styles.authFooter}>
-                    <span>Don't have an account?</span>{" "}
-                    <Link
-                        to={
-                            trainNumber
-                                ? `/register?train=${encodeURIComponent(trainNumber)}`
-                                : stationId
-                                  ? `/register?station=${encodeURIComponent(stationId)}`
-                                  : "/register"
-                        }
-                    >
-                        Create an account
-                    </Link>
+                    <span>Don't have an account?</span> <Link to={registerPath}>Create an account</Link>
                 </div>
             </div>
         </main>

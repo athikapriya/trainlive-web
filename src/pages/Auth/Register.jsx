@@ -14,7 +14,7 @@ function Register() {
 
     const stationId = searchParams.get("station");
     const trainNumber = searchParams.get("train");
-
+    const reportIntent = searchParams.get("report") === "true";
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -63,7 +63,12 @@ function Register() {
         try {
             await registerUser(fullName, email, password, confirmPassword);
             await login(email, password);
-            if (trainNumber) {
+
+            if (reportIntent) {
+                navigate("/?report=true", {
+                    replace: true,
+                });
+            } else if (trainNumber) {
                 navigate(`/?train=${encodeURIComponent(trainNumber)}`, {
                     replace: true,
                 });
@@ -83,6 +88,22 @@ function Register() {
         }
     }
 
+    const loginPath = (() => {
+        const params = new URLSearchParams();
+
+        if (reportIntent) {
+            params.set("report", "true");
+        } else if (trainNumber) {
+            params.set("train", trainNumber);
+        } else if (stationId) {
+            params.set("station", stationId);
+        }
+
+        const query = params.toString();
+
+        return query ? `/login?${query}` : "/login";
+    })();
+
     return (
         <main className={styles.authPage}>
             <button type="button" className={styles.backButton} onClick={() => navigate(-1)} aria-label="Go back">
@@ -91,7 +112,6 @@ function Register() {
 
             <div className={styles.authWrap}>
                 <div className={styles.authHeader}>
-
                     <h1>Create your account</h1>
 
                     <p>Share updates and help fellow riders.</p>
@@ -192,18 +212,7 @@ function Register() {
                 </form>
 
                 <div className={styles.authFooter}>
-                    <span>Already have an account?</span>{" "}
-                    <Link
-                        to={
-                            trainNumber
-                                ? `/login?train=${encodeURIComponent(trainNumber)}`
-                                : stationId
-                                  ? `/login?station=${encodeURIComponent(stationId)}`
-                                  : "/login"
-                        }
-                    >
-                        Sign in
-                    </Link>
+                    <span>Already have an account?</span> <Link to={loginPath}>Sign in</Link>
                 </div>
             </div>
         </main>
