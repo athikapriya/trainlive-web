@@ -3,8 +3,8 @@ import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 
 import MapView from "../../components/map/MapView";
 import MapSearch from "../../components/map/MapSearch";
-import StationReportSheet from "../../components/station/StationReportSheet";
-import TrainReportSheet from "../../components/train/TrainReportSheet";
+import StationReportSheet from "../../components/stationReportSheet/StationReportSheet";
+import TrainReportSheet from "../../components/trainReportSheet/TrainReportSheet";
 
 import { getStation } from "../../services/stationApi";
 import { getTrain, getTrainReports } from "../../services/trainApi";

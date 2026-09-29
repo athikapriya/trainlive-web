@@ -12,6 +12,7 @@ import Register from "./pages/Auth/Register";
 import ForgotPassword from './pages/Auth/ForgetPassword';
 import ResetPassword from "./pages/Auth/ResetPassword";
 import ChangePassword from './pages/Auth/ChangePassword'
+import TrainDetails from "./pages/TrainDetails/TrainDetails";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
                 <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/trains" element={<Trains />} />
+                    <Route path="/trains/:trainNumber" element={<TrainDetails />} />
                     <Route path="/saved" element={<Saved />} />
                     <Route path="/profile" element={<Profile />} />
                 </Route>
