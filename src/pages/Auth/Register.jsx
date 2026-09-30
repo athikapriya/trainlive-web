@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
 
 import useAuth from "../../hooks/useAuth";
@@ -9,12 +9,19 @@ import styles from "./auth.module.css";
 
 function Register() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [searchParams] = useSearchParams();
     const { login } = useAuth();
+    
+    const stateFrom = location.state?.from;
+    const queryFrom = searchParams.get("from");
+
+    const from = stateFrom || queryFrom;
 
     const stationId = searchParams.get("station");
     const trainNumber = searchParams.get("train");
     const reportIntent = searchParams.get("report") === "true";
+
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -64,23 +71,41 @@ function Register() {
             await registerUser(fullName, email, password, confirmPassword);
             await login(email, password);
 
+            if (from) {
+                navigate(from, {
+                    replace: true,
+                });
+
+                return;
+            }
+
             if (reportIntent) {
                 navigate("/?report=true", {
                     replace: true,
                 });
-            } else if (trainNumber) {
+
+                return;
+            }
+
+            if (trainNumber) {
                 navigate(`/?train=${encodeURIComponent(trainNumber)}`, {
                     replace: true,
                 });
-            } else if (stationId) {
+
+                return;
+            }
+
+            if (stationId) {
                 navigate(`/?station=${encodeURIComponent(stationId)}`, {
                     replace: true,
                 });
-            } else {
-                navigate("/", {
-                    replace: true,
-                });
+
+                return;
             }
+
+            navigate("/", {
+                replace: true,
+            });
         } catch (error) {
             setError(getErrorMessage(error));
         } finally {
@@ -89,6 +114,14 @@ function Register() {
     }
 
     const loginPath = (() => {
+        if (from) {
+            const params = new URLSearchParams();
+
+            params.set("from", from);
+
+            return `/login?${params.toString()}`;
+        }
+
         const params = new URLSearchParams();
 
         if (reportIntent) {

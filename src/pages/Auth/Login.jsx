@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
 
 import useAuth from "../../hooks/useAuth";
@@ -7,12 +7,15 @@ import styles from "./auth.module.css";
 
 function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [searchParams] = useSearchParams();
     const { login } = useAuth();
+    const from = location.state?.from;
 
     const stationId = searchParams.get("station");
     const trainNumber = searchParams.get("train");
     const reportIntent = searchParams.get("report") === "true";
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -27,24 +30,41 @@ function Login() {
 
         try {
             await login(email, password);
+            if (from) {
+                navigate(from, {
+                    replace: true,
+                });
+
+                return;
+            }
 
             if (reportIntent) {
                 navigate("/?report=true", {
                     replace: true,
                 });
-            } else if (trainNumber) {
+
+                return;
+            }
+
+            if (trainNumber) {
                 navigate(`/?train=${encodeURIComponent(trainNumber)}`, {
                     replace: true,
                 });
-            } else if (stationId) {
+
+                return;
+            }
+
+            if (stationId) {
                 navigate(`/?station=${encodeURIComponent(stationId)}`, {
                     replace: true,
                 });
-            } else {
-                navigate("/", {
-                    replace: true,
-                });
+
+                return;
             }
+
+            navigate("/", {
+                replace: true,
+            });
         } catch (error) {
             setError(
                 error?.data?.detail || error?.message || "Unable to sign in. Please check your email and password."
@@ -55,6 +75,14 @@ function Login() {
     }
 
     const forgotPasswordPath = (() => {
+        if (from) {
+            const params = new URLSearchParams();
+
+            params.set("from", from);
+
+            return `/forgot-password?${params.toString()}`;
+        }
+
         const params = new URLSearchParams();
 
         if (reportIntent) {
@@ -71,6 +99,14 @@ function Login() {
     })();
 
     const registerPath = (() => {
+        if (from) {
+            const params = new URLSearchParams();
+
+            params.set("from", from);
+
+            return `/register?${params.toString()}`;
+        }
+
         const params = new URLSearchParams();
 
         if (reportIntent) {

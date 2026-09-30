@@ -1,0 +1,808 @@
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 22px;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text-soft);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease,
+        transform 160ms ease;
+}
+
+.backButton:hover {
+    background: var(--surface-2);
+    border-color: var(--line-strong);
+    color: var(--text);
+}
+
+.backButton:active {
+    transform: translateY(1px);
+}
+
+.headerMeta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+}
+
+.trainNumber {
+    display: inline-flex;
+    align-items: center;
+    min-height: 25px;
+    padding: 0 9px;
+    border-radius: 7px;
+    background: var(--green);
+    color: var(--green-soft);
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.02em;
+}
+
+.metaPill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 25px;
+    padding: 0 9px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--surface);
+    color: var(--text-soft);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.section {
+    margin-bottom: 18px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.section:last-child {
+    margin-bottom: 0;
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.sectionLabel {
+    margin-bottom: 4px;
+    color: var(--text-faint);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.sectionTitle {
+    margin: 0;
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.historyInfo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 4px;
+    color: var(--text-faint);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.historySelector {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 18px;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface-2);
+}
+
+.historyOption {
+    min-width: 66px;
+    height: 29px;
+    padding: 0 11px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-soft);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 650;
+    cursor: pointer;
+    transition:
+        background 160ms ease,
+        color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.historyOption:hover {
+    background: var(--green-soft);
+    color: var(--green);
+}
+
+.historyOptionActive {
+    background: var(--green);
+    color: #ffffff;
+    box-shadow: 0 2px 5px rgba(18, 32, 25, 0.16);
+}
+
+.historyOptionActive:hover {
+    background: var(--green);
+    color: #ffffff;
+}
+
+.historyOption:active {
+    transform: translateY(1px);
+}
+
+.historyScroll {
+    width: 100%;
+    min-width: 0;
+    margin-top: 16px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+}
+
+.historyScroll::-webkit-scrollbar {
+    height: 5px;
+}
+
+.historyScroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.historyScroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--line-strong);
+}
+
+.historyChart {
+    width: 100%;
+    min-width: 0;
+    min-height: 172px;
+    padding: 10px 3px 0;
+    display: flex;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    gap: 5px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+}
+
+.historyChartLoading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.historyColumn {
+    min-width: 0;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
+.historyBarArea {
+    width: 100%;
+    min-width: 0;
+    height: 122px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.historyBar {
+    width: clamp(7px, 1.5vw, 17px);
+    min-height: 0;
+    border-radius: 5px 5px 2px 2px;
+    transition:
+        height 220ms ease,
+        opacity 160ms ease,
+        transform 160ms ease;
+}
+
+.historyBar:hover {
+    opacity: 0.82;
+    transform: translateY(-1px);
+}
+
+/* On time = TrainLive green */
+.historyOnTime {
+    background: var(--green);
+}
+
+/* Small delay = TrainLive amber */
+.historyDelayedLow {
+    background: var(--amber);
+}
+
+/* Major delay = TrainLive red */
+.historyDelayedHigh {
+    background: var(--red);
+}
+
+.historyNoData {
+    background: transparent;
+}
+
+.historyDate {
+    width: 100%;
+    min-width: 0;
+    margin-top: 9px;
+    padding: 0 1px 9px;
+    overflow: hidden;
+    color: var(--text-faint);
+    font-size: clamp(7px, 0.75vw, 10px);
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.historyEmpty {
+    width: 100%;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-faint);
+    font-size: 12px;
+}
+
+.historyLegend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 13px;
+    color: var(--text-soft);
+    font-size: 10px;
+}
+
+.historyLegend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legendDot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+}
+
+.legendOnTime {
+    background: var(--green);
+}
+
+.legendLow {
+    background: var(--amber);
+}
+
+.legendHigh {
+    background: var(--red);
+}
+
+.totalDuration {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text-soft);
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.routeTable {
+    margin-top: 17px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+}
+
+.routeHeader,
+.routeRow {
+    display: grid;
+    grid-template-columns:
+        minmax(180px, 1.7fr)
+        minmax(90px, 0.8fr)
+        minmax(70px, 0.6fr)
+        minmax(90px, 0.8fr);
+    align-items: center;
+}
+
+.routeHeader {
+    min-height: 34px;
+    padding: 0 13px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+    color: var(--text-faint);
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.routeRows {
+    display: flex;
+    flex-direction: column;
+}
+
+.routeRow {
+    min-height: 61px;
+    padding: 0 13px;
+    border-bottom: 1px solid var(--line);
+}
+
+.routeRow:last-child {
+    border-bottom: 0;
+}
+
+.stationCell {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stationNumber {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    color: var(--text-faint);
+    font-size: 9px;
+    font-weight: 750;
+}
+
+.stationOrigin {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.stationDestination {
+    border-color: var(--amber);
+    color: var(--amber);
+}
+
+.stationNames {
+    min-width: 0;
+}
+
+.stationName {
+    overflow: hidden;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stationNameEn {
+    margin-top: 2px;
+    overflow: hidden;
+    color: var(--text-faint);
+    font-size: 9px;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.timeCell,
+.haltCell {
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.haltCell {
+    color: var(--text-soft);
+}
+
+.reportCount {
+    padding-top: 4px;
+    color: var(--text-soft);
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.reportsList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 17px;
+}
+
+.reportCard {
+    display: flex;
+    gap: 11px;
+    padding: 13px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface-2);
+}
+
+.reportIcon {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--green-soft);
+    color: var(--green);
+}
+
+.reportContent {
+    min-width: 0;
+    flex: 1;
+}
+
+.reportTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.reportEvent {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.reportTime {
+    color: var(--text-faint);
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.reportStationWrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    margin-top: 8px;
+    color: var(--text-soft);
+}
+
+.reportStation {
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.reportStationEn {
+    margin-top: 2px;
+    color: var(--text-faint);
+    font-size: 9px;
+}
+
+.reportNote {
+    margin-top: 8px;
+    color: var(--text-soft);
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.reportDelay {
+    display: inline-flex;
+    margin-top: 8px;
+    padding: 4px 7px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.reportDelayOnTime {
+    background: var(--green-soft);
+    color: var(--green);
+}
+
+.reportDelayLow {
+    background: var(--amber-soft);
+    color: var(--amber);
+}
+
+.reportDelayHigh {
+    background: var(--red-soft);
+    color: var(--red);
+}
+
+.emptyState {
+    margin-top: 16px;
+    padding: 24px 16px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 10px;
+    color: var(--text-faint);
+    font-size: 12px;
+    text-align: center;
+}
+
+.loadingState {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    color: var(--text-soft);
+    font-size: 12px;
+}
+
+.spinner {
+    width: 15px;
+    height: 15px;
+    border: 2px solid var(--line);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: trainDetailsSpin 700ms linear infinite;
+}
+
+@keyframes trainDetailsSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.errorState {
+    padding: 18px;
+    border: 1px solid var(--red);
+    border-radius: 10px;
+    background: var(--red-soft);
+    color: var(--red);
+    font-size: 12px;
+}
+
+@media (max-width: 800px) {
+    .section {
+        padding: 17px;
+    }
+
+    .routeHeader,
+    .routeRow {
+        grid-template-columns:
+            minmax(150px, 1.6fr)
+            minmax(80px, 0.8fr)
+            minmax(60px, 0.6fr)
+            minmax(80px, 0.8fr);
+    }
+
+    .historyBar {
+        width: clamp(7px, 1.8vw, 15px);
+    }
+}
+
+@media (max-width: 600px) {
+    .backButton {
+        margin-bottom: 16px;
+    }
+
+    .headerMeta {
+        gap: 5px;
+    }
+
+    .metaPill,
+    .trainNumber {
+        min-height: 23px;
+        padding: 0 7px;
+        font-size: 10px;
+    }
+
+    .section {
+        margin-bottom: 12px;
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .sectionHeader {
+        gap: 10px;
+    }
+
+    .sectionTitle {
+        font-size: 16px;
+    }
+
+    .historyInfo span {
+        display: none;
+    }
+
+    .historyInfo {
+        padding-top: 2px;
+    }
+
+    .historySelector {
+        margin-top: 14px;
+        padding: 3px;
+        background: var(--surface-2);
+    }
+
+    .historyOption {
+        min-width: 61px;
+        height: 28px;
+        font-size: 10px;
+    }
+
+    .historyOptionActive {
+        background: var(--green);
+        color: #ffffff;
+        box-shadow: 0 2px 6px rgba(18, 32, 25, 0.18);
+    }
+
+    /* =====================================================
+       14-day mobile horizontal scroll
+    ===================================================== */
+    .historyScrollFourteen {
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
+    }
+
+    .historyScrollFourteen .historyChart {
+        width: max(100%, 560px);
+    }
+
+    .historyChart {
+        min-height: 156px;
+        padding: 10px 3px 0;
+        gap: 3px;
+    }
+
+    .historyScrollFourteen .historyChart {
+        gap: 6px;
+    }
+
+    .historyBarArea {
+        height: 108px;
+    }
+
+    .historyBar {
+        width: clamp(6px, 2.2vw, 12px);
+        border-radius: 4px 4px 2px 2px;
+    }
+
+    .historyScrollFourteen .historyBar {
+        width: 10px;
+    }
+
+    .historyDate {
+        margin-top: 7px;
+        padding-bottom: 8px;
+        font-size: 8px;
+    }
+
+    .historyScrollFourteen .historyDate {
+        font-size: 9px;
+    }
+
+    .historyLegend {
+        gap: 9px;
+        margin-top: 11px;
+        font-size: 9px;
+    }
+
+    /* =====================================================
+       Route
+    ===================================================== */
+    .routeTable {
+        margin-top: 14px;
+        overflow-x: auto;
+    }
+
+    .routeHeader,
+    .routeRow {
+        min-width: 530px;
+    }
+
+    .routeHeader {
+        min-height: 32px;
+    }
+
+    .routeRow {
+        min-height: 57px;
+    }
+
+    /* =====================================================
+       Reports
+    ===================================================== */
+    .reportsList {
+        margin-top: 14px;
+    }
+
+    .reportCard {
+        padding: 11px;
+    }
+}
+
+/* =========================================================
+   Very small screens
+========================================================= */
+@media (max-width: 390px) {
+    .section {
+        padding: 13px;
+    }
+
+    .historyScrollFourteen .historyChart {
+        width: 560px;
+        min-width: 560px;
+    }
+
+    .historyScrollFourteen .historyBar {
+        width: 10px;
+    }
+
+    .historyScrollFourteen .historyDate {
+        font-size: 9px;
+    }
+
+    .historyChart {
+        gap: 2px;
+        min-height: 148px;
+    }
+
+    .historyBarArea {
+        height: 102px;
+    }
+
+    .historyBar {
+        width: 6px;
+    }
+
+    .historyDate {
+        font-size: 7px;
+    }
+
+    .historyLegend {
+        gap: 7px;
+        font-size: 8px;
+    }
+
+    .routeHeader,
+    .routeRow {
+        min-width: 500px;
+    }
+}

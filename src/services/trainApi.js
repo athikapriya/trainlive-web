@@ -49,3 +49,17 @@ export function getTrainReports(
         }
     );
 }
+
+
+export function getTrainHistory(trainNumber, days = 7, { accessToken = null, signal } = {}) {
+    const headers = {};
+
+    if (accessToken) {
+        headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return apiFetch(`/api/trains/${encodeURIComponent(trainNumber)}/history/?days=${days}`, {
+        headers,
+        signal,
+    });
+}
