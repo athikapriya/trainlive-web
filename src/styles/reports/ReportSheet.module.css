@@ -525,6 +525,33 @@
     font-weight: 600;
 }
 
+/* Next stop ETA */
+.nextStopRow {
+    margin: 0 11px 10px 59px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.nextStop {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-soft);
+    font-size: 9.5px;
+    font-weight: 700;
+}
+
+.nextStopEta {
+    flex-shrink: 0;
+    color: var(--eta);
+    font-size: 9.5px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
 /* Vote row */
 .voteRow {
     display: flex;

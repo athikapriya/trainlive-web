@@ -431,6 +431,8 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                             These reports are shared by TrainLive users and may not always be accurate.
                                             <br />
                                             Please vote ✓ if the report is correct and ✕ if it is incorrect.
+                                            <br />
+                                            ETA is estimated from the latest community report and may vary with actual train movement.
                                         </span>
 
                                         <span className={styles.infoBangla}>কমিউনিটি-ভিত্তিক রিপোর্ট</span>
@@ -440,6 +442,8 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                             সবসময় সঠিক নাও হতে পারে।
                                             <br />
                                             রিপোর্টটি সঠিক হলে ✓ এবং ভুল হলে ✕ ভোট দিন।
+                                            <br />
+                                            ETA সর্বশেষ কমিউনিটি রিপোর্টের ভিত্তিতে আনুমানিক; ট্রেনের প্রকৃত চলাচলের কারণে সময় পরিবর্তিত হতে পারে।
                                         </span>
                                     </span>
                                 </span>
@@ -608,12 +612,48 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                             )}
                                         </div>
 
+                                        {(() => {
+                                            const currentStationId = report.station?.id
+                                            const stops = report.eta?.stops || [];
+                                            const currentStopIndex = stops.findIndex(
+                                                (stop) => Number(stop.station?.id) === Number(currentStationId)
+                                            );
+                                            const nextStop =
+                                                currentStopIndex !== -1
+                                                    ? stops[currentStopIndex + 1]
+                                                    : null;
+                                            if (!nextStop) {
+                                                return null;
+                                            }
+                                            return (
+                                                <div className={styles.nextStopRow}>
+                                                    <span className={styles.nextStop}>
+                                                        Next stop: {nextStop.station?.name_en || nextStop.station?.name}
+                                                    </span>
+
+                                                    {nextStop.eta_arrival && (
+                                                        <span className={styles.nextStopEta}>
+                                                            ETA: {nextStop.eta_arrival}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            );
+                                        })()}
+
                                         <div className={styles.reportBangla}>
                                             {report.status_summary?.text && (
-                                                    <div className={styles.statusSummary}>
+                                                <div className={styles.statusSummary}>
+                                                    <div>
                                                         {report.status_summary.text}
                                                     </div>
-                                                )}
+
+                                                    {report.status_summary.next_station_text && (
+                                                        <div>
+                                                            {report.status_summary.next_station_text}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className={styles.voteRow}>
