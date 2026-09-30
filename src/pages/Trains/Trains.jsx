@@ -96,10 +96,6 @@ function getJourneyWindowForDate(train, serviceDate) {
 
             const stopDate = new Date(serviceDate);
 
-            /*
-             * A scheduled time earlier than the origin
-             * departure belongs to the next day.
-             */
             if (
                 originParts &&
                 (timeParts.hours < originParts.hours ||
@@ -180,7 +176,7 @@ function getCurrentJourney(train, now) {
             if (now >= todayJourney.journeyEnd) {
                 return {
                     ...todayJourney,
-                    state: "COMPLETED",
+                    state: "PAST_SCHEDULED_END",
                 };
             }
         }
@@ -204,10 +200,35 @@ function getCurrentJourney(train, now) {
                     state: "ACTIVE",
                 };
             }
+
+            if (isOvernight && now >= yesterdayJourney.journeyEnd) {
+                return {
+                    ...yesterdayJourney,
+                    state: "PAST_SCHEDULED_END",
+                };
+            }
         }
     }
 
     return null;
+}
+
+/* =========================================================
+   Report ETA helper
+========================================================= */
+
+function getCompletionEta(train) {
+    if (!train?.completion_eta) {
+        return null;
+    }
+
+    const eta = new Date(train.completion_eta);
+
+    if (Number.isNaN(eta.getTime())) {
+        return null;
+    }
+
+    return eta;
 }
 
 /* =========================================================
@@ -216,6 +237,8 @@ function getCurrentJourney(train, now) {
 
 function getTrainDisplayStatus(train, now) {
     const journey = getCurrentJourney(train, now);
+
+    const completionEta = getCompletionEta(train);
 
     const today = new Date(now);
 
@@ -227,7 +250,7 @@ function getTrainDisplayStatus(train, now) {
      * =====================================================
      */
 
-    if (isOffDay(train, today) && !journey) {
+    if (isOffDay(train, today) && !journey && !completionEta) {
         return {
             status: "OFF_DAY",
             label: "Off day",
@@ -238,7 +261,79 @@ function getTrainDisplayStatus(train, now) {
     }
 
     /*
-     * No usable schedule.
+     * =====================================================
+     * SCHEDULED
+     * =====================================================
+     */
+
+    if (journey && journey.state === "SCHEDULED") {
+        return {
+            status: "SCHEDULED",
+            label: "Scheduled",
+            secondaryLabel: null,
+            delayMinutes: null,
+            journeyStart: journey.journeyStart,
+            completionEta,
+        };
+    }
+
+    /*
+     * =====================================================
+     * REPORT-BASED ACTIVE JOURNEY
+     * =====================================================
+     */
+
+    if (completionEta && now < completionEta) {
+        const delayMinutes = typeof train.delay_minutes === "number" ? train.delay_minutes : null;
+
+        /*
+         * Delayed
+         */
+        if (delayMinutes !== null && delayMinutes > 0) {
+            return {
+                status: "DELAYED",
+                label: train.status_label || `+${delayMinutes} min late`,
+                secondaryLabel: null,
+                delayMinutes,
+                journeyStart: journey?.journeyStart || null,
+                completionEta,
+            };
+        }
+
+        /*
+         * On time
+         */
+        return {
+            status: "ON_TIME",
+            label: "On time",
+            secondaryLabel: null,
+            delayMinutes: delayMinutes ?? 0,
+            journeyStart: journey?.journeyStart || null,
+            completionEta,
+        };
+    }
+
+    /*
+     * =====================================================
+     * REPORT-BASED COMPLETION
+     * =====================================================
+     */
+
+    if (completionEta && now >= completionEta) {
+        return {
+            status: "COMPLETED",
+            label: "Journey completed",
+            secondaryLabel: null,
+            delayMinutes: null,
+            journeyStart: journey?.journeyStart || null,
+            completionEta,
+        };
+    }
+
+    /*
+     * =====================================================
+     * NO REPORT
+     * =====================================================
      */
 
     if (!journey) {
@@ -251,49 +346,24 @@ function getTrainDisplayStatus(train, now) {
         };
     }
 
-    /*
-     * =====================================================
-     * SCHEDULED
-     * =====================================================
-     */
-
-    if (journey.state === "SCHEDULED") {
-        return {
-            status: "SCHEDULED",
-            label: "Scheduled",
-            secondaryLabel: null,
-            delayMinutes: null,
-            journeyStart: journey.journeyStart,
-        };
-    }
-
-    /*
-     * =====================================================
-     * COMPLETED
-     * =====================================================
-     */
-
-    if (journey.state === "COMPLETED") {
+    if (journey.state === "PAST_SCHEDULED_END") {
         return {
             status: "COMPLETED",
             label: "Journey completed",
             secondaryLabel: "No latest reports · assumed on time",
             delayMinutes: null,
             journeyStart: journey.journeyStart,
+            completionEta: null,
         };
     }
 
     /*
      * =====================================================
-     * ACTIVE
+     * ACTIVE — FALLBACK
      * =====================================================
      */
 
     const delayMinutes = typeof train.delay_minutes === "number" ? train.delay_minutes : null;
-
-    /*
-     * Positive delay = delayed.
-     */
 
     if (delayMinutes !== null && delayMinutes > 0) {
         return {
@@ -302,13 +372,9 @@ function getTrainDisplayStatus(train, now) {
             secondaryLabel: null,
             delayMinutes,
             journeyStart: journey.journeyStart,
+            completionEta,
         };
     }
-
-    /*
-     * Active + no positive delay report
-     * = assumed on time.
-     */
 
     return {
         status: "ON_TIME",
@@ -316,6 +382,7 @@ function getTrainDisplayStatus(train, now) {
         secondaryLabel: null,
         delayMinutes: delayMinutes !== null ? delayMinutes : 0,
         journeyStart: journey.journeyStart,
+        completionEta,
     };
 }
 
@@ -352,13 +419,6 @@ function sortTrainsByJourneyStart(trains) {
         const groupA = getJourneyGroup(statusA);
 
         const groupB = getJourneyGroup(statusB);
-
-        /*
-         * Active
-         * Scheduled
-         * Completed
-         * Off day
-         */
 
         if (groupA !== groupB) {
             return groupA - groupB;
