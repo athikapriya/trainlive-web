@@ -82,6 +82,96 @@ function formatDuration(minutes) {
 }
 
 /* =========================================================
+   ETA helpers
+========================================================= */
+function getEtaStopMap(report) {
+    const eta = report?.eta;
+
+    if (!eta || !Array.isArray(eta.stops)) {
+        return new Map();
+    }
+
+    return new Map(eta.stops.map((stop) => [stop.station?.id, stop]));
+}
+
+function getEtaArrival(stop, etaStopMap) {
+    if (!stop?.station?.id) return null;
+
+    const etaStop = etaStopMap.get(stop.station.id);
+
+    return etaStop?.eta_arrival || null;
+}
+
+function getEtaDeparture(stop, etaStopMap) {
+    if (!stop?.station?.id) return null;
+
+    const etaStop = etaStopMap.get(stop.station.id);
+
+    return etaStop?.eta_departure || null;
+}
+
+function etaTimeToMinutes(value) {
+    if (!value) return null;
+
+    const match = value.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+
+    if (!match) return null;
+
+    let hour = Number(match[1]);
+    const minute = Number(match[2]);
+    const period = match[3].toUpperCase();
+
+    if (Number.isNaN(hour) || Number.isNaN(minute) || hour < 1 || hour > 12 || minute < 0 || minute > 59) {
+        return null;
+    }
+
+    if (period === "AM") {
+        if (hour === 12) {
+            hour = 0;
+        }
+    } else if (hour !== 12) {
+        hour += 12;
+    }
+
+    return hour * 60 + minute;
+}
+
+function isEtaStillActive(destinationEta) {
+    const etaMinutes = etaTimeToMinutes(destinationEta);
+
+    if (etaMinutes === null) {
+        return false;
+    }
+
+    const now = new Date();
+
+    const currentTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Dhaka",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    }).format(now);
+
+    const [currentHour, currentMinute] = currentTime.split(":").map(Number);
+
+    const currentMinutes = currentHour * 60 + currentMinute;
+
+    let adjustedEtaMinutes = etaMinutes;
+
+    if (adjustedEtaMinutes < currentMinutes - 12 * 60) {
+        adjustedEtaMinutes += 24 * 60;
+    }
+
+    let adjustedCurrentMinutes = currentMinutes;
+
+    if (adjustedCurrentMinutes < etaMinutes - 12 * 60) {
+        adjustedCurrentMinutes += 24 * 60;
+    }
+
+    return adjustedCurrentMinutes < adjustedEtaMinutes;
+}
+
+/* =========================================================
    Route schedule
 ========================================================= */
 function buildRouteSchedule(stops = []) {
@@ -113,6 +203,7 @@ function buildRouteSchedule(stops = []) {
 
     const rows = sortedStops.map((stop, index) => {
         let arrivalMinutes = timeToMinutes(stop.scheduled_arrival);
+
         let departureMinutes = timeToMinutes(stop.scheduled_departure);
 
         if (index === 0) {
@@ -228,7 +319,6 @@ function formatReportTime(value) {
 /* =========================================================
    History helpers
 ========================================================= */
-
 function getHistoryBarClass(day) {
     if (day.status === "ON_TIME") {
         return styles.historyOnTime;
@@ -310,6 +400,16 @@ function TrainDetails() {
     const [loading, setLoading] = useState(true);
     const [historyLoading, setHistoryLoading] = useState(false);
     const [error, setError] = useState("");
+
+    const [, setEtaClock] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setEtaClock((value) => value + 1);
+        }, 60 * 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         if (!user) {
@@ -415,6 +515,38 @@ function TrainDetails() {
     const routeSchedule = useMemo(() => {
         return buildRouteSchedule(train?.stops || []);
     }, [train?.stops]);
+
+    const latestEtaReport = useMemo(() => {
+        return reports.find((report) => report.event_type === "ARRIVED" || report.event_type === "DEPARTED") || null;
+    }, [reports]);
+
+    const etaStopMap = useMemo(() => {
+        return getEtaStopMap(latestEtaReport);
+    }, [latestEtaReport]);
+
+    const destinationStop = useMemo(() => {
+        if (!routeSchedule.rows.length) {
+            return null;
+        }
+
+        return routeSchedule.rows[routeSchedule.rows.length - 1];
+    }, [routeSchedule.rows]);
+
+    const destinationEta = useMemo(() => {
+        if (!destinationStop) {
+            return null;
+        }
+
+        return getEtaArrival(destinationStop, etaStopMap);
+    }, [destinationStop, etaStopMap]);
+
+    const showEta = useMemo(() => {
+        if (!latestEtaReport || !destinationEta) {
+            return false;
+        }
+
+        return isEtaStillActive(destinationEta);
+    }, [latestEtaReport, destinationEta]);
 
     const historyItems = useMemo(() => {
         const items = Array.isArray(history?.history) ? history.history : [];
@@ -595,6 +727,18 @@ function TrainDetails() {
                             )}
                         </div>
 
+                        {/* ETA disclaimer */}
+                        {showEta && (
+                            <div className={styles.etaDisclaimer}>
+                                <FiInfo size={12} />
+
+                                <span>
+                                    ETA is estimated from the latest community report and may vary with actual train
+                                    movement.
+                                </span>
+                            </div>
+                        )}
+
                         {routeSchedule.rows.length ? (
                             <div className={styles.routeTable}>
                                 <div className={styles.routeHeader}>
@@ -607,6 +751,10 @@ function TrainDetails() {
                                 <div className={styles.routeRows}>
                                     {routeSchedule.rows.map((stop, index) => {
                                         const station = stop.station;
+
+                                        const etaArrival = showEta ? getEtaArrival(stop, etaStopMap) : null;
+
+                                        const etaDeparture = showEta ? getEtaDeparture(stop, etaStopMap) : null;
 
                                         return (
                                             <div key={`${train.id}-${stop.stop_order}`} className={styles.routeRow}>
@@ -637,7 +785,11 @@ function TrainDetails() {
                                                 </div>
 
                                                 <div className={styles.timeCell}>
-                                                    {formatScheduleTime(stop.scheduled_arrival)}
+                                                    <div>{formatScheduleTime(stop.scheduled_arrival)}</div>
+
+                                                    {etaArrival && (
+                                                        <div className={styles.etaTime}>ETA : {etaArrival}</div>
+                                                    )}
                                                 </div>
 
                                                 <div className={styles.haltCell}>
@@ -645,7 +797,11 @@ function TrainDetails() {
                                                 </div>
 
                                                 <div className={styles.timeCell}>
-                                                    {formatScheduleTime(stop.scheduled_departure)}
+                                                    <div>{formatScheduleTime(stop.scheduled_departure)}</div>
+
+                                                    {etaDeparture && (
+                                                        <div className={styles.etaTime}>ETD : {etaDeparture}</div>
+                                                    )}
                                                 </div>
                                             </div>
                                         );

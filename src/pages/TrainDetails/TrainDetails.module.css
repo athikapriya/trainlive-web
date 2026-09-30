@@ -237,17 +237,14 @@
     transform: translateY(-1px);
 }
 
-/* On time = TrainLive green */
 .historyOnTime {
     background: var(--green);
 }
 
-/* Small delay = TrainLive amber */
 .historyDelayedLow {
     background: var(--amber);
 }
 
-/* Major delay = TrainLive red */
 .historyDelayedHigh {
     background: var(--red);
 }
@@ -316,6 +313,10 @@
     background: var(--red);
 }
 
+/* =========================================================
+   Route schedule
+========================================================= */
+
 .totalDuration {
     display: inline-flex;
     align-items: center;
@@ -327,6 +328,23 @@
     font-size: 11px;
     font-weight: 650;
     white-space: nowrap;
+}
+
+/* ETA disclaimer */
+.etaDisclaimer {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 10px;
+    color: #8f7a55;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.etaDisclaimer svg {
+    flex: 0 0 auto;
+    margin-top: 1px;
 }
 
 .routeTable {
@@ -436,10 +454,27 @@
     font-weight: 600;
 }
 
+.timeCell {
+    line-height: 1.25;
+}
+
 .haltCell {
     color: var(--text-soft);
 }
 
+/* Backend-provided ETA */
+.etaTime {
+    margin-top: 3px;
+    color: var(--eta);
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   Reports
+========================================================= */
 .reportCount {
     padding-top: 4px;
     color: var(--text-soft);
@@ -674,6 +709,7 @@
     /* =====================================================
        14-day mobile horizontal scroll
     ===================================================== */
+
     .historyScrollFourteen {
         overflow-x: auto;
         overflow-y: hidden;
@@ -728,6 +764,12 @@
     /* =====================================================
        Route
     ===================================================== */
+
+    .etaDisclaimer {
+        margin-top: 9px;
+        font-size: 9px;
+    }
+
     .routeTable {
         margin-top: 14px;
         overflow-x: auto;
@@ -746,9 +788,14 @@
         min-height: 57px;
     }
 
+    .etaTime {
+        font-size: 8px;
+    }
+
     /* =====================================================
        Reports
     ===================================================== */
+
     .reportsList {
         margin-top: 14px;
     }
@@ -761,6 +808,7 @@
 /* =========================================================
    Very small screens
 ========================================================= */
+
 @media (max-width: 390px) {
     .section {
         padding: 13px;
