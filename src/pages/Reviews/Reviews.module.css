@@ -1,0 +1,696 @@
+.page {
+    width: 100%;
+    min-height: 100%;
+    background:
+        radial-gradient(
+            circle at 0% 100%,
+            var(--green-soft) 0,
+            transparent 30%
+        ),
+        var(--bg);
+    color: var(--text);
+    padding-bottom: 32px;
+}
+
+.container {
+    width: min(100%, 920px);
+    margin: 0 auto;
+}
+
+.topBar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 58px;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+}
+
+.pageTitle {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.topBarSpacer {
+    width: 36px;
+    height: 36px;
+}
+
+.backButton {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text-soft);
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(18, 32, 25, 0.06);
+}
+
+.backButton svg {
+    width: 17px;
+    height: 17px;
+}
+
+.backButton:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.ratingHero {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 6px 20px 20px;
+    padding-top: 10px;
+}
+
+.ratingBigCol {
+    flex-shrink: 0;
+    min-width: 82px;
+    text-align: center;
+}
+
+.ratingBig {
+    color: var(--text);
+    font-family: "Space Grotesk", "Manrope", sans-serif;
+    font-size: 38px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+.ratingStarsRow {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 7px;
+}
+
+.ratingStarsRow .star {
+    width: 14px;
+    height: 14px;
+    color: var(--line-strong);
+}
+
+.ratingStarsRow .filled {
+    color: var(--amber);
+}
+
+.ratingCount {
+    margin-top: 5px;
+    color: var(--text-faint);
+    font-size: 10.5px;
+    line-height: 1.3;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ratingBars {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.ratingBarRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--text-soft);
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 700;
+}
+
+.ratingBarNumber {
+    width: 7px;
+    text-align: right;
+}
+
+.ratingBarRow .star {
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    color: var(--amber);
+}
+
+.ratingBarTrack {
+    flex: 1;
+    height: 6px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--surface-2);
+}
+
+.ratingBarFill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--amber);
+    transition: width 0.25s ease;
+}
+
+.ratingBarCount {
+    width: 20px;
+    text-align: right;
+    color: var(--text-faint);
+}
+
+.writeButtonWrap {
+    padding: 0 18px 16px;
+}
+
+.primaryButton {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(155deg, var(--green), var(--teal));
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 750;
+    text-align: center;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        background 0.15s ease;
+}
+
+.primaryButton:hover {
+    opacity: 0.92;
+}
+
+.primaryButton:active {
+    transform: scale(0.99);
+}
+
+.primaryButton:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.writeReviewCard {
+    margin: 0 18px 18px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.writeHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.writeHeader h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 750;
+}
+
+.writeHeader p {
+    margin: 4px 0 0;
+    color: var(--text-faint);
+    font-size: 10.5px;
+    line-height: 1.45;
+}
+
+.closeWrite {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface-2);
+    color: var(--text-soft);
+    font-family: inherit;
+    font-size: 19px;
+    line-height: 1;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.closeWrite:hover {
+    background: var(--surface);
+    color: var(--text);
+}
+
+.starPicker {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    margin-bottom: 14px;
+}
+
+.starButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.starButton .star {
+    width: 27px;
+    height: 27px;
+    color: var(--line-strong);
+    transition:
+        transform 0.1s ease,
+        color 0.1s ease;
+}
+
+.starButton:hover .star {
+    transform: scale(1.08);
+}
+
+.starButton .filled {
+    color: var(--amber);
+}
+
+.field {
+    position: relative;
+}
+
+.textarea {
+    display: block;
+    width: 100%;
+    min-height: 125px;
+    box-sizing: border-box;
+    resize: vertical;
+    margin: 0;
+    padding: 12px 13px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface-2);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.55;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
+}
+
+.textarea::placeholder {
+    color: var(--text-faint);
+}
+
+.textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+.characterCount {
+    margin-top: 5px;
+    color: var(--text-faint);
+    font-size: 9.5px;
+    font-weight: 600;
+    text-align: right;
+}
+
+.error {
+    margin: 9px 0;
+    color: var(--red);
+    font-size: 10.5px;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 2px 18px 10px;
+}
+
+.sectionHeader h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.sectionHeader span {
+    color: var(--text-faint);
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.reviewsList {
+    padding-bottom: 12px;
+}
+
+.reviewCard {
+    margin: 0 18px 10px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.reviewTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.reviewUser {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+}
+
+.userAvatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: var(--teal-soft);
+    color: var(--teal);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.reviewName {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.stars {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    margin-top: 3px;
+}
+
+.stars .star {
+    width: 11px;
+    height: 11px;
+    color: var(--line-strong);
+}
+
+.stars .filled {
+    color: var(--amber);
+}
+
+.reviewDate {
+    flex-shrink: 0;
+    color: var(--text-faint);
+    font-size: 10px;
+    line-height: 1.3;
+    font-weight: 600;
+}
+
+.reviewText {
+    margin: 9px 0 0;
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.helpfulButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 11px;
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--text-soft);
+    font-family: inherit;
+    font-size: 10.5px;
+    line-height: 1.2;
+    font-weight: 700;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.helpfulButton:hover {
+    border-color: var(--line-strong);
+    background: var(--surface);
+}
+
+.helpfulButton:disabled {
+    cursor: default;
+}
+
+.helpfulButton svg {
+    width: 12px;
+    height: 12px;
+}
+
+.helpfulActive {
+    background: var(--green-soft);
+    color: var(--green);
+    border-color: var(--green);
+}
+
+.helpfulError {
+    margin-top: 7px;
+    color: var(--red);
+    font-size: 10px;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.loadMoreWrap {
+    display: flex;
+    justify-content: center;
+    padding: 8px 18px 24px;
+}
+
+.loadMoreButton {
+    min-height: 40px;
+    margin: 0;
+    padding: 9px 18px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 700;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.loadMoreButton:hover {
+    background: var(--surface-2);
+    border-color: var(--line-strong);
+}
+
+.loadMoreButton:active {
+    transform: scale(0.98);
+}
+
+.emptyState {
+    margin: 0 18px;
+    padding: 42px 24px;
+    border: 1px dashed var(--line);
+    border-radius: 16px;
+    text-align: center;
+}
+
+.emptyStars {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.emptyStars .star {
+    width: 18px;
+    height: 18px;
+    color: var(--line-strong);
+}
+
+.emptyState h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.emptyState p {
+    max-width: 280px;
+    margin: 6px auto 0;
+    color: var(--text-faint);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.skeletonTop {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.skeletonAvatar {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: var(--surface-2);
+}
+
+.skeletonInfo {
+    flex: 1;
+}
+
+.skeletonLineTiny,
+.skeletonLineSmall,
+.skeletonLine,
+.skeletonLineShort {
+    border-radius: 999px;
+    background: var(--surface-2);
+}
+
+.skeletonLineSmall {
+    width: 90px;
+    height: 10px;
+}
+
+.skeletonLineTiny {
+    width: 55px;
+    height: 7px;
+    margin-top: 6px;
+}
+
+.skeletonLine {
+    width: 100%;
+    height: 9px;
+    margin-top: 13px;
+}
+
+.skeletonLineShort {
+    width: 65%;
+    height: 9px;
+    margin-top: 7px;
+}
+
+.toast {
+    position: fixed;
+    left: 20px;
+    right: 20px;
+    bottom: 24px;
+    z-index: 95;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+@media (min-width: 700px) {
+    .page {
+        padding-bottom: 50px;
+    }
+
+    .topBar {
+        border-radius: 0;
+    }
+
+    .ratingHero {
+        margin-top: 18px;
+    }
+
+    .writeButtonWrap,
+    .sectionHeader {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .writeReviewCard,
+    .reviewCard,
+    .emptyState {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .loadMoreWrap {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
