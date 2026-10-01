@@ -1,7 +1,15 @@
-const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL ||
-    "http://127.0.0.1:8000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
+export class ApiError extends Error {
+    constructor(message, { status, statusText, data } = {}) {
+        super(message);
+
+        this.name = "ApiError";
+        this.status = status;
+        this.statusText = statusText;
+        this.data = data;
+    }
+}
 
 export async function apiFetch(endpoint, options = {}) {
     const url = endpoint.startsWith("http") ? endpoint : `${API_BASE_URL}${endpoint}`;
@@ -14,14 +22,24 @@ export async function apiFetch(endpoint, options = {}) {
         },
     });
 
-    if (!response.ok) {
-        throw new Error(
-            `API request failed: ${response.status} ${response.statusText}`
-        );
-    }
-    return response.json();
-}
+    let data = null;
 
+    try {
+        data = await response.json();
+    } catch {
+        data = null;
+    }
+
+    if (!response.ok) {
+        throw new ApiError(`API request failed: ${response.status} ${response.statusText}`, {
+            status: response.status,
+            statusText: response.statusText,
+            data,
+        });
+    }
+
+    return data;
+}
 
 export async function apiFetchAll(endpoint, options = {}) {
     let url = endpoint;
@@ -35,6 +53,5 @@ export async function apiFetchAll(endpoint, options = {}) {
 
     return results;
 }
-
 
 export default API_BASE_URL;
