@@ -4,7 +4,9 @@
     position: relative;
     display: flex;
     justify-content: center;
-    background: var(--bg);
+    background:
+        radial-gradient(circle at 88% 0%, var(--green-soft) 0, transparent 30%),
+        var(--bg);
     color: var(--text);
     overflow-y: auto;
 }
