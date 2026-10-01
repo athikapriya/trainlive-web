@@ -1,0 +1,649 @@
+/* Page */
+
+.page {
+    width: 100%;
+    min-height: 100%;
+    background:
+        radial-gradient(circle at 88% 0%, var(--green-soft) 0, transparent 30%),
+        var(--bg);
+    color: var(--text);
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.container {
+    width: min(100%, 900px);
+    margin: 0 auto;
+    padding: 0 18px 48px;
+}
+
+/* Header */
+
+.header {
+    display: grid;
+    grid-template-columns: 42px 1fr 42px;
+    align-items: center;
+    height: 60px;
+}
+
+.backButton {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text-soft);
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(18, 32, 25, 0.06);
+}
+
+.backButton svg {
+    width: 17px;
+    height: 17px;
+}
+
+.backButton:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.backButton:active {
+    transform: scale(0.94);
+}
+
+.headerTitle {
+    font-family: "Manrope", sans-serif;
+    font-size: 15px;
+    font-weight: 750;
+    text-align: center;
+    color: var(--text);
+}
+
+.headerSpacer {
+    width: 42px;
+}
+
+/* Hero */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-top: 8px;
+    padding: 26px 22px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: linear-gradient(135deg, var(--green-soft), var(--amber-soft));
+    box-shadow: var(--shadow);
+    transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.heroGlow {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    top: -105px;
+    right: -60px;
+    border-radius: 50%;
+    background: rgba(214, 138, 30, 0.11);
+    filter: blur(2px);
+    pointer-events: none;
+}
+
+.heroIcon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    background: var(--green);
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(30, 138, 91, 0.20);
+}
+
+.heroIcon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+}
+
+.heroEyebrow {
+    display: block;
+    margin-bottom: 6px;
+    font-family: "Manrope", sans-serif;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: var(--green);
+}
+
+.hero h1 {
+    margin: 0;
+    font-family: "Manrope", sans-serif;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--text);
+}
+
+.hero h1 span {
+    color: var(--green);
+}
+
+.hero p {
+    max-width: 580px;
+    margin: 9px 0 0;
+    font-family: "Manrope", sans-serif;
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--text-soft);
+}
+
+/* Policy Meta */
+
+.policyMeta {
+    display: flex;
+    align-items: center;
+    margin-top: 18px;
+    padding: 0 4px;
+}
+
+.metaItem {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-family: "Manrope", sans-serif;
+}
+
+.metaItem span {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+}
+
+.metaItem strong {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-soft);
+}
+
+.metaDivider {
+    width: 1px;
+    height: 27px;
+    margin: 0 16px;
+    background: var(--line);
+}
+
+/* Introduction */
+
+.introCard {
+    margin-top: 24px;
+    padding: 19px 20px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: 0 5px 18px rgba(18, 32, 25, 0.035);
+}
+
+.introCard p {
+    margin: 0;
+    font-family: "Manrope", sans-serif;
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--text-soft);
+}
+
+.introCard p + p {
+    margin-top: 9px;
+}
+
+/* Policy Section */
+
+.policySection {
+    position: relative;
+    margin-top: 34px;
+    padding-left: 2px;
+}
+
+.sectionNumber {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 22px;
+    margin-bottom: 9px;
+    border-radius: 7px;
+    background: var(--green-soft);
+    color: var(--green);
+    font-family: "Manrope", sans-serif;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.policySection h2 {
+    margin: 0 0 12px;
+    font-family: "Manrope", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+    color: var(--text);
+}
+
+.policySection p {
+    margin: 0;
+    font-family: "Manrope", sans-serif;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text-soft);
+}
+
+.policySection p + p {
+    margin-top: 11px;
+}
+
+.policySection strong {
+    color: var(--text);
+    font-weight: 750;
+}
+
+.policySection a {
+    color: var(--green);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.policySection a:hover {
+    text-decoration: underline;
+}
+
+/* Policy Items */
+
+.policyItem {
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+}
+
+.policyItem:first-of-type {
+    margin-top: 4px;
+}
+
+.policyItem h3 {
+    margin: 0 0 5px;
+    font-family: "Manrope", sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.policyItem p {
+    font-size: 11.5px;
+    line-height: 1.75;
+}
+
+/* Lists */
+
+.policySection ul {
+    margin: 5px 0 0;
+    padding: 0 0 0 19px;
+}
+
+.policySection li {
+    padding-left: 4px;
+    margin-bottom: 9px;
+    font-family: "Manrope", sans-serif;
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--text-soft);
+}
+
+.policySection li::marker {
+    color: var(--green);
+}
+
+.policySection li strong {
+    color: var(--text);
+}
+
+/* Notice */
+
+.notice {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 17px;
+    padding: 13px 15px;
+    border-left: 3px solid var(--green);
+    border-radius: 0 11px 11px 0;
+    background: var(--green-soft);
+}
+
+.notice strong {
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.notice span {
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    line-height: 1.6;
+    color: var(--text-soft);
+}
+
+/* Emphasis */
+
+.emphasis {
+    margin-top: 16px !important;
+    padding: 13px 15px;
+    border-radius: 11px;
+    background: var(--surface-2);
+    color: var(--text) !important;
+    font-weight: 650;
+}
+
+.smallNote {
+    margin-top: 14px !important;
+    font-size: 10px !important;
+    color: var(--text-faint) !important;
+}
+
+/* Privacy Highlight */
+
+.privacyHighlight {
+    display: flex;
+    gap: 13px;
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    background: var(--surface);
+    box-shadow: 0 5px 18px rgba(18, 32, 25, 0.035);
+}
+
+.highlightIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: var(--green-soft);
+    color: var(--green);
+}
+
+.highlightIcon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.privacyHighlight strong {
+    display: block;
+    margin-bottom: 5px;
+    font-family: "Manrope", sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.privacyHighlight p {
+    font-size: 10.5px;
+    line-height: 1.7;
+}
+
+/* Contact Card */
+
+.contactCard {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 42px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    margin-top: 38px;
+    padding: 19px;
+    border-radius: 18px;
+    background: var(--rail);
+    box-shadow: 0 12px 30px rgba(11, 61, 46, 0.16);
+}
+
+.contactCard::after {
+    content: "";
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    right: -72px;
+    bottom: -88px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.contactIcon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.contactIcon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.contactContent {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+}
+
+.contactEyebrow {
+    display: block;
+    margin-bottom: 3px;
+    font-family: "Manrope", sans-serif;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    color: rgba(255, 255, 255, 0.52);
+}
+
+.contactContent h2 {
+    margin: 0;
+    font-family: "Manrope", sans-serif;
+    font-size: 14px;
+    font-weight: 750;
+    color: #ffffff;
+}
+
+.contactContent p {
+    margin: 4px 0 3px;
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.email {
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.90);
+    text-decoration: none;
+}
+
+.email:hover {
+    text-decoration: underline;
+}
+
+.contactButton {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 0 11px;
+    border: 0;
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--rail);
+    font-family: "Manrope", sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.contactButton svg {
+    width: 13px;
+    height: 13px;
+}
+
+.contactButton:hover {
+    opacity: 0.92;
+}
+
+.contactButton:active {
+    transform: scale(0.95);
+}
+
+/* Footer */
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    margin-top: 24px;
+    text-align: center;
+    font-family: "Manrope", sans-serif;
+}
+
+.footer strong {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-soft);
+}
+
+.footer span {
+    font-size: 9px;
+    line-height: 1.5;
+    color: var(--text-faint);
+}
+
+/* Focus */
+
+.backButton:focus-visible,
+.contactButton:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+}
+
+/* Desktop */
+
+@media (min-width: 700px) {
+    .container {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .header {
+        height: 68px;
+    }
+
+    .hero {
+        margin-top: 12px;
+        padding: 32px 30px;
+    }
+
+    .heroIcon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+    }
+
+    .hero p {
+        font-size: 13px;
+    }
+
+    .policyMeta {
+        margin-top: 20px;
+    }
+
+    .introCard {
+        padding: 22px 24px;
+    }
+
+    .policySection {
+        margin-top: 40px;
+    }
+
+    .policySection h2 {
+        font-size: 20px;
+    }
+
+    .policySection p,
+    .policySection li {
+        font-size: 13px;
+    }
+
+    .policyItem p {
+        font-size: 12.5px;
+    }
+
+    .contactCard {
+        padding: 21px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .hero {
+        flex-wrap: wrap;
+    }
+
+    .contactCard{
+        grid-template-columns: auto;
+    }
+}
+
+/* Reduced Motion */
+
+@media (prefers-reduced-motion: reduce) {
+    .page,
+    .hero,
+    .backButton,
+    .contactButton {
+        transition: none;
+    }
+}
