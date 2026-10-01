@@ -13,6 +13,12 @@ import ForgotPassword from './pages/Auth/ForgetPassword';
 import ResetPassword from "./pages/Auth/ResetPassword";
 import ChangePassword from './pages/Auth/ChangePassword'
 import TrainDetails from "./pages/TrainDetails/TrainDetails";
+import ContactUs from "./pages/ContactUs/ContactUs";
+import Reviews from "./pages/Reviews/Reviews";
+import FAQ from "./pages/FAQ/FAQ";
+import Privacy from "./pages/Privacy/Privacy";
+import Terms from "./pages/Terms/Terms";
+import About from "./pages/About/About";
 
 
 function App() {
@@ -26,6 +32,12 @@ function App() {
                     <Route path="/trains/:trainNumber" element={<TrainDetails />} />
                     <Route path="/saved" element={<Saved />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/contact" element={<ContactUs />} />
+                    <Route path="/reviews" element={<Reviews />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/about" element={<About />} />
                 </Route>
 
                 {/* Authentication */}
