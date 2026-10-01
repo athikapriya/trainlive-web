@@ -15,6 +15,9 @@ function MainLayout() {
 
     const [isReportSubmitOpen, setIsReportSubmitOpen] = useState(false);
 
+    // Pages that should not show the fixed bottom navigation.
+   c
+
     const handleReport = () => {
         if (!isAuthenticated) {
             navigate("/login?report=true");
@@ -84,7 +87,7 @@ function MainLayout() {
                 onSubmitted={handleReportSubmitted}
             />
 
-            <BottomNav onReport={handleReport} />
+            {!hideBottomNav && <BottomNav onReport={handleReport} />}
         </div>
     );
 }
