@@ -270,7 +270,13 @@ function Saved() {
                             </div>
 
                             <div className={styles.cardFooter}>
-                                <span>{savedStation.report_count_today ?? 0} reports today</span>
+                                <span>
+                                    {savedStation.report_count_today > 0
+                                        ? `${savedStation.report_count_today} ${
+                                            savedStation.report_count_today === 1 ? "report" : "reports"
+                                        } today`
+                                        : "No reports today"}
+                                </span>
 
                                 <FiChevronRight size={17} />
                             </div>
@@ -359,7 +365,13 @@ function Saved() {
                             </div>
 
                             <div className={styles.cardFooter}>
-                                <span>{savedTrain.report_count_today ?? 0} reports today</span>
+                                <span>
+                                    {savedTrain.report_count_today > 0
+                                        ? `${savedTrain.report_count_today} ${
+                                            savedTrain.report_count_today === 1 ? "report" : "reports"
+                                        } today`
+                                        : "No reports today"}
+                                </span>
 
                                 <FiChevronRight size={17} />
                             </div>

@@ -1,29 +1,43 @@
 .list {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
+/* =========================
+   SAVED CARD
+   ========================= */
+
 .card {
-    padding: 13px 14px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 15px 12px;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 15px;
     background: var(--surface);
     cursor: pointer;
     transition:
         background-color 160ms ease,
         border-color 160ms ease,
+        box-shadow 160ms ease,
         transform 120ms ease;
 }
 
 .card:hover {
     border-color: var(--line-strong);
     background: var(--surface-2);
+    box-shadow: var(--shadow);
 }
 
 .card:active {
     transform: scale(0.99);
 }
+
+/* =========================
+   CARD TOP
+   ========================= */
 
 .cardTop {
     display: flex;
@@ -36,21 +50,29 @@
     min-width: 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 11px;
 }
 
 .cardText {
     min-width: 0;
+    flex: 1;
 }
 
+/* =========================
+   ICON
+   ========================= */
+
 .stationIcon {
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+
+    border-radius: 11px;
+
     background: var(--green-soft);
     color: var(--green);
 }
@@ -60,64 +82,97 @@
     color: var(--teal);
 }
 
+/* =========================
+   TEXT
+   ========================= */
+
 .primaryText {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
     color: var(--text);
     font-size: 14px;
     line-height: 1.35;
-    font-weight: 650;
+    font-weight: 700;
 }
 
 .secondaryText {
     margin-top: 2px;
+
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
     color: var(--text-soft);
     font-family: "Noto Sans Bengali", sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.4;
 }
+
+/* =========================
+   TRAIN META
+   ========================= */
 
 .trainMeta {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: 5px;
+    margin-top: 6px;
 }
 
 .trainNumber {
+    display: inline-flex;
+    align-items: center;
+
     padding: 2px 7px;
+
     border-radius: 5px;
+
     background: var(--green);
     color: var(--green-soft);
+
     font-family: "JetBrains Mono", monospace;
     font-size: 10px;
     font-weight: 700;
+    line-height: 1.4;
 }
 
 .direction {
+    display: inline-flex;
+    align-items: center;
+
     padding: 2px 7px;
+
     border-radius: 5px;
+
     background: var(--surface-2);
     color: var(--text-soft);
+
     font-size: 9px;
     font-weight: 700;
+    line-height: 1.4;
 }
+
+/* =========================
+   TRAIN ROUTE
+   ========================= */
 
 .trainRoute {
     display: flex;
     align-items: center;
-    gap: 4px;
-    margin-top: 6px;
+    gap: 5px;
+
+    margin-top: 7px;
+
     color: var(--text-soft);
-    font-size: 11px;
-    line-height: 1.35;
+    font-size: 10px;
+    line-height: 1.4;
 }
 
 .trainRoute span {
+    min-width: 0;
+
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -128,22 +183,33 @@
     color: var(--text-faint);
 }
 
+/* =========================
+   SAVE / REMOVE BUTTON
+   ========================= */
+
 .starButton {
     width: 32px;
     height: 32px;
     flex: 0 0 32px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     padding: 0;
+
     border: 0;
-    border-radius: 50%;
+    border-radius: 9px;
+
     background: transparent;
     color: var(--amber);
+
     cursor: pointer;
+
     transition:
         background-color 160ms ease,
-        transform 120ms ease;
+        transform 120ms ease,
+        color 160ms ease;
 }
 
 .starButton:hover {
@@ -151,44 +217,70 @@
 }
 
 .starButton:active {
-    transform: scale(0.9);
+    transform: scale(0.88);
 }
 
 .starButton:disabled {
-    opacity: 0.45;
+    opacity: 0.4;
     cursor: default;
 }
+
+/* =========================
+   CARD FOOTER
+   ========================= */
 
 .cardFooter {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 10px;
-    margin-top: 10px;
-    padding-top: 8px;
+
+    margin-top: 11px;
+    padding-top: 9px;
+
     border-top: 1px solid var(--line);
+
     color: var(--text-faint);
     font-size: 10px;
     line-height: 1.3;
 }
 
+.cardFooter span {
+    min-width: 0;
+}
+
+.cardFooter svg {
+    flex: 0 0 auto;
+    color: var(--text-faint);
+}
+
+/* =========================
+   EMPTY STATE
+   ========================= */
+
 .emptyState {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 42px 20px;
+
+    padding: 50px 20px;
+
     text-align: center;
-    color: var(--text-faint);
 }
 
 .stateIcon {
-    width: 54px;
-    height: 54px;
+    width: 56px;
+    height: 56px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12px;
-    border-radius: 16px;
+
+    margin-bottom: 13px;
+
+    border-radius: 17px;
+
     background: var(--green-soft);
     color: var(--green);
 }
@@ -200,60 +292,83 @@
 
 .stateTitle {
     margin: 0;
+
     color: var(--text);
+
     font-size: 14px;
     line-height: 1.4;
-    font-weight: 650;
+    font-weight: 700;
 }
 
 .stateText {
     max-width: 290px;
-    margin: 5px 0 0;
+
+    margin: 6px 0 0;
+
     color: var(--text-soft);
+
     font-size: 11px;
     line-height: 1.55;
 }
 
+/* =========================
+   AUTH STATE
+   ========================= */
+
 .authState {
     min-height: 100%;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 30px 20px;
+
+    padding: 36px 20px;
+
     text-align: center;
 }
 
 .authState .stateIcon {
-    margin-bottom: 14px;
+    margin-bottom: 15px;
 }
 
 .authState .stateText {
     max-width: 300px;
 }
 
+/* =========================
+   BUTTONS
+   ========================= */
+
 .primaryButton,
 .secondaryButton {
     width: 100%;
     max-width: 260px;
     min-height: 42px;
+
     border-radius: 11px;
+
     font-family: inherit;
     font-size: 13px;
     font-weight: 650;
+
     cursor: pointer;
 }
 
 .primaryButton {
     margin-top: 20px;
+
     border: 1px solid var(--green);
+
     background: var(--green);
     color: #ffffff;
 }
 
 .secondaryButton {
     margin-top: 8px;
+
     border: 1px solid var(--line-strong);
+
     background: var(--surface);
     color: var(--text);
 }
@@ -266,13 +381,20 @@
     background: var(--surface-2);
 }
 
+/* =========================
+   LOADING
+   ========================= */
+
 .loadingState {
     min-height: 100%;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     gap: 11px;
+
     color: var(--text-soft);
     font-size: 12px;
 }
@@ -280,9 +402,12 @@
 .spinner {
     width: 24px;
     height: 24px;
+
     border: 2px solid var(--line);
     border-top-color: var(--green);
+
     border-radius: 50%;
+
     animation: spin 700ms linear infinite;
 }
 
@@ -292,27 +417,83 @@
     }
 }
 
-
 /* =========================
-   RESPONSIVE
+   RESPONSIVE WIDTH
    ========================= */
-@media (min-width: 481px) and (max-width: 899px) {
-    .contentInner {
-        width: 60%;
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 1099px) {
+    .list,
+    .emptyState,
+    .authState,
+    .loadingState {
+        width: 100%;
+        margin-inline: auto;
     }
 }
 
-@media (max-width: 480px) {
-    .content {
-        padding-top: 12px;
-    }
-
-    .contentInner {
+/* Desktop */
+@media (min-width: 1100px) {
+    .list,
+    .emptyState,
+    .authState,
+    .loadingState {
         width: 100%;
-        padding: 0 14px;
+        margin-inline: auto;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .card {
+        padding: 12px 13px 11px;
+        border-radius: 14px;
     }
 
+    .stationIcon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        border-radius: 10px;
+    }
+
+    .cardMain {
+        gap: 10px;
+    }
+
+    .primaryText {
+        font-size: 13px;
+    }
+
+    .secondaryText {
+        font-size: 11px;
+    }
+
+    .cardFooter {
+        margin-top: 10px;
+        padding-top: 8px;
+    }
+
+    .emptyState {
+        padding: 42px 18px;
+    }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
     .card {
-        padding: 12px 13px;
+        padding-inline: 12px;
+    }
+
+    .starButton {
+        width: 30px;
+        height: 30px;
+        flex-basis: 30px;
+    }
+
+    .stationIcon {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
     }
 }
