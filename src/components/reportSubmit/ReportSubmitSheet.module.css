@@ -1,14 +1,36 @@
+.body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 22px 18px 24px;
+}
+
+.contentInner {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   BACKDROP
+   ========================================================= */
+
 .backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(5, 15, 10, 0.55);
+
     z-index: 9998;
+
+    background: rgba(5, 15, 10, 0.58);
+
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+
     transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease;
+        opacity 220ms ease,
+        visibility 220ms ease;
 }
 
 .backdrop.show {
@@ -17,27 +39,33 @@
     pointer-events: auto;
 }
 
-/* Sheet */
+/* =========================================================
+   SHEET
+   ========================================================= */
+
 .sheet {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
+
     width: 100%;
-    height: calc(100dvh - 64px);
+    height: 100dvh;
+
     display: flex;
     flex-direction: column;
+
+    box-sizing: border-box;
+
     background: var(--surface);
     color: var(--text);
-    border-radius:
-        var(--radius-sheet)
-        var(--radius-sheet)
-        0
-        0;
+
     z-index: 9999;
+
     transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(.32, .72, 0, 1);
+
+    transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+
     overflow: hidden;
+
     visibility: hidden;
 }
 
@@ -46,65 +74,141 @@
     visibility: visible;
 }
 
-/* Header */
+/* =========================================================
+   TOP HANDLE
+   ========================================================= */
+
+.sheet::before {
+    content: "";
+
+    position: absolute;
+
+    top: 7px;
+    left: 50%;
+
+    width: 34px;
+    height: 4px;
+
+    transform: translateX(-50%);
+
+    border-radius: 999px;
+
+    background: var(--line-strong);
+
+    opacity: 0.7;
+
+    z-index: 3;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 .header {
+    position: relative;
+
     flex-shrink: 0;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 18px;
+
+    min-height: 72px;
+
+    padding: 18px 18px 14px;
+
     border-bottom: 1px solid var(--line);
+
+    background: var(--surface);
 }
 
 .headerContent {
     min-width: 0;
+
+    padding-top: 4px;
 }
 
 .title {
-    font-size: 16px;
-    font-weight: 700;
     color: var(--text);
+
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 750;
+
+    letter-spacing: -0.015em;
 }
 
 .subtitle {
-    margin-top: 2px;
-    font-family: "Noto Sans Bengali", sans-serif;
-    font-size: 11px;
-    font-weight: 500;
+    margin-top: 3px;
+
     color: var(--text-faint);
+
+    font-family: "Noto Sans Bengali", sans-serif;
+
+    font-size: 10px;
+    line-height: 1.4;
+    font-weight: 500;
 }
 
 .closeButton {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
+
+    flex: 0 0 36px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+
+    padding: 0;
+
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 11px;
+
     background: var(--surface-2);
     color: var(--text-soft);
+
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        transform 120ms ease;
 }
 
 .closeButton:hover {
+    border-color: var(--line-strong);
     background: var(--bg);
 }
 
-/* Form */
+.closeButton:active {
+    transform: scale(0.92);
+}
+
+/* =========================================================
+   FORM BODY
+   ========================================================= */
+
 .body {
     width: 100%;
-    max-width: 680px;
+    max-width: 700px;
+
+    box-sizing: border-box;
+
     flex: 1;
     min-height: 0;
+
     margin: 0 auto;
-    padding: 20px 18px 120px;
+
+    padding: 22px 18px 40px;
+
     overflow-y: auto;
     overflow-x: hidden;
+
     scrollbar-width: none;
+
     -ms-overflow-style: none;
+
     overscroll-behavior: contain;
 }
 
@@ -112,162 +216,281 @@
     display: none;
 }
 
-/* Field */
+/* =========================================================
+   FIELD
+   ========================================================= */
+
 .field {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 
 .label {
     display: flex;
     align-items: baseline;
+
     gap: 6px;
-    margin-bottom: 7px;
-    font-size: 11.5px;
-    font-weight: 700;
+
+    margin-bottom: 8px;
+
     color: var(--text-soft);
+
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 750;
 }
 
 .labelBn {
-    font-family: "Noto Sans Bengali", sans-serif;
-    font-size: 11px;
-    font-weight: 500;
     color: var(--text-faint);
+
+    font-family: "Noto Sans Bengali", sans-serif;
+
+    font-size: 10px;
+    line-height: 1.3;
+    font-weight: 500;
 }
 
 .optional {
     margin-left: auto;
-    font-size: 10px;
-    font-weight: 500;
+
     color: var(--text-faint);
+
+    font-size: 9px;
+    font-weight: 500;
 }
 
-/* Report type */
+/* =========================================================
+   REPORT TYPE
+   ========================================================= */
+
 .statusOptions {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
     gap: 8px;
 }
 
 .statusOption {
-    min-height: 52px;
+    min-width: 0;
+    min-height: 60px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1px;
-    padding: 7px 5px;
+
+    gap: 2px;
+
+    padding: 8px 5px;
+
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: 13px;
+
     background: var(--surface-2);
+
     color: var(--text-soft);
+
     font-family: inherit;
+
     font-size: 12px;
+    line-height: 1.2;
     font-weight: 700;
+
     cursor: pointer;
+
     transition:
-        background 0.15s ease,
-        border-color 0.15s ease,
-        color 0.15s ease,
-        transform 0.15s ease;
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease,
+        transform 120ms ease;
+}
+
+.statusOption:hover {
+    border-color: var(--line-strong);
 }
 
 .statusOption:active {
-    transform: scale(0.98);
+    transform: scale(0.975);
 }
 
 .statusOption.selected {
-    background: var(--green);
     border-color: var(--green);
+
+    background: var(--green);
+
     color: #ffffff;
+
+    box-shadow: 0 4px 12px rgba(18, 122, 84, 0.18);
 }
 
 .statusBn {
     font-family: "Noto Sans Bengali", sans-serif;
-    font-size: 10px;
+
+    font-size: 9px;
+    line-height: 1.3;
     font-weight: 500;
-    opacity: 0.85;
+
+    opacity: 0.82;
 }
 
 .typeHint {
-    margin-top: 7px;
-    padding: 7px 10px;
-    border-radius: 9px;
+    margin-top: 8px;
+
+    padding: 9px 11px;
+
+    border: 1px solid var(--line);
+
+    border-radius: 10px;
+
     background: var(--surface-2);
+
     color: var(--text-faint);
-    font-size: 10.5px;
-    line-height: 1.45;
+
+    font-size: 10px;
+    line-height: 1.5;
 }
 
-/* Select field */
+/* =========================================================
+   SELECT FIELD
+   ========================================================= */
+
 .selectField {
     width: 100%;
-    min-height: 44px;
+    min-height: 47px;
+
+    box-sizing: border-box;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 12px;
+
+    gap: 12px;
+
+    padding: 10px 13px;
+
     border: 1px solid var(--line);
     border-radius: 12px;
+
     background: var(--surface-2);
+
     color: var(--text);
+
     font-family: inherit;
+
     font-size: 13px;
+    line-height: 1.3;
+
     text-align: left;
+
     cursor: pointer;
+
     outline: none;
+
+    transition:
+        border-color 150ms ease,
+        background-color 150ms ease;
 }
 
 .selectField:hover {
     border-color: var(--line-strong);
 }
 
-.selectField:focus {
+.selectField:focus-visible {
     border-color: var(--green);
 }
 
+.selectField svg {
+    flex: 0 0 auto;
+
+    color: var(--text-faint);
+
+    transition: transform 150ms ease;
+}
+
+.selectField:hover svg {
+    color: var(--text-soft);
+}
+
 .placeholder {
+    min-width: 0;
+
     color: var(--text-faint);
 }
 
 .selectedValue {
     min-width: 0;
-    color: var(--text);
-    white-space: nowrap;
+
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: var(--text);
+    font-weight: 600;
 }
 
-/* Time */
+/* =========================================================
+   INPUT
+   ========================================================= */
+
 .input {
     width: 100%;
-    min-height: 44px;
-    padding: 10px 12px;
+    min-height: 47px;
+
+    box-sizing: border-box;
+
+    padding: 10px 13px;
+
     border: 1px solid var(--line);
     border-radius: 12px;
+
     background: var(--surface-2);
+
     color: var(--text);
+
     font-family: inherit;
+
     font-size: 13px;
+
     outline: none;
+
+    transition:
+        border-color 150ms ease,
+        background-color 150ms ease;
 }
 
 .input:focus {
     border-color: var(--green);
 }
 
-/* Notes */
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
 .textarea {
     width: 100%;
-    min-height: 70px;
-    padding: 11px 12px;
+    min-height: 82px;
+
+    box-sizing: border-box;
+
+    padding: 11px 13px;
+
     border: 1px solid var(--line);
     border-radius: 12px;
+
     background: var(--surface-2);
+
     color: var(--text);
+
     font-family: inherit;
+
     font-size: 13px;
+    line-height: 1.5;
+
     outline: none;
+
     resize: none;
+
+    transition: border-color 150ms ease;
 }
 
 .textarea:focus {
@@ -280,124 +503,241 @@
 
 .noteHint {
     margin-top: 5px;
-    font-size: 10px;
+
     color: var(--text-faint);
+
+    font-size: 9px;
+    line-height: 1.4;
 }
 
-/* Submit */
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.formError {
+    margin-bottom: 14px;
+
+    padding: 10px 12px;
+
+    border: 1px solid rgba(220, 70, 70, 0.22);
+    border-radius: 11px;
+
+    background: rgba(220, 70, 70, 0.07);
+
+    color: #c03939;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   SUBMIT
+   ========================================================= */
+
 .submitButton {
     width: 100%;
-    min-height: 48px;
+    min-height: 52px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     gap: 1px;
+
     margin-top: 4px;
-    border: none;
+
+    border: 1px solid var(--green);
     border-radius: 14px;
-    background: linear-gradient(155deg, var(--green), var(--teal));
+
+    background: var(--green);
+
     color: #ffffff;
+
     font-family: inherit;
+
     font-size: 13px;
-    font-weight: 700;
+    line-height: 1.3;
+    font-weight: 750;
+
     cursor: pointer;
-    box-shadow: 0 8px 20px -6px rgba(30, 138, 91, 0.35);
+
+    box-shadow: 0 6px 18px rgba(18, 122, 84, 0.18);
+
+    transition:
+        filter 150ms ease,
+        transform 120ms ease,
+        opacity 150ms ease;
+}
+
+.submitButton:hover {
+    filter: brightness(0.96);
 }
 
 .submitButton:active {
     transform: scale(0.99);
 }
 
-.submitBn {
-    font-family: "Noto Sans Bengali", sans-serif;
-    font-size: 10px;
-    font-weight: 500;
-    opacity: 0.9;
+.submitButton:disabled {
+    opacity: 0.65;
+    cursor: default;
 }
 
-/* Selector */
+.submitBn {
+    font-family: "Noto Sans Bengali", sans-serif;
+
+    font-size: 9px;
+    line-height: 1.3;
+    font-weight: 500;
+
+    opacity: 0.88;
+}
+
+/* =========================================================
+   SELECTOR
+   ========================================================= */
+
 .selectorOverlay {
     position: absolute;
     inset: 0;
-    z-index: 10;
+
+    z-index: 20;
+
     display: flex;
     flex-direction: column;
+
     background: var(--surface);
 }
 
 .selector {
     width: 100%;
     height: 100%;
+
     display: flex;
     flex-direction: column;
 }
 
-/* Selector header */
+/* =========================================================
+   SELECTOR HEADER
+   ========================================================= */
+
 .selectorHeader {
     flex-shrink: 0;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 18px;
+
+    min-height: 68px;
+
+    padding: 15px 18px;
+
     border-bottom: 1px solid var(--line);
 }
 
 .selectorTitle {
-    font-size: 15px;
-    font-weight: 700;
     color: var(--text);
+
+    font-size: 15px;
+    line-height: 1.3;
+    font-weight: 750;
 }
 
 .selectorSubtitle {
-    margin-top: 2px;
-    font-family: "Noto Sans Bengali", sans-serif;
-    font-size: 10px;
-    font-weight: 500;
+    margin-top: 3px;
+
     color: var(--text-faint);
+
+    font-family: "Noto Sans Bengali", sans-serif;
+
+    font-size: 10px;
+    line-height: 1.3;
 }
 
 .selectorClose {
-    width: 34px;
-    height: 34px;
+    width: 35px;
+    height: 35px;
+
+    flex: 0 0 35px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+
+    padding: 0;
+
     border: 1px solid var(--line);
     border-radius: 10px;
+
     background: var(--surface-2);
     color: var(--text-soft);
+
     cursor: pointer;
+
+    transition:
+        background-color 150ms ease,
+        transform 120ms ease;
 }
 
-/* Search */
+.selectorClose:hover {
+    background: var(--bg);
+}
+
+.selectorClose:active {
+    transform: scale(0.92);
+}
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
 .searchBox {
     flex-shrink: 0;
-    height: 44px;
+
+    height: 45px;
+
     display: flex;
     align-items: center;
-    gap: 8px;
+
+    gap: 9px;
+
     margin: 14px 18px;
+
     padding: 0 12px;
+
+    box-sizing: border-box;
+
     border: 1px solid var(--line);
     border-radius: 12px;
+
     background: var(--surface-2);
+
     color: var(--text-faint);
+
+    transition: border-color 150ms ease;
 }
 
 .searchBox:focus-within {
     border-color: var(--green);
 }
 
+.searchBox svg {
+    flex: 0 0 auto;
+}
+
 .searchBox input {
     width: 100%;
     min-width: 0;
+
     border: none;
     outline: none;
+
     background: transparent;
+
     color: var(--text);
+
     font-family: inherit;
+
     font-size: 13px;
 }
 
@@ -405,13 +745,20 @@
     color: var(--text-faint);
 }
 
-/* Selector list */
+/* =========================================================
+   SELECTOR LIST
+   ========================================================= */
+
 .selectorList {
     flex: 1;
     min-height: 0;
+
     overflow-y: auto;
-    padding: 0 18px 120px;
+
+    padding: 0 18px 32px;
+
     scrollbar-width: none;
+
     -ms-overflow-style: none;
 }
 
@@ -419,21 +766,37 @@
     display: none;
 }
 
-/* Train option */
+/* =========================================================
+   SELECTOR OPTIONS
+   ========================================================= */
+
 .trainOption,
 .stationOption {
     width: 100%;
+
+    min-height: 48px;
+
     display: flex;
     align-items: center;
-    padding: 12px 10px;
+
+    box-sizing: border-box;
+
+    padding: 10px 10px;
+
     border: none;
     border-bottom: 1px solid var(--line);
+
     background: transparent;
+
     color: var(--text);
+
     font-family: inherit;
+
     text-align: left;
+
     cursor: pointer;
-    transition: background 0.15s ease;
+
+    transition: background-color 140ms ease;
 }
 
 .trainOption:hover,
@@ -441,59 +804,191 @@
     background: var(--surface-2);
 }
 
-/* Train */
+.trainOption:active,
+.stationOption:active {
+    background: var(--surface-2);
+}
+
+/* =========================================================
+   TRAIN OPTION
+   ========================================================= */
+
 .trainOption {
     gap: 12px;
 }
 
 .trainNumber {
-    min-width: 42px;
-    font-family: "JetBrains Mono", monospace;
-    font-size: 12px;
-    font-weight: 700;
+    min-width: 45px;
+
     color: var(--green);
+
+    font-family: "JetBrains Mono", monospace;
+
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 750;
 }
 
 .trainName {
     min-width: 0;
-    font-family: "Inter", "Noto Sans Bengali", sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    white-space: nowrap;
+
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: var(--text);
+
+    font-family: "Noto Sans Bengali", "Manrope", sans-serif;
+
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 600;
 }
 
-/* Station */
+/* =========================================================
+   STATION OPTION
+   ========================================================= */
+
+.stationOption {
+    padding-inline: 10px;
+}
+
 .stationName {
     min-width: 0;
-    font-family: "Inter", "Noto Sans Bengali", sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    white-space: nowrap;
+
     overflow: hidden;
     text-overflow: ellipsis;
-}
+    white-space: nowrap;
 
-/* Empty/loading state */
-.selectorMessage {
-    padding: 30px 10px;
-    text-align: center;
-    color: var(--text-faint);
+    color: var(--text);
+
+    font-family: "Noto Sans Bengali", "Manrope", sans-serif;
+
     font-size: 12px;
+    line-height: 1.4;
+    font-weight: 600;
 }
 
-/* Short screens */
-@media (max-height: 600px) {
+/* =========================================================
+   SELECTOR MESSAGE
+   ========================================================= */
+
+.selectorMessage {
+    padding: 38px 10px;
+
+    text-align: center;
+
+    color: var(--text-faint);
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   TABLET / DESKTOP
+   ========================================================= */
+
+@media (min-width: 700px) {
+    .sheet {
+        inset: auto 0 0;
+
+        height: min(100dvh, 820px);
+
+        border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+
+        box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .body {
+        padding-inline: 24px;
+    }
+
+    .selectorList {
+        padding-inline: 24px;
+    }
+
+    .searchBox {
+        margin-inline: 24px;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
     .header {
-        padding: 12px 18px;
+        min-height: 68px;
+
+        padding: 17px 15px 13px;
+    }
+
+    .body {
+        padding: 18px 14px 30px;
+    }
+
+    .field {
+        margin-bottom: 16px;
+    }
+
+    .statusOptions {
+        gap: 7px;
+    }
+
+    .statusOption {
+        min-height: 57px;
+    }
+
+    .selectorHeader {
+        padding-inline: 15px;
+    }
+
+    .searchBox {
+        margin-inline: 14px;
+    }
+
+    .selectorList {
+        padding-inline: 14px;
+    }
+}
+
+/* =========================================================
+   VERY SMALL / SHORT DEVICES
+   ========================================================= */
+
+@media (max-width: 360px) {
+    .title {
+        font-size: 16px;
+    }
+
+    .statusOption {
+        min-height: 53px;
+
+        font-size: 11px;
+    }
+
+    .selectField,
+    .input {
+        min-height: 44px;
+    }
+
+    .textarea {
+        min-height: 70px;
+    }
+
+    .submitButton {
+        min-height: 49px;
+    }
+}
+
+@media (max-height: 620px) {
+    .header {
+        min-height: 60px;
+        padding-block: 11px;
     }
 
     .body {
         padding-top: 14px;
-        padding-bottom: 120px;
     }
 
     .field {
@@ -501,85 +996,19 @@
     }
 
     .statusOption {
-        min-height: 44px;
+        min-height: 46px;
     }
 
     .selectField,
     .input {
-        min-height: 40px;
-        padding: 8px 12px;
+        min-height: 42px;
     }
 
     .textarea {
-        min-height: 60px;
+        min-height: 58px;
     }
 
     .submitButton {
-        min-height: 44px;
+        min-height: 46px;
     }
-
-    .typeHint,
-    .noteHint {
-        font-size: 10px;
-    }
-
-    .selectorHeader {
-        padding: 12px 18px;
-    }
-
-    .searchBox {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-}
-
-/* Form error */
-.formError {
-    margin-bottom: 12px;
-    padding: 9px 11px;
-    border: 1px solid rgba(220, 70, 70, 0.25);
-    border-radius: 10px;
-    background: rgba(220, 70, 70, 0.08);
-    color: #c03939;
-    font-size: 11px;
-    line-height: 1.45;
-}
-
-.noteHint {
-    margin-top: 5px;
-    font-size: 10px;
-    color: var(--text-faint);
-}
-
-/* Form error */
-.formError {
-    margin-bottom: 12px;
-    padding: 9px 11px;
-    border: 1px solid rgba(220, 70, 70, 0.25);
-    border-radius: 10px;
-    background: rgba(220, 70, 70, 0.08);
-    color: #c03939;
-    font-size: 11px;
-    line-height: 1.45;
-}
-
-/* Submit */
-.submitButton {
-    width: 100%;
-    min-height: 48px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1px;
-    margin-top: 4px;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(155deg, var(--green), var(--teal));
-    color: #ffffff;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 8px 20px -6px rgba(30, 138, 91, 0.35);
 }

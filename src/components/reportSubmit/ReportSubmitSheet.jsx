@@ -31,6 +31,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
     const [submitError, setSubmitError] = useState("");
 
     const isStationEvent = eventType === "ARRIVED" || eventType === "DEPARTED";
+
     const isUpdate = eventType === "UPDATE";
 
     useEffect(() => {
@@ -228,22 +229,24 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
         if (data?.detail) {
             const detail = data.detail;
-            const match = detail.match(
-                /Expected available in (\d+) seconds?/i
-            );
+
+            const match = detail.match(/Expected available in (\d+) seconds?/i);
 
             if (match) {
                 const seconds = Number(match[1]);
+
                 if (seconds < 60) {
                     return `Too many requests. Please try again in ${seconds} seconds.`;
                 }
 
                 const minutes = Math.ceil(seconds / 60);
+
                 if (minutes < 60) {
                     return `You've submitted reports too quickly. Please try again in about ${minutes} minute${minutes === 1 ? "" : "s"}.`;
                 }
 
                 const hours = Math.ceil(minutes / 60);
+
                 return `Too many requests. Please try again in about ${hours} hour${hours === 1 ? "" : "s"}.`;
             }
 
@@ -404,148 +407,162 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
                 </header>
 
                 <form className={styles.body} onSubmit={handleSubmit}>
-                    {/* Report type */}
-                    <div className={styles.field}>
-                        <label className={styles.label}>
-                            <span>What happened?</span>
-                            <span className={styles.labelBn}>কী ঘটেছে?</span>
-                        </label>
-
-                        <div className={styles.statusOptions}>
-                            <button
-                                type="button"
-                                className={`${styles.statusOption} ${eventType === "ARRIVED" ? styles.selected : ""}`}
-                                onClick={() => handleEventTypeChange("ARRIVED")}
-                            >
-                                <span>Arrived</span>
-                                <span className={styles.statusBn}>আগমন</span>
-                            </button>
-
-                            <button
-                                type="button"
-                                className={`${styles.statusOption} ${eventType === "DEPARTED" ? styles.selected : ""}`}
-                                onClick={() => handleEventTypeChange("DEPARTED")}
-                            >
-                                <span>Departed</span>
-                                <span className={styles.statusBn}>প্রস্থান</span>
-                            </button>
-
-                            <button
-                                type="button"
-                                className={`${styles.statusOption} ${eventType === "UPDATE" ? styles.selected : ""}`}
-                                onClick={() => handleEventTypeChange("UPDATE")}
-                            >
-                                <span>Update</span>
-                                <span className={styles.statusBn}>আপডেট</span>
-                            </button>
-                        </div>
-
-                        {eventType === "ARRIVED" && (
-                            <div className={styles.typeHint}>Report when the train arrived at a station.</div>
-                        )}
-
-                        {eventType === "DEPARTED" && (
-                            <div className={styles.typeHint}>Report when the train departed from a station.</div>
-                        )}
-
-                        {isUpdate && (
-                            <div className={styles.typeHint}>
-                                Share a general train update or issue. No station is required.
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Train */}
-                    <div className={styles.field}>
-                        <label className={styles.label}>
-                            <span>Train</span>
-                            <span className={styles.labelBn}>ট্রেন</span>
-                        </label>
-
-                        <button type="button" className={styles.selectField} onClick={handleOpenTrainSelector}>
-                            <span className={selectedTrain ? styles.selectedValue : styles.placeholder}>
-                                {selectedTrain
-                                    ? `${selectedTrain.number} — ${selectedTrain.name_bn || selectedTrain.name}`
-                                    : "Select train"}
-                            </span>
-
-                            <FiChevronDown size={16} />
-                        </button>
-                    </div>
-
-                    {/* Station */}
-                    {isStationEvent && (
+                    <div className={styles.contentInner}>
+                        {/* Report type */}
                         <div className={styles.field}>
                             <label className={styles.label}>
-                                <span>Station</span>
-                                <span className={styles.labelBn}>স্টেশন</span>
+                                <span>What happened?</span>
+                                <span className={styles.labelBn}>কী ঘটেছে?</span>
                             </label>
 
-                            <button type="button" className={styles.selectField} onClick={handleOpenStationSelector}>
-                                <span className={selectedStation ? styles.selectedValue : styles.placeholder}>
-                                    {selectedStation
-                                        ? selectedStation.name || selectedStation.name_en
-                                        : "Select station"}
+                            <div className={styles.statusOptions}>
+                                <button
+                                    type="button"
+                                    className={`${styles.statusOption} ${
+                                        eventType === "ARRIVED" ? styles.selected : ""
+                                    }`}
+                                    onClick={() => handleEventTypeChange("ARRIVED")}
+                                >
+                                    <span>Arrived</span>
+                                    <span className={styles.statusBn}>আগমন</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={`${styles.statusOption} ${
+                                        eventType === "DEPARTED" ? styles.selected : ""
+                                    }`}
+                                    onClick={() => handleEventTypeChange("DEPARTED")}
+                                >
+                                    <span>Departed</span>
+                                    <span className={styles.statusBn}>প্রস্থান</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={`${styles.statusOption} ${
+                                        eventType === "UPDATE" ? styles.selected : ""
+                                    }`}
+                                    onClick={() => handleEventTypeChange("UPDATE")}
+                                >
+                                    <span>Update</span>
+                                    <span className={styles.statusBn}>আপডেট</span>
+                                </button>
+                            </div>
+
+                            {eventType === "ARRIVED" && (
+                                <div className={styles.typeHint}>Report when the train arrived at a station.</div>
+                            )}
+
+                            {eventType === "DEPARTED" && (
+                                <div className={styles.typeHint}>Report when the train departed from a station.</div>
+                            )}
+
+                            {isUpdate && (
+                                <div className={styles.typeHint}>
+                                    Share a general train update or issue. No station is required.
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Train */}
+                        <div className={styles.field}>
+                            <label className={styles.label}>
+                                <span>Train</span>
+                                <span className={styles.labelBn}>ট্রেন</span>
+                            </label>
+
+                            <button type="button" className={styles.selectField} onClick={handleOpenTrainSelector}>
+                                <span className={selectedTrain ? styles.selectedValue : styles.placeholder}>
+                                    {selectedTrain
+                                        ? `${selectedTrain.number} — ${selectedTrain.name_bn || selectedTrain.name}`
+                                        : "Select train"}
                                 </span>
 
                                 <FiChevronDown size={16} />
                             </button>
                         </div>
-                    )}
 
-                    {/* Time */}
-                    <div className={styles.field}>
-                        <label className={styles.label}>
-                            <span>Time</span>
-                            <span className={styles.labelBn}>সময়</span>
-                        </label>
+                        {/* Station */}
+                        {isStationEvent && (
+                            <div className={styles.field}>
+                                <label className={styles.label}>
+                                    <span>Station</span>
+                                    <span className={styles.labelBn}>স্টেশন</span>
+                                </label>
 
-                        <input
-                            type="time"
-                            className={styles.input}
-                            value={eventTime}
-                            onChange={(event) => setEventTime(event.target.value)}
-                            required
-                        />
-                    </div>
+                                <button
+                                    type="button"
+                                    className={styles.selectField}
+                                    onClick={handleOpenStationSelector}
+                                >
+                                    <span className={selectedStation ? styles.selectedValue : styles.placeholder}>
+                                        {selectedStation
+                                            ? selectedStation.name || selectedStation.name_en
+                                            : "Select station"}
+                                    </span>
 
-                    {/* Notes */}
-                    <div className={styles.field}>
-                        <label className={styles.label}>
-                            <span>Notes</span>
-                            <span className={styles.labelBn}>নোট</span>
+                                    <FiChevronDown size={16} />
+                                </button>
+                            </div>
+                        )}
 
-                            {!isUpdate && <span className={styles.optional}>Optional · ঐচ্ছিক</span>}
-                        </label>
+                        {/* Time */}
+                        <div className={styles.field}>
+                            <label className={styles.label}>
+                                <span>Time</span>
+                                <span className={styles.labelBn}>সময়</span>
+                            </label>
 
-                        <textarea
-                            className={styles.textarea}
-                            placeholder={
-                                isUpdate ? "Share what is happening with the train…" : "Platform, crowd, delay reason…"
-                            }
-                            value={note}
-                            onChange={(event) => setNote(event.target.value)}
-                            required={isUpdate}
-                        />
-
-                        {isUpdate && <div className={styles.noteHint}>Describe the update or issue clearly.</div>}
-                    </div>
-
-                    {/* Submit error */}
-                    {submitError && (
-                        <div className={styles.formError} role="alert">
-                            {submitError}
+                            <input
+                                type="time"
+                                className={styles.input}
+                                value={eventTime}
+                                onChange={(event) => setEventTime(event.target.value)}
+                                required
+                            />
                         </div>
-                    )}
 
-                    {/* Submit */}
-                    <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
-                        <span>{isSubmitting ? "Submitting..." : "Submit report"}</span>
+                        {/* Notes */}
+                        <div className={styles.field}>
+                            <label className={styles.label}>
+                                <span>Notes</span>
+                                <span className={styles.labelBn}>নোট</span>
 
-                        <span className={styles.submitBn}>
-                            {isSubmitting ? "জমা দেওয়া হচ্ছে..." : "রিপোর্ট জমা দিন"}
-                        </span>
-                    </button>
+                                {!isUpdate && <span className={styles.optional}>Optional · ঐচ্ছিক</span>}
+                            </label>
+
+                            <textarea
+                                className={styles.textarea}
+                                placeholder={
+                                    isUpdate
+                                        ? "Platform, crowd, crossing, any issue..."
+                                        : "Platform, crowd, delay reason…"
+                                }
+                                value={note}
+                                onChange={(event) => setNote(event.target.value)}
+                                required={isUpdate}
+                            />
+
+                            {isUpdate && <div className={styles.noteHint}>Describe the update or issue clearly.</div>}
+                        </div>
+
+                        {/* Submit error */}
+                        {submitError && (
+                            <div className={styles.formError} role="alert">
+                                {submitError}
+                            </div>
+                        )}
+
+                        {/* Submit */}
+                        <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+                            <span>{isSubmitting ? "Submitting..." : "Submit report"}</span>
+
+                            <span className={styles.submitBn}>
+                                {isSubmitting ? "জমা দেওয়া হচ্ছে..." : "রিপোর্ট জমা দিন"}
+                            </span>
+                        </button>
+                    </div>
                 </form>
 
                 {/* Selector */}

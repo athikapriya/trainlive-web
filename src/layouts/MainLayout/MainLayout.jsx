@@ -15,8 +15,7 @@ function MainLayout() {
 
     const [isReportSubmitOpen, setIsReportSubmitOpen] = useState(false);
 
-    // Pages that should not show the fixed bottom navigation.
-   const hideBottomNav =
+    const hideBottomNav =
         location.pathname === "/profile" ||
         location.pathname === "/contact" ||
         location.pathname === "/reviews" ||
@@ -95,7 +94,7 @@ function MainLayout() {
                 onSubmitted={handleReportSubmitted}
             />
 
-            {!hideBottomNav && <BottomNav onReport={handleReport} />}
+            {!hideBottomNav && !isReportSubmitOpen && <BottomNav onReport={handleReport} />}
         </div>
     );
 }
