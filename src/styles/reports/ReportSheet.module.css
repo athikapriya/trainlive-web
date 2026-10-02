@@ -20,26 +20,37 @@
     border-radius: 22px 22px 0 0;
     box-shadow: 0 -8px 28px rgba(18, 32, 25, 0.14);
     pointer-events: auto;
-    animation: slideUp 0.3s cubic-bezier(0.3, 0.85, 0.3, 1);
+    animation:
+        slideUp
+        0.3s
+        cubic-bezier(0.3, 0.85, 0.3, 1)
+        forwards;
 }
 
-/* Handle */
+/* =========================================================
+   Handle
+   ========================================================= */
+
 .handle {
-    width: 38px;
-    height: 4px;
-    margin: 9px auto 5px;
+    width: 34px;
+    height: 3px;
+    margin: 7px auto 3px;
     border-radius: 999px;
     background: var(--line);
     flex-shrink: 0;
 }
 
-/* Header */
+/* =========================================================
+   Header
+   ========================================================= */
+
 .header {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 9px 16px 13px;
+    gap: 10px;
+    padding: 7px 14px 9px;
     border-bottom: 1px solid var(--line);
 }
 
@@ -50,17 +61,15 @@
 .stationTitleRow {
     display: flex;
     align-items: center;
-    gap:10px;
+    gap: 8px;
 }
 
 .stationDot {
     width: 6px;
     height: 6px;
     flex-shrink: 0;
-
     background: var(--red);
     border-radius: 50%;
-
     position: relative;
     z-index: 1;
 }
@@ -71,27 +80,25 @@
     inset: -4px;
     border-radius: 50%;
     background: var(--red);
-    opacity: 0.10;
+    opacity: 0.1;
     z-index: -1;
     animation: stationGlow 1.5s ease-in-out infinite;
 }
 
 @keyframes stationGlow {
-
     0%,
     100% {
         opacity: 0.15;
     }
-
     50% {
-        opacity: 0.30;
+        opacity: 0.3;
     }
 }
 
 .stationInfo h2 {
     margin: 0;
     color: var(--text);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
     letter-spacing: -0.2px;
     overflow: hidden;
@@ -100,29 +107,32 @@
 }
 
 .stationInfo p {
-    margin: 3px 0 0 15px;
+    margin: 2px 0 0 14px;
     color: var(--text-soft);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
 }
 
-/* Header actions */
+/* =========================================================
+   Header actions
+   ========================================================= */
+
 .headerActions {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
 }
 
 .saveButton,
 .closeButton {
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 9px;
     background: var(--surface-2);
     color: var(--text-faint);
     font-family: inherit;
@@ -134,7 +144,7 @@
 }
 
 .saveButton {
-    font-size: 20px;
+    font-size: 19px;
     line-height: 1;
 }
 
@@ -149,7 +159,7 @@
 }
 
 .closeButton {
-    font-size: 21px;
+    font-size: 20px;
     line-height: 1;
 }
 
@@ -162,10 +172,15 @@
     transform: scale(0.94);
 }
 
-/* Content */
+/* =========================================================
+   Report content
+   ========================================================= */
+
 .content {
+    width: min(60%, 760px);
+    margin: 0 auto;
     overflow-y: auto;
-    padding: 13px 14px 24px;
+    padding: 9px 0 14px;
     scrollbar-width: none;
 }
 
@@ -173,26 +188,30 @@
     display: none;
 }
 
-/* Report heading */
+/* =========================================================
+   Report heading
+   ========================================================= */
+
 .reportHeading {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
-    padding: 0 3px;
+    margin-bottom: 6px;
+    padding: 0 2px;
 }
 
 .headingTitle {
     display: block;
     color: var(--text);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
 }
 
 .headingTitleRow {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
 }
 
 .infoWrapper {
@@ -207,18 +226,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border: 1px solid var(--text-faint);
     border-radius: 50%;
-
     color: var(--text-faint);
     font-size: 9px;
     font-weight: 900;
     line-height: 1;
-
     cursor: help;
     outline: none;
-
     transition:
         color 0.15s ease,
         border-color 0.15s ease,
@@ -235,53 +250,42 @@
 .infoTooltip {
     position: absolute;
     left: 0;
-    top: calc(100% + 8px);
-
-    width: 260px;
-    padding: 11px 12px;
-
+    top: calc(100% + 7px);
+    width: 250px;
+    padding: 9px 10px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-
+    gap: 5px;
     border: 1px solid var(--line);
-    border-radius: 11px;
-
+    border-radius: 10px;
     background: var(--surface);
     color: var(--text-soft);
-
     box-shadow: 0 6px 20px rgba(18, 32, 25, 0.14);
-
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 500;
-    line-height: 1.45;
-
+    line-height: 1.4;
     opacity: 0;
     visibility: hidden;
     transform: translateY(4px);
-
     pointer-events: none;
-
     transition:
         opacity 0.15s ease,
         transform 0.15s ease,
         visibility 0.15s ease;
-
     z-index: 20;
 }
 
 .infoTooltip strong {
     color: var(--text);
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
 }
 
 .infoBangla {
-    margin-top: 2px;
-
+    margin-top: 1px;
     color: var(--text);
     font-family: "Noto Sans Bengali", sans-serif;
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 700;
 }
 
@@ -294,37 +298,42 @@
 
 .headingSubtitle {
     display: block;
-    margin-top: 2px;
+    margin-top: 1px;
     color: var(--text-faint);
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 500;
 }
 
 .reportCount {
-    min-width: 26px;
-    height: 24px;
-    padding: 0 7px;
+    min-width: 24px;
+    height: 22px;
+    padding: 0 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 7px;
     background: var(--surface-2);
     color: var(--text-soft);
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 800;
 }
 
-/* Report cards */
+/* =========================================================
+   Report cards
+   ========================================================= */
+
 .reportList {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .reportCard {
+    width: 100%;
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 13px;
     background: var(--surface);
     transition:
         border-color 0.15s ease,
@@ -333,23 +342,23 @@
 }
 
 .reportCard:hover {
-    /* border-color: color-mix(in srgb, var(--teal) 35%, var(--line)); */
     box-shadow: 2px 4px 8px var(--green-soft);
 }
 
 .reportCard.expanded {
-    /* border-color: color-mix(in srgb, var(--teal) 45%, var(--line)); */
-    box-shadow: 0 4px 14px rgba(18, 32, 25, 0.06);
     box-shadow: 4px 8px 16px var(--green-soft);
 }
 
-/* Main report row */
+/* =========================================================
+   Main report row
+   ========================================================= */
+
 .reportMain {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 11px;
+    gap: 9px;
+    padding: 9px 10px;
     border: none;
     background: transparent;
     color: inherit;
@@ -362,29 +371,35 @@
     background: var(--surface-2);
 }
 
-/* Train number / station code */
+/* =========================================================
+   Train number / station code
+   ========================================================= */
+
 .trainIcon {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 9px;
     background: var(--green, var(--text));
     color: var(--accent, #ffffff);
 }
 
 .trainIcon span {
-    max-width: 32px;
+    max-width: 30px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 800;
 }
 
-/* Report information */
+/* =========================================================
+   Report information
+   ========================================================= */
+
 .reportInfo {
     flex: 1;
     min-width: 0;
@@ -393,7 +408,7 @@
 .reportTop {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
     min-width: 0;
 }
 
@@ -403,17 +418,17 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 750;
 }
 
 .trainMeta {
-    margin-top: 2px;
+    margin-top: 1px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text-faint);
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 600;
 }
 
@@ -421,21 +436,21 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    margin-top: 4px;
+    margin-top: 3px;
     color: var(--text-soft);
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 600;
 }
 
 .reportNotePreview {
-    margin-top: 5px;
+    margin-top: 4px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text-soft);
-    font-size: 9.5px;
+    font-size: 10px;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.35;
 }
 
 .reportNotePreview span {
@@ -443,12 +458,15 @@
     font-weight: 700;
 }
 
-/* Event pills */
+/* =========================================================
+   Event pills
+   ========================================================= */
+
 .eventPill {
     flex-shrink: 0;
-    padding: 3px 7px;
+    padding: 2px 6px;
     border-radius: 999px;
-    font-size: 8.5px;
+    font-size: 8px;
     font-weight: 800;
 }
 
@@ -472,35 +490,41 @@
     color: var(--text-soft);
 }
 
-/* Expand icon */
+/* =========================================================
+   Expand icon
+   ========================================================= */
+
 .expandIcon {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 7px;
+    border-radius: 6px;
     background: var(--surface-2);
     color: var(--text-faint);
-    font-size: 14px;
+    font-size: 13px;
 }
 
-/* Delay */
+/* =========================================================
+   Delay
+   ========================================================= */
+
 .statusRow {
     display: flex;
     align-items: center;
-    gap: 7px;
-    padding: 0 11px 9px 59px;
+    gap: 6px;
+    padding: 0 10px 7px 55px;
     flex-wrap: wrap;
 }
 
 .delayBadge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 8px;
+    padding: 3px 7px;
     border-radius: 999px;
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 800;
 }
 
@@ -521,17 +545,20 @@
 
 .scheduled {
     color: var(--text-faint);
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 600;
 }
 
-/* Next stop ETA */
+/* =========================================================
+   Next stop ETA
+   ========================================================= */
+
 .nextStopRow {
-    margin: 0 11px 10px 59px;
+    margin: 0 10px 8px 55px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
 }
 
 .nextStop {
@@ -540,44 +567,47 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text-soft);
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 700;
 }
 
 .nextStopEta {
     flex-shrink: 0;
     color: var(--eta);
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 800;
     white-space: nowrap;
 }
 
-/* Vote row */
+/* =========================================================
+   Vote row
+   ========================================================= */
+
 .voteRow {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 0 11px 11px 59px;
+    gap: 5px;
+    padding: 0 10px 9px 55px;
 }
 
 .voteLabel {
-    margin-right: 2px;
+    margin-right: 1px;
     color: var(--text-faint);
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 600;
 }
 
 .voteButton {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 5px 8px;
+    gap: 3px;
+    padding: 4px 7px;
     border: 1px solid var(--line);
     border-radius: 999px;
     background: var(--surface-2);
     color: var(--text-soft);
     font-family: inherit;
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 650;
     cursor: pointer;
     transition:
@@ -587,7 +617,7 @@
 }
 
 .voteButton b {
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 800;
 }
 
@@ -612,9 +642,12 @@
     cursor: default;
 }
 
-/* Expanded details */
+/* =========================================================
+   Expanded details
+   ========================================================= */
+
 .expandedContent {
-    padding: 11px;
+    padding: 9px;
     border-top: 1px solid var(--line);
     background: var(--surface-2);
     animation: fadeIn 0.18s ease;
@@ -623,59 +656,65 @@
 .detailGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 6px;
 }
 
 .detailItem {
-    padding: 8px 9px;
+    padding: 7px 8px;
     border: 1px solid var(--line);
-    border-radius: 9px;
+    border-radius: 8px;
     background: var(--surface);
 }
 
 .detailItem span {
     display: block;
     color: var(--text-faint);
-    font-size: 8.5px;
+    font-size: 8px;
     font-weight: 600;
 }
 
 .detailItem strong {
     display: block;
-    margin-top: 3px;
+    margin-top: 2px;
     color: var(--text);
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
 }
 
-/* Traveller note */
+/* =========================================================
+   Traveller note
+   ========================================================= */
+
 .note {
-    margin-top: 9px;
-    padding: 9px 10px;
+    margin-top: 7px;
+    padding: 8px 9px;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 9px;
     background: var(--surface);
 }
 
 .note > span {
     color: var(--text-faint);
-    font-size: 8.5px;
+    font-size: 8px;
     font-weight: 700;
 }
 
 .note p {
-    margin: 4px 0 0;
+    margin: 3px 0 0;
     color: var(--text-soft);
-    font-size: 10.5px;
-    line-height: 1.45;
+    font-size: 10px;
+    line-height: 1.4;
 }
 
-/* Community trust */
+/* =========================================================
+   Community trust
+   ========================================================= */
+
 .trustCard {
-    margin-top: 9px;
-    padding: 10px;
+    margin-top: 7px;
+    padding: 9px;
     border: 1px solid var(--line);
-    border-radius: 11px;
+    border-radius: 10px;
     background: var(--surface);
 }
 
@@ -688,27 +727,27 @@
 .trustHeader span {
     display: block;
     color: var(--text);
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
 }
 
 .trustHeader small {
     display: block;
-    margin-top: 2px;
+    margin-top: 1px;
     color: var(--text-faint);
-    font-size: 8px;
+    font-size: 7.5px;
 }
 
 .trustHeader strong {
     color: var(--green);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
 }
 
 .trustBar {
     width: 100%;
-    height: 5px;
-    margin-top: 8px;
+    height: 4px;
+    margin-top: 7px;
     overflow: hidden;
     border-radius: 999px;
     background: var(--surface-2);
@@ -724,90 +763,76 @@
 .trustStats {
     display: flex;
     justify-content: space-between;
-    margin-top: 6px;
+    margin-top: 5px;
     color: var(--text-faint);
-    font-size: 8.5px;
+    font-size: 8px;
 }
 
-/* Loading */
+/* =========================================================
+   Loading
+   ========================================================= */
+
 .loadingState {
-    min-height: 150px;
+    min-height: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 9px;
+    gap: 7px;
     color: var(--text-faint);
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .spinner {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid var(--line);
     border-top-color: var(--brass);
     border-radius: 50%;
     animation: spin 0.75s linear infinite;
 }
 
-/* Empty state */
+/* =========================================================
+   Empty state
+   ========================================================= */
+
 .empty {
-    padding: 25px 10px 20px;
+    padding: 18px 8px 14px;
     text-align: center;
 }
 
 .emptyIcon {
-    margin-bottom: 9px;
-    font-size: 27px;
+    margin-bottom: 7px;
+    font-size: 24px;
 }
 
 .empty h3 {
     margin: 0;
     color: var(--text);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 800;
 }
 
 .empty p {
-    max-width: 290px;
-    margin: 6px auto 0;
+    max-width: 280px;
+    margin: 5px auto 0;
     color: var(--text-soft);
-    font-size: 11px;
-    line-height: 1.5;
+    font-size: 10px;
+    line-height: 1.45;
 }
 
-/* Animations */
+/* =========================================================
+   Animations
+   ========================================================= */
+
 @keyframes slideUp {
     from {
+        opacity: 0;
         transform: translateY(100%);
     }
-
     to {
+        opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-100%);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideOutLeft {
-    from {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    to {
-        opacity: 0;
-        transform: translateX(-100%);
     }
 }
 
@@ -816,7 +841,6 @@
         opacity: 1;
         transform: translateY(0);
     }
-
     to {
         opacity: 0;
         transform: translateY(100%);
@@ -828,7 +852,6 @@
         opacity: 0;
         transform: translateY(-3px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -842,48 +865,25 @@
 }
 
 .closing .sheet {
-    animation: slideDown 0.7s cubic-bezier(0.3, 0.85, 0.3, 1) forwards;
+    animation:
+        slideDown
+        0.3s
+        cubic-bezier(0.3, 0.85, 0.3, 1)
+        forwards;
 }
 
-/* Desktop */
-@media (min-width: 768px) {
-    .wrapper {
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: auto;
-        width: min(370px, 100%);
-        align-items: stretch;
-    }
+/* =========================================================
+   Expand button
+   ========================================================= */
 
-    .sheet {
-        width: 100%;
-        max-height: none;
-        height: 100%;
-
-        border-top: none;
-        border-right: 1px solid var(--line);
-        border-radius: 0 22px 22px 0;
-
-        box-shadow: 8px 0 28px rgba(18, 32, 25, 0.14);
-
-        animation: slideInLeft 0.3s cubic-bezier(0.3, 0.85, 0.3, 1);
-    }
-
-    .closing .sheet {
-        animation: slideOutLeft 0.7s cubic-bezier(0.3, 0.85, 0.3, 1) forwards;
-    }
-}
-
-/* Expand button */
 .expandButton {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 7px;
     background: var(--surface-2);
     color: var(--text-faint);
     transition:
@@ -896,7 +896,10 @@
     color: var(--text-soft);
 }
 
-/* Chevron */
+/* =========================================================
+   Chevron
+   ========================================================= */
+
 .expandIcon,
 .expandIconExpanded {
     display: block;
@@ -914,25 +917,28 @@
     transform: rotate(180deg);
 }
 
-/* Guest report prompt */
+/* =========================================================
+   Guest report prompt
+   ========================================================= */
+
 .guestReportPrompt {
     display: flex;
     align-items: center;
-    gap: 7px;
-    margin: 0 11px 11px 59px;
-    padding: 8px 9px;
+    gap: 6px;
+    margin: 0 10px 9px 55px;
+    padding: 7px 8px;
     border: 1px solid var(--line);
-    border-radius: 9px;
+    border-radius: 8px;
     background: var(--surface-2);
     color: var(--text-soft);
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.35;
 }
 
 .guestReportLock {
     flex-shrink: 0;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .guestLoginLink {
@@ -951,29 +957,95 @@
     text-decoration: underline;
 }
 
+/* =========================================================
+   Train name Bengali
+   ========================================================= */
+
 .trainNameBn {
     display: block;
-    margin-top: 2px;
-
+    margin-top: 1px;
     font-family: "Noto Sans Bengali", sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
-    line-height: 1.3;
-
+    line-height: 1.25;
     color: var(--text-soft);
 }
 
-.reportBangla{
-    padding: 0 11px 11px 59px;
+/* =========================================================
+   Bangla report summary
+   ========================================================= */
+
+.reportBangla {
+    padding: 0 10px 9px 55px;
 }
 
 .statusSummary {
-    margin-top: 8px;
-    color: var(--text);
-    font-size: 11.5px;
-    line-height: 1.55;
-    font-weight: 500;
-    padding: 8px 10px;
+    margin-top: 6px;
+    padding: 7px 9px;
     border-radius: 8px;
     background: var(--teal-soft);
+    color: var(--text);
+    font-size: 11px;
+    line-height: 1.45;
+    font-weight: 500;
+}
+
+/* =========================================================
+   Responsive widths
+   ========================================================= */
+
+@media (min-width: 1200px) {
+    .content {
+        width: min(60%, 760px);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .content {
+        width: 75%;
+        max-width: 700px;
+    }
+}
+
+@media (max-width: 767px) {
+    .content {
+        width: calc(100% - 20px);
+        max-width: none;
+        padding-top: 8px;
+        padding-bottom: 12px;
+    }
+}
+
+@media (max-width: 360px) {
+    .content {
+        width: calc(100% - 16px);
+    }
+
+    .reportCard {
+        border-radius: 12px;
+    }
+
+    .reportMain {
+        padding: 8px 9px;
+    }
+
+    .statusRow {
+        padding-left: 54px;
+    }
+
+    .voteRow {
+        padding-left: 54px;
+    }
+
+    .nextStopRow {
+        margin-left: 54px;
+    }
+
+    .guestReportPrompt {
+        margin-left: 54px;
+    }
+
+    .reportBangla {
+        padding-left: 54px;
+    }
 }
