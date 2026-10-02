@@ -53,9 +53,10 @@ function getDelayClass(delayMinutes) {
 
 function TrainCard({ train, displayStatus, onClick }) {
     const startStation = getStationName(train.start_station);
+
     const destinationStation = getStationName(train.destination_station);
 
-    const { status, label, secondaryLabel, delayMinutes } = displayStatus;
+    const { status, label, secondaryLabel, delayMinutes } = displayStatus || {};
 
     const statusClass = getStatusClass(status);
     const delayClass = getDelayClass(delayMinutes);
@@ -123,6 +124,9 @@ function TrainCard({ train, displayStatus, onClick }) {
                     )}
                 </div>
 
+                {/* =================================================
+                    Status
+                ================================================= */}
                 <div className={styles.statusInfo}>
                     <span className={`${styles.statusBadge} ${statusClass} ${delayClass}`}>{label}</span>
 

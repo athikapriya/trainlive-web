@@ -1,10 +1,13 @@
 /* =========================================================
    Header controls
 ========================================================= */
+
 .headerControls {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 13px;
+    gap: 12px;
+    margin-inline: auto;
 }
 
 .searchWrapper {
@@ -14,7 +17,7 @@
 
 .searchIcon {
     position: absolute;
-    left: 13px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
     color: rgba(255, 255, 255, 0.62);
@@ -23,42 +26,53 @@
 
 .searchInput {
     width: 100%;
-    height: 40px;
-    padding: 0 40px;
-    box-sizing: border-box;
+    height: 42px;
+    padding: 0 42px;
     border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 10px;
+    border-radius: 12px;
     outline: none;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.075);
     color: #ffffff;
     font-family: inherit;
     font-size: 12px;
+    box-sizing: border-box;
+
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease;
 }
 
 .searchInput::placeholder {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.52);
 }
 
 .searchInput:focus {
-    border-color: rgba(255, 255, 255, 0.32);
-    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.105);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.04);
 }
 
 .clearButton {
     position: absolute;
     right: 7px;
     top: 50%;
-    transform: translateY(-50%);
+
     width: 28px;
     height: 28px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     padding: 0;
     border: 0;
     border-radius: 50%;
+
     background: transparent;
     color: rgba(255, 255, 255, 0.65);
+
+    transform: translateY(-50%);
     cursor: pointer;
 }
 
@@ -68,49 +82,233 @@
 }
 
 /* =========================================================
-   Train list
+   Filters
 ========================================================= */
-.list {
+
+.filterRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    width: 100%;
+
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    margin-bottom: 10px;
+}
+
+.filterRow::-webkit-scrollbar {
+    display: none;
+}
+
+.filterButton {
+    flex: 0 0 auto;
+
+    height: 31px;
+    padding: 0 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.055);
+    color: rgba(255, 255, 255, 0.68);
+
+    font: inherit;
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 160ms ease,
+        color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.filterButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.filterButton:active {
+    transform: translateY(1px);
+}
+
+.filterButtonActive {
+    border-color: rgba(255, 255, 255, 0.24);
+    background: #ffffff;
+    color: var(--rail);
+}
+
+/* =========================================================
+   Live summary
+========================================================= */
+
+.summary {
+    width: 100%;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: stretch;
+
+    margin-inline: auto;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+
+    border: 1px solid var(--line);
+    border-radius: 15px;
+
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.summaryItem {
+    min-width: 0;
+    flex: 1 1 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+.summaryItem > div:last-child {
+    min-width: 0;
+
     display: flex;
     flex-direction: column;
+}
+
+.summaryItem strong {
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.summaryItem span {
+    margin-top: 2px;
+
+    color: var(--text-faint);
+    font-size: 9px;
+    font-weight: 650;
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    white-space: nowrap;
+}
+
+.summaryIcon,
+.summaryIconDelayed,
+.summaryIconScheduled {
+    width: 29px;
+    height: 29px;
+
+    flex: 0 0 29px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+}
+
+.summaryIcon {
+    background: var(--green-soft);
+    color: var(--green);
+}
+
+.summaryIconDelayed {
+    background: var(--amber-soft);
+    color: var(--amber);
+}
+
+.summaryIconScheduled {
+    background: var(--teal-soft);
+    color: var(--teal);
+}
+
+.summaryDivider {
+    width: 1px;
+    min-width: 1px;
+    flex: 0 0 1px;
+
+    align-self: stretch;
+
+    margin: 2px 8px;
+
+    background: var(--line);
+}
+
+/* =========================================================
+   Train list
+========================================================= */
+
+.list {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
     gap: 10px;
+
+    margin-inline: auto;
 }
 
 /* =========================================================
    Empty state
 ========================================================= */
+
 .emptyState {
+    width: 100%;
+    box-sizing: border-box;
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 42px 20px;
+
+    padding: 52px 20px;
+
     text-align: center;
-    color: var(--text-faint);
+
+    margin-inline: auto;
 }
 
 .stateIcon {
-    width: 54px;
-    height: 54px;
+    width: 56px;
+    height: 56px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12px;
-    border-radius: 16px;
+
+    margin-bottom: 13px;
+
+    border: 1px solid var(--line);
+    border-radius: 17px;
+
     background: var(--teal-soft);
     color: var(--teal);
+
+    box-shadow: var(--shadow);
 }
 
 .stateTitle {
-    margin: 0;
     color: var(--text);
     font-size: 14px;
     line-height: 1.4;
-    font-weight: 650;
+    font-weight: 750;
 }
 
 .stateText {
     max-width: 290px;
-    margin: 5px 0 0;
+
+    margin-top: 5px;
+
     color: var(--text-soft);
     font-size: 11px;
     line-height: 1.55;
@@ -119,58 +317,266 @@
 /* =========================================================
    Loading
 ========================================================= */
+
 .loadingState {
-    min-height: 100%;
+    width: 100%;
+    min-height: 320px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     gap: 11px;
+
     color: var(--text-soft);
     font-size: 12px;
+
+    margin-inline: auto;
 }
 
 .spinner {
-    width: 24px;
-    height: 24px;
+    width: 23px;
+    height: 23px;
+
     border: 2px solid var(--line);
-    border-top-color: var(--teal);
+    border-top-color: var(--green);
     border-radius: 50%;
+
     animation: spin 700ms linear infinite;
 }
 
 /* =========================================================
    Error
 ========================================================= */
+
 .errorState {
-    min-height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    color: var(--danger, #c62828);
+    width: 100%;
+    box-sizing: border-box;
+
+    margin-top: 8px;
+    padding: 18px;
+
+    border: 1px solid var(--red);
+    border-radius: 14px;
+
+    background: var(--red-soft);
+    color: var(--red);
+
     font-size: 12px;
+    line-height: 1.5;
+
     text-align: center;
+
+    margin-inline: auto;
 }
 
 /* =========================================================
-   Animation
+   Desktop / tablet responsive width
 ========================================================= */
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+
+/*
+   Mobile:
+   100%
+
+   Tablet:
+   60%
+
+   Large desktop:
+   80%
+*/
+
+/* =========================================================
+   Tablet
+========================================================= */
+
+@media (min-width: 700px) and (max-width: 1099px) {
+    .headerControls,
+    .summary,
+    .list,
+    .emptyState,
+    .loadingState,
+    .errorState {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   Large desktop
+========================================================= */
+
+@media (min-width: 1100px) {
+    .headerControls,
+    .summary,
+    .list,
+    .emptyState,
+    .loadingState,
+    .errorState {
+        width: 100%;
     }
 }
 
 /* =========================================================
    Mobile
 ========================================================= */
+
+@media (max-width: 699px) {
+    .headerControls,
+    .summary,
+    .list,
+    .emptyState,
+    .loadingState,
+    .errorState {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   Small mobile
+========================================================= */
+
 @media (max-width: 480px) {
     .headerControls {
-        gap: 11px;
+        gap: 10px;
     }
 
     .searchInput {
-        height: 38px;
+        height: 40px;
+        font-size: 11px;
+    }
+
+    .summary {
+        margin-bottom: 11px;
+        padding: 10px 8px;
+        border-radius: 13px;
+    }
+
+    .summaryItem {
+        gap: 6px;
+    }
+
+    .summaryIcon,
+    .summaryIconDelayed,
+    .summaryIconScheduled {
+        width: 27px;
+        height: 27px;
+        flex-basis: 27px;
+        border-radius: 8px;
+    }
+
+    .summaryItem strong {
+        font-size: 14px;
+    }
+
+    .summaryItem span {
+        font-size: 8px;
+    }
+
+    .summaryDivider {
+        height: 24px;
+    }
+
+    .list {
+        gap: 8px;
+    }
+}
+
+/* =========================================================
+   Very small mobile
+========================================================= */
+
+@media (max-width: 360px) {
+    .summary {
+        padding-inline: 6px;
+    }
+
+    .summaryItem {
+        gap: 4px;
+    }
+
+    .summaryIcon,
+    .summaryIconDelayed,
+    .summaryIconScheduled {
+        display: none;
+    }
+
+    .summaryItem strong {
+        font-size: 13px;
+    }
+
+    .summaryItem span {
+        font-size: 7px;
+    }
+}
+
+/* =========================================================
+   Animation
+========================================================= */
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 480px) {
+    .summary {
+        margin-bottom: 11px;
+        padding: 10px 7px;
+        border-radius: 13px;
+    }
+
+    .summaryItem {
+        gap: 5px;
+    }
+
+    .summaryIcon,
+    .summaryIconDelayed,
+    .summaryIconScheduled {
+        width: 26px;
+        height: 26px;
+        flex-basis: 26px;
+        border-radius: 8px;
+    }
+
+    .summaryItem strong {
+        font-size: 13px;
+    }
+
+    .summaryItem span {
+        font-size: 7px;
+        letter-spacing: 0.025em;
+    }
+
+    .summaryDivider {
+        margin-inline: 5px;
+    }
+}
+
+@media (max-width: 360px) {
+    .summary {
+        padding-inline: 6px;
+    }
+
+    .summaryItem {
+        gap: 3px;
+    }
+
+    .summaryIcon,
+    .summaryIconDelayed,
+    .summaryIconScheduled {
+        display: none;
+    }
+
+    .summaryItem strong {
+        font-size: 12px;
+    }
+
+    .summaryItem span {
+        font-size: 7px;
+    }
+
+    .summaryDivider {
+        margin-inline: 3px;
     }
 }

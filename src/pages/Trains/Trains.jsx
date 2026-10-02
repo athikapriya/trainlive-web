@@ -1,452 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { FiSearch, FiX } from "react-icons/fi";
+import { FiSearch, FiX, FiActivity, FiClock, FiAlertCircle } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 import PageHeader from "../../layouts/PageHeader/PageHeader";
 import TrainCard from "../../components/trains/TrainCard";
 import { getTrains } from "../../services/trainApi";
 
+import { getTrainDisplayStatus, sortTrainsByJourneyStart } from "./trainUtils";
+
 import styles from "./Trains.module.css";
 import pageStyles from "../../styles/page.module.css";
-
-/* =========================================================
-   Time helpers
-========================================================= */
-
-function getTimeParts(timeString) {
-    if (!timeString) {
-        return null;
-    }
-
-    const parts = String(timeString).split(":");
-
-    if (parts.length < 2) {
-        return null;
-    }
-
-    const hours = Number(parts[0]);
-    const minutes = Number(parts[1]);
-    const seconds = Number(parts[2] || 0);
-
-    if (Number.isNaN(hours) || Number.isNaN(minutes) || Number.isNaN(seconds)) {
-        return null;
-    }
-
-    return {
-        hours,
-        minutes,
-        seconds,
-    };
-}
-
-function createDateWithTime(date, timeString) {
-    const parts = getTimeParts(timeString);
-
-    if (!parts) {
-        return null;
-    }
-
-    const result = new Date(date);
-
-    result.setHours(parts.hours, parts.minutes, parts.seconds, 0);
-
-    return result;
-}
-
-/* =========================================================
-   Journey helpers
-========================================================= */
-
-function getJourneyWindowForDate(train, serviceDate) {
-    const stops = Array.isArray(train.stops) ? [...train.stops].sort((a, b) => a.stop_order - b.stop_order) : [];
-
-    if (stops.length === 0) {
-        return null;
-    }
-
-    const originStop = stops[0];
-
-    if (!originStop?.scheduled_departure) {
-        return null;
-    }
-
-    const journeyStart = createDateWithTime(serviceDate, originStop.scheduled_departure);
-
-    if (!journeyStart) {
-        return null;
-    }
-
-    let journeyEnd = journeyStart;
-
-    const originParts = getTimeParts(originStop.scheduled_departure);
-
-    for (const stop of stops) {
-        const scheduledTimes = [stop.scheduled_arrival, stop.scheduled_departure];
-
-        for (const timeString of scheduledTimes) {
-            if (!timeString) {
-                continue;
-            }
-
-            const timeParts = getTimeParts(timeString);
-
-            if (!timeParts) {
-                continue;
-            }
-
-            const stopDate = new Date(serviceDate);
-
-            if (
-                originParts &&
-                (timeParts.hours < originParts.hours ||
-                    (timeParts.hours === originParts.hours && timeParts.minutes < originParts.minutes) ||
-                    (timeParts.hours === originParts.hours &&
-                        timeParts.minutes === originParts.minutes &&
-                        timeParts.seconds < originParts.seconds))
-            ) {
-                stopDate.setDate(stopDate.getDate() + 1);
-            }
-
-            const scheduledDateTime = createDateWithTime(stopDate, timeString);
-
-            if (scheduledDateTime && scheduledDateTime > journeyEnd) {
-                journeyEnd = scheduledDateTime;
-            }
-        }
-    }
-
-    return {
-        serviceDate,
-        journeyStart,
-        journeyEnd,
-    };
-}
-
-function isOffDay(train, date) {
-    if (!train.off_day) {
-        return false;
-    }
-
-    const dayName = date
-        .toLocaleDateString("en-US", {
-            weekday: "long",
-        })
-        .toLowerCase();
-
-    return train.off_day.trim().toLowerCase() === dayName;
-}
-
-/* =========================================================
-   Current journey
-========================================================= */
-
-function getCurrentJourney(train, now) {
-    const today = new Date(now);
-
-    today.setHours(0, 0, 0, 0);
-
-    const yesterday = new Date(today);
-
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    /*
-     * =====================================================
-     * TODAY
-     * =====================================================
-     */
-
-    if (!isOffDay(train, today)) {
-        const todayJourney = getJourneyWindowForDate(train, today);
-
-        if (todayJourney) {
-            if (now >= todayJourney.journeyStart && now < todayJourney.journeyEnd) {
-                return {
-                    ...todayJourney,
-                    state: "ACTIVE",
-                };
-            }
-
-            if (now < todayJourney.journeyStart) {
-                return {
-                    ...todayJourney,
-                    state: "SCHEDULED",
-                };
-            }
-
-            if (now >= todayJourney.journeyEnd) {
-                return {
-                    ...todayJourney,
-                    state: "PAST_SCHEDULED_END",
-                };
-            }
-        }
-    }
-
-    /*
-     * =====================================================
-     * YESTERDAY OVERNIGHT JOURNEY
-     * =====================================================
-     */
-
-    if (!isOffDay(train, yesterday)) {
-        const yesterdayJourney = getJourneyWindowForDate(train, yesterday);
-
-        if (yesterdayJourney) {
-            const isOvernight = yesterdayJourney.journeyEnd > yesterdayJourney.journeyStart;
-
-            if (isOvernight && now >= yesterdayJourney.journeyStart && now < yesterdayJourney.journeyEnd) {
-                return {
-                    ...yesterdayJourney,
-                    state: "ACTIVE",
-                };
-            }
-
-            if (isOvernight && now >= yesterdayJourney.journeyEnd) {
-                return {
-                    ...yesterdayJourney,
-                    state: "PAST_SCHEDULED_END",
-                };
-            }
-        }
-    }
-
-    return null;
-}
-
-/* =========================================================
-   Report ETA helper
-========================================================= */
-
-function getCompletionEta(train) {
-    if (!train?.completion_eta) {
-        return null;
-    }
-
-    const eta = new Date(train.completion_eta);
-
-    if (Number.isNaN(eta.getTime())) {
-        return null;
-    }
-
-    return eta;
-}
-
-/* =========================================================
-   Train display status
-========================================================= */
-
-function getTrainDisplayStatus(train, now) {
-    const journey = getCurrentJourney(train, now);
-
-    const completionEta = getCompletionEta(train);
-
-    const today = new Date(now);
-
-    today.setHours(0, 0, 0, 0);
-
-    /*
-     * =====================================================
-     * OFF DAY
-     * =====================================================
-     */
-
-    if (isOffDay(train, today) && !journey && !completionEta) {
-        return {
-            status: "OFF_DAY",
-            label: "Off day",
-            secondaryLabel: "No scheduled journey today",
-            delayMinutes: null,
-            journeyStart: null,
-        };
-    }
-
-    /*
-     * =====================================================
-     * SCHEDULED
-     * =====================================================
-     */
-
-    if (journey && journey.state === "SCHEDULED") {
-        return {
-            status: "SCHEDULED",
-            label: "Scheduled",
-            secondaryLabel: null,
-            delayMinutes: null,
-            journeyStart: journey.journeyStart,
-            completionEta,
-        };
-    }
-
-    /*
-     * =====================================================
-     * REPORT-BASED ACTIVE JOURNEY
-     * =====================================================
-     */
-
-    if (completionEta && now < completionEta) {
-        const delayMinutes = typeof train.delay_minutes === "number" ? train.delay_minutes : null;
-
-        /*
-         * Delayed
-         */
-        if (delayMinutes !== null && delayMinutes > 0) {
-            return {
-                status: "DELAYED",
-                label: train.status_label || `+${delayMinutes} min late`,
-                secondaryLabel: null,
-                delayMinutes,
-                journeyStart: journey?.journeyStart || null,
-                completionEta,
-            };
-        }
-
-        /*
-         * On time
-         */
-        return {
-            status: "ON_TIME",
-            label: "On time",
-            secondaryLabel: null,
-            delayMinutes: delayMinutes ?? 0,
-            journeyStart: journey?.journeyStart || null,
-            completionEta,
-        };
-    }
-
-    /*
-     * =====================================================
-     * REPORT-BASED COMPLETION
-     * =====================================================
-     */
-
-    if (completionEta && now >= completionEta) {
-        return {
-            status: "COMPLETED",
-            label: "Journey completed",
-            secondaryLabel: null,
-            delayMinutes: null,
-            journeyStart: journey?.journeyStart || null,
-            completionEta,
-        };
-    }
-
-    /*
-     * =====================================================
-     * NO REPORT
-     * =====================================================
-     */
-
-    if (!journey) {
-        return {
-            status: "SCHEDULED",
-            label: "Scheduled",
-            secondaryLabel: null,
-            delayMinutes: null,
-            journeyStart: null,
-        };
-    }
-
-    if (journey.state === "PAST_SCHEDULED_END") {
-        return {
-            status: "COMPLETED",
-            label: "Journey completed",
-            secondaryLabel: "No latest reports · assumed on time",
-            delayMinutes: null,
-            journeyStart: journey.journeyStart,
-            completionEta: null,
-        };
-    }
-
-    /*
-     * =====================================================
-     * ACTIVE — FALLBACK
-     * =====================================================
-     */
-
-    const delayMinutes = typeof train.delay_minutes === "number" ? train.delay_minutes : null;
-
-    if (delayMinutes !== null && delayMinutes > 0) {
-        return {
-            status: "DELAYED",
-            label: train.status_label || `+${delayMinutes} min late`,
-            secondaryLabel: null,
-            delayMinutes,
-            journeyStart: journey.journeyStart,
-            completionEta,
-        };
-    }
-
-    return {
-        status: "ON_TIME",
-        label: "On time",
-        secondaryLabel: null,
-        delayMinutes: delayMinutes !== null ? delayMinutes : 0,
-        journeyStart: journey.journeyStart,
-        completionEta,
-    };
-}
-
-/* =========================================================
-   Sorting
-========================================================= */
-
-function getJourneyGroup(status) {
-    switch (status) {
-        case "ON_TIME":
-        case "DELAYED":
-            return 1;
-
-        case "SCHEDULED":
-            return 2;
-
-        case "COMPLETED":
-            return 3;
-
-        case "OFF_DAY":
-            return 4;
-
-        default:
-            return 5;
-    }
-}
-
-function sortTrainsByJourneyStart(trains) {
-    return [...trains].sort((a, b) => {
-        const statusA = a.displayStatus.status;
-
-        const statusB = b.displayStatus.status;
-
-        const groupA = getJourneyGroup(statusA);
-
-        const groupB = getJourneyGroup(statusB);
-
-        if (groupA !== groupB) {
-            return groupA - groupB;
-        }
-
-        const startA = a.displayStatus.journeyStart;
-
-        const startB = b.displayStatus.journeyStart;
-
-        if (!startA && !startB) {
-            return 0;
-        }
-
-        if (!startA) {
-            return 1;
-        }
-
-        if (!startB) {
-            return -1;
-        }
-
-        /*
-         * Latest journey first.
-         */
-
-        return startB.getTime() - startA.getTime();
-    });
-}
 
 /* =========================================================
    Component
@@ -459,13 +22,11 @@ function Trains() {
     const [activeFilter, setActiveFilter] = useState("all");
 
     const [searchInput, setSearchInput] = useState("");
-
     const [search, setSearch] = useState("");
 
     const [currentTime, setCurrentTime] = useState(() => new Date());
 
     const [isLoading, setIsLoading] = useState(true);
-
     const [error, setError] = useState(null);
 
     /* =====================================================
@@ -524,7 +85,7 @@ function Trains() {
     }, [searchInput]);
 
     /* =====================================================
-       Keep current time fresh
+       Clock
     ===================================================== */
 
     useEffect(() => {
@@ -536,27 +97,55 @@ function Trains() {
     }, []);
 
     /* =====================================================
-       Status + sorting
+       Calculate statuses
     ===================================================== */
 
     const trainsWithStatus = useMemo(() => {
-        const result = trains.map((train) => ({
+        const mapped = trains.map((train) => ({
             ...train,
             displayStatus: getTrainDisplayStatus(train, currentTime),
         }));
 
-        return sortTrainsByJourneyStart(result);
+        return sortTrainsByJourneyStart(mapped);
     }, [trains, currentTime]);
+
+    /* =====================================================
+       Summary
+    ===================================================== */
+
+    const summary = useMemo(() => {
+        let active = 0;
+        let delayed = 0;
+        let scheduled = 0;
+
+        for (const train of trainsWithStatus) {
+            const status = train.displayStatus.status;
+
+            if (status === "ON_TIME" || status === "DELAYED") {
+                active += 1;
+            }
+
+            if (status === "DELAYED") {
+                delayed += 1;
+            }
+
+            if (status === "SCHEDULED") {
+                scheduled += 1;
+            }
+        }
+
+        return {
+            active,
+            delayed,
+            scheduled,
+        };
+    }, [trainsWithStatus]);
 
     /* =====================================================
        Filter
     ===================================================== */
 
     const filteredTrains = useMemo(() => {
-        if (activeFilter === "all") {
-            return trainsWithStatus;
-        }
-
         if (activeFilter === "ontime") {
             return trainsWithStatus.filter((train) => train.displayStatus.status === "ON_TIME");
         }
@@ -597,7 +186,7 @@ function Trains() {
                     type="text"
                     value={searchInput}
                     onChange={(event) => setSearchInput(event.target.value)}
-                    placeholder="Search trains..."
+                    placeholder="Search by train number or name..."
                     className={styles.searchInput}
                 />
 
@@ -613,10 +202,10 @@ function Trains() {
                 )}
             </div>
 
-            <div className={pageStyles.tabs}>
+            <div className={styles.filterRow}>
                 <button
                     type="button"
-                    className={`${pageStyles.tab} ${activeFilter === "all" ? pageStyles.tabActive : ""}`}
+                    className={`${styles.filterButton} ${activeFilter === "all" ? styles.filterButtonActive : ""}`}
                     onClick={() => setActiveFilter("all")}
                 >
                     All
@@ -624,7 +213,7 @@ function Trains() {
 
                 <button
                     type="button"
-                    className={`${pageStyles.tab} ${activeFilter === "ontime" ? pageStyles.tabActive : ""}`}
+                    className={`${styles.filterButton} ${activeFilter === "ontime" ? styles.filterButtonActive : ""}`}
                     onClick={() => setActiveFilter("ontime")}
                 >
                     On time
@@ -632,7 +221,7 @@ function Trains() {
 
                 <button
                     type="button"
-                    className={`${pageStyles.tab} ${activeFilter === "delayed" ? pageStyles.tabActive : ""}`}
+                    className={`${styles.filterButton} ${activeFilter === "delayed" ? styles.filterButtonActive : ""}`}
                     onClick={() => setActiveFilter("delayed")}
                 >
                     Delayed
@@ -642,11 +231,56 @@ function Trains() {
     );
 
     /* =====================================================
+       Summary
+    ===================================================== */
+
+    const renderSummary = () => (
+        <div className={styles.summary}>
+            <div className={styles.summaryItem}>
+                <div className={styles.summaryIcon}>
+                    <FiActivity size={14} />
+                </div>
+
+                <div>
+                    <strong>{summary.active}</strong>
+                    <span>active</span>
+                </div>
+            </div>
+
+            <div className={styles.summaryDivider} />
+
+            <div className={styles.summaryItem}>
+                <div className={styles.summaryIconDelayed}>
+                    <FiAlertCircle size={14} />
+                </div>
+
+                <div>
+                    <strong>{summary.delayed}</strong>
+                    <span>delayed</span>
+                </div>
+            </div>
+
+            <div className={styles.summaryDivider} />
+
+            <div className={styles.summaryItem}>
+                <div className={styles.summaryIconScheduled}>
+                    <FiClock size={14} />
+                </div>
+
+                <div>
+                    <strong>{summary.scheduled}</strong>
+                    <span>scheduled</span>
+                </div>
+            </div>
+        </div>
+    );
+
+    /* =====================================================
        Train list
     ===================================================== */
 
     const renderTrainList = () => {
-        if (filteredTrains.length === 0) {
+        if (!filteredTrains.length) {
             return (
                 <div className={styles.emptyState}>
                     <div className={styles.stateIcon}>
@@ -681,7 +315,7 @@ function Trains() {
     if (isLoading) {
         return (
             <div className={pageStyles.page}>
-                <PageHeader title="All trains" subtitle="Today’s schedule · 24h window">
+                <PageHeader title="All trains" subtitle="Live journeys across Bangladesh">
                     {renderHeaderControls()}
                 </PageHeader>
 
@@ -689,7 +323,8 @@ function Trains() {
                     <div className={pageStyles.contentInner}>
                         <div className={styles.loadingState}>
                             <div className={styles.spinner} />
-                            Loading trains...
+
+                            <span>Loading trains...</span>
                         </div>
                     </div>
                 </div>
@@ -704,7 +339,7 @@ function Trains() {
     if (error) {
         return (
             <div className={pageStyles.page}>
-                <PageHeader title="All trains" subtitle="Today’s schedule · 24h window">
+                <PageHeader title="All trains" subtitle="Live journeys across Bangladesh">
                     {renderHeaderControls()}
                 </PageHeader>
 
@@ -723,12 +358,15 @@ function Trains() {
 
     return (
         <div className={pageStyles.page}>
-            <PageHeader title="All trains" subtitle="Today’s schedule · 24h window">
+            <PageHeader title="All trains" subtitle="Live journeys across Bangladesh">
                 {renderHeaderControls()}
             </PageHeader>
 
             <div className={pageStyles.content}>
-                <div className={pageStyles.contentInner}>{renderTrainList()}</div>
+                <div className={pageStyles.contentInner}>
+                    {renderSummary()}
+                    {renderTrainList()}
+                </div>
             </div>
         </div>
     );
