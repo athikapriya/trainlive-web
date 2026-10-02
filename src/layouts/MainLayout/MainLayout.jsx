@@ -23,7 +23,8 @@ function MainLayout() {
         location.pathname === "/faq" ||
         location.pathname === "/privacy" ||
         location.pathname === "/terms" ||
-        location.pathname === "/about";
+        location.pathname === "/about" ||
+        location.pathname.startsWith("/trains/");
 
     const handleReport = () => {
         if (!isAuthenticated) {

@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FiArrowLeft, FiClock, FiInfo, FiMapPin, FiMessageCircle } from "react-icons/fi";
+import {
+    FiArrowLeft,
+    FiArrowRight,
+    FiClock,
+    FiInfo,
+    FiMapPin,
+    FiMessageCircle,
+    FiNavigation,
+    FiRadio,
+} from "react-icons/fi";
 
 import useAuth from "../../hooks/useAuth";
 import PageHeader from "../../layouts/PageHeader/PageHeader";
@@ -210,7 +219,6 @@ function buildRouteSchedule(stops = []) {
             arrivalMinutes = null;
         }
 
-        /* Handle overnight journeys */
         if (arrivalMinutes !== null) {
             while (arrivalMinutes < previousDeparture) {
                 arrivalMinutes += 24 * 60;
@@ -512,17 +520,16 @@ function TrainDetails() {
         return () => controller.abort();
     }, [trainNumber, historyDays, user, accessToken]);
 
-    const routeSchedule = useMemo(() => {
-        return buildRouteSchedule(train?.stops || []);
-    }, [train?.stops]);
+    const routeSchedule = useMemo(() => buildRouteSchedule(train?.stops || []), [train?.stops]);
 
-    const latestEtaReport = useMemo(() => {
-        return reports.find((report) => report.event_type === "ARRIVED" || report.event_type === "DEPARTED") || null;
-    }, [reports]);
+    const latestEtaReport = useMemo(
+        () => reports.find((report) => report.event_type === "ARRIVED" || report.event_type === "DEPARTED") || null,
+        [reports]
+    );
 
-    const etaStopMap = useMemo(() => {
-        return getEtaStopMap(latestEtaReport);
-    }, [latestEtaReport]);
+    const etaStopMap = useMemo(() => getEtaStopMap(latestEtaReport), [latestEtaReport]);
+
+    const originStop = useMemo(() => routeSchedule.rows[0] || null, [routeSchedule.rows]);
 
     const destinationStop = useMemo(() => {
         if (!routeSchedule.rows.length) {
@@ -553,6 +560,8 @@ function TrainDetails() {
 
         return items.slice(0, historyDays);
     }, [history?.history, historyDays]);
+
+    const latestReport = reports[0] || null;
 
     if (!user) {
         return null;
@@ -613,10 +622,113 @@ function TrainDetails() {
 
             <div className={pageStyles.content}>
                 <div className={pageStyles.contentInner}>
+                    {/* =================================================
+                        Back navigation
+                    ================================================= */}
                     <button type="button" className={styles.backButton} onClick={() => navigate(-1)}>
-                        <FiArrowLeft size={14} />
+                        <FiArrowLeft size={15} />
                         <span>Back to trains</span>
                     </button>
+
+                    {/* =================================================
+                        Train hero
+                    ================================================= */}
+                    <section className={styles.trainHero}>
+                        <div className={styles.heroGlow} />
+
+                        <div className={styles.heroTop}>
+                            <div className={styles.trainBadge}>
+                                <FiNavigation size={17} />
+                            </div>
+
+                            <div className={styles.heroStatus}>
+                                <span className={styles.statusDot} />
+                                <span>Community tracked</span>
+                            </div>
+                        </div>
+
+                        <div className={styles.heroNumber}>{train.number}</div>
+
+                        <div className={styles.heroName}>{train.name || `Train ${train.number}`}</div>
+
+                        {train.name_bn && <div className={styles.heroNameBn}>{train.name_bn}</div>}
+
+                        {originStop && destinationStop && (
+                            <div className={styles.heroJourney}>
+                                <div className={styles.heroStation}>
+                                    <span>From</span>
+                                    <strong>{getStationName(originStop.station)}</strong>
+                                </div>
+
+                                <div className={styles.heroArrow}>
+                                    <FiArrowRight size={16} />
+                                </div>
+
+                                <div className={`${styles.heroStation} ${styles.heroStationRight}`}>
+                                    <span>To</span>
+                                    <strong>{getStationName(destinationStop.station)}</strong>
+                                </div>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* =================================================
+                        Journey snapshot
+                    ================================================= */}
+                    <section className={`${styles.section} ${styles.snapshotSection}`}>
+                        <div className={styles.snapshotGrid}>
+                            <div className={styles.snapshotItem}>
+                                <span>Departure</span>
+                                <strong>{originStop ? formatScheduleTime(originStop.scheduled_departure) : "—"}</strong>
+                            </div>
+
+                            <div className={styles.snapshotDivider} />
+
+                            <div className={styles.snapshotItem}>
+                                <span>Arrival</span>
+                                <strong>
+                                    {destinationStop ? formatScheduleTime(destinationStop.scheduled_arrival) : "—"}
+                                </strong>
+                            </div>
+
+                            <div className={styles.snapshotDivider} />
+
+                            <div className={styles.snapshotItem}>
+                                <span>Journey</span>
+                                <strong>
+                                    {routeSchedule.totalDuration !== null
+                                        ? formatDuration(routeSchedule.totalDuration)
+                                        : "—"}
+                                </strong>
+                            </div>
+                        </div>
+
+                        {latestReport && (
+                            <div className={styles.latestActivity}>
+                                <div className={styles.latestActivityIcon}>
+                                    <FiRadio size={13} />
+                                </div>
+
+                                <div className={styles.latestActivityContent}>
+                                    <div className={styles.latestActivityLabel}>Latest community update</div>
+
+                                    <div className={styles.latestActivityText}>
+                                        {latestReport.event_type === "ARRIVED"
+                                            ? "Arrived"
+                                            : latestReport.event_type === "DEPARTED"
+                                              ? "Departed"
+                                              : "Train update"}
+
+                                        {latestReport.station ? ` · ${getStationName(latestReport.station)}` : ""}
+                                    </div>
+                                </div>
+
+                                <span className={styles.latestActivityTime}>
+                                    {formatReportTime(latestReport.event_time)}
+                                </span>
+                            </div>
+                        )}
+                    </section>
 
                     {/* =================================================
                         Journey history
@@ -708,7 +820,7 @@ function TrainDetails() {
                     </section>
 
                     {/* =================================================
-                        Route schedule
+                        Route
                     ================================================= */}
 
                     <section className={styles.section}>
@@ -727,7 +839,6 @@ function TrainDetails() {
                             )}
                         </div>
 
-                        {/* ETA disclaimer */}
                         {showEta && (
                             <div className={styles.etaDisclaimer}>
                                 <FiInfo size={12} />
@@ -740,37 +851,34 @@ function TrainDetails() {
                         )}
 
                         {routeSchedule.rows.length ? (
-                            <div className={styles.routeTable}>
-                                <div className={styles.routeHeader}>
-                                    <div>Station</div>
-                                    <div>Arrival</div>
-                                    <div>Halt</div>
-                                    <div>Departure</div>
-                                </div>
+                            <div className={styles.routeTimeline}>
+                                {routeSchedule.rows.map((stop, index) => {
+                                    const station = stop.station;
 
-                                <div className={styles.routeRows}>
-                                    {routeSchedule.rows.map((stop, index) => {
-                                        const station = stop.station;
+                                    const isOrigin = index === 0;
 
-                                        const etaArrival = showEta ? getEtaArrival(stop, etaStopMap) : null;
+                                    const isDestination = index === routeSchedule.rows.length - 1;
 
-                                        const etaDeparture = showEta ? getEtaDeparture(stop, etaStopMap) : null;
+                                    const etaArrival = showEta ? getEtaArrival(stop, etaStopMap) : null;
 
-                                        return (
-                                            <div key={`${train.id}-${stop.stop_order}`} className={styles.routeRow}>
-                                                <div className={styles.stationCell}>
-                                                    <div
-                                                        className={`${styles.stationNumber} ${
-                                                            index === 0
-                                                                ? styles.stationOrigin
-                                                                : index === routeSchedule.rows.length - 1
-                                                                  ? styles.stationDestination
-                                                                  : ""
-                                                        }`}
-                                                    >
-                                                        {stop.stop_order}
-                                                    </div>
+                                    const etaDeparture = showEta ? getEtaDeparture(stop, etaStopMap) : null;
 
+                                    return (
+                                        <div key={`${train.id}-${stop.stop_order}`} className={styles.routeItem}>
+                                            <div className={styles.routeRail}>
+                                                <div
+                                                    className={`${styles.stationMarker} ${
+                                                        isOrigin ? styles.stationOrigin : ""
+                                                    } ${isDestination ? styles.stationDestination : ""}`}
+                                                >
+                                                    {stop.stop_order}
+                                                </div>
+
+                                                {!isDestination && <div className={styles.railLine} />}
+                                            </div>
+
+                                            <div className={styles.routeContent}>
+                                                <div className={styles.stationTop}>
                                                     <div className={styles.stationNames}>
                                                         <div className={styles.stationName}>
                                                             {getStationName(station)}
@@ -782,31 +890,43 @@ function TrainDetails() {
                                                             </div>
                                                         )}
                                                     </div>
+
+                                                    <span className={styles.stopNumber}>STOP {stop.stop_order}</span>
                                                 </div>
 
-                                                <div className={styles.timeCell}>
-                                                    <div>{formatScheduleTime(stop.scheduled_arrival)}</div>
+                                                <div className={styles.scheduleTimes}>
+                                                    <div className={styles.scheduleTime}>
+                                                        <span>Arrival</span>
 
-                                                    {etaArrival && (
-                                                        <div className={styles.etaTime}>ETA : {etaArrival}</div>
-                                                    )}
-                                                </div>
+                                                        <strong>{formatScheduleTime(stop.scheduled_arrival)}</strong>
 
-                                                <div className={styles.haltCell}>
-                                                    {stop.haltMinutes !== null ? formatDuration(stop.haltMinutes) : "—"}
-                                                </div>
+                                                        {etaArrival && (
+                                                            <small className={styles.etaTime}>ETA {etaArrival}</small>
+                                                        )}
+                                                    </div>
 
-                                                <div className={styles.timeCell}>
-                                                    <div>{formatScheduleTime(stop.scheduled_departure)}</div>
+                                                    <div className={styles.scheduleTime}>
+                                                        <span>Departure</span>
 
-                                                    {etaDeparture && (
-                                                        <div className={styles.etaTime}>ETD : {etaDeparture}</div>
+                                                        <strong>{formatScheduleTime(stop.scheduled_departure)}</strong>
+
+                                                        {etaDeparture && (
+                                                            <small className={styles.etaTime}>ETD {etaDeparture}</small>
+                                                        )}
+                                                    </div>
+
+                                                    {stop.haltMinutes !== null && (
+                                                        <div className={styles.haltTime}>
+                                                            <FiClock size={11} />
+
+                                                            <span>{formatDuration(stop.haltMinutes)} halt</span>
+                                                        </div>
                                                     )}
                                                 </div>
                                             </div>
-                                        );
-                                    })}
-                                </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className={styles.emptyState}>No stop information available.</div>
