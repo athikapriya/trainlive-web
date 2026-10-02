@@ -7,34 +7,35 @@ import { getTrains } from "../../services/trainApi";
 import SearchOverlay from "../SearchOverlay/SearchOverlay";
 import useAuth from "../../hooks/useAuth";
 
-
-function MapSearch({onStationSelect, onTrainSelect}) {
+function MapSearch({ onStationSelect, onTrainSelect }) {
     const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
 
     const [isOpen, setIsOpen] = useState(false);
-
     const [searchType, setSearchType] = useState("stations");
     const [query, setQuery] = useState("");
-
     const [stations, setStations] = useState([]);
     const [trains, setTrains] = useState([]);
-
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // ====================== user avatar section ======================
 
-    // ====================== user avatar section ========================
     const getUserInitial = () => {
         if (!user) {
             return "";
         }
-        const name = user.full_name?.trim() || user.email?.trim() || "";
-        return name.charAt(0).toUpperCase();
+
+        const name =
+            user.full_name?.trim() ||
+            user.email?.trim() ||
+            "";
+
+        return name.charAt(0);
     };
+
     const userInitial = getUserInitial();
 
-
-    // ====================== search api section ========================
+    // ====================== search api section ======================
 
     useEffect(() => {
         if (!isOpen) {
@@ -42,6 +43,7 @@ function MapSearch({onStationSelect, onTrainSelect}) {
         }
 
         const controller = new AbortController();
+
         const timeoutId = setTimeout(async () => {
             try {
                 setIsLoading(true);
@@ -96,7 +98,8 @@ function MapSearch({onStationSelect, onTrainSelect}) {
         };
     }, [isOpen, searchType, query]);
 
-    // ================ open/close section ==================
+    // ====================== open / close ======================
+
     const handleOpen = () => {
         setIsOpen(true);
     };
@@ -107,15 +110,16 @@ function MapSearch({onStationSelect, onTrainSelect}) {
         setError(null);
     };
 
-    // ================ change search type section ==================
+    // ====================== search type ======================
+
     const handleSearchTypeChange = (type) => {
         setSearchType(type);
         setQuery("");
         setError(null);
     };
 
+    // ====================== result selection ======================
 
-    // ================ result selection section ==================
     const handleStationSelect = (station) => {
         setIsOpen(false);
         setQuery("");
@@ -132,13 +136,22 @@ function MapSearch({onStationSelect, onTrainSelect}) {
         onTrainSelect(train);
     };
 
-
     return (
         <>
             {!isOpen && (
                 <div className="map-search">
-                    <button type="button" className="map-search-bar" onClick={handleOpen} aria-label="Search station or train">
-                        <FiSearch className="map-search-icon" size={18} aria-hidden="true" />
+                    <button
+                        type="button"
+                        className="map-search-bar"
+                        onClick={handleOpen}
+                        aria-label="Search station or train"
+                    >
+                        <FiSearch
+                            className="map-search-icon"
+                            size={18}
+                            aria-hidden="true"
+                        />
+
                         <span className="map-search-placeholder">
                             Search a station or train
                         </span>
@@ -146,7 +159,10 @@ function MapSearch({onStationSelect, onTrainSelect}) {
                         {!isAuthLoading &&
                             isAuthenticated &&
                             userInitial && (
-                                <span className="map-search-avatar" aria-label="Account" >
+                                <span
+                                    className="map-search-avatar"
+                                    aria-label="Account"
+                                >
                                     {userInitial}
                                 </span>
                             )}
