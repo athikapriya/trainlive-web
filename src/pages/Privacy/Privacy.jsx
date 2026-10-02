@@ -387,7 +387,7 @@ function Privacy() {
                 <footer className={styles.footer}>
                     <strong>TrainLive</strong>
 
-                    <span>Community-powered train information</span>
+                    <span>Real-time train information, powered by the community.</span>
                 </footer>
             </div>
         </div>

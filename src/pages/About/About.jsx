@@ -199,7 +199,7 @@ function About() {
                             <span className={styles.versionBadge}>1.0</span>
                         </div>
                         <div className={styles.versionLine} />
-                        <p>Community-powered train information</p>
+                        <p>Real-time train information, powered by the community.</p>
                     </div>
                 </section>
 
@@ -209,7 +209,7 @@ function About() {
                 ===================================================== */}
                 <footer className={styles.footer}>
                     <strong>TrainLive</strong>
-                    <span>Community-powered train information</span>
+                    <span>Real-time train information, powered by the community.</span>
                 </footer>
 
 
