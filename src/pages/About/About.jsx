@@ -38,18 +38,20 @@ function About() {
                         <FiInfo size={22} />
                     </div>
 
-                    <span className={styles.eyebrow}>ABOUT TRAINLIVE</span>
+                    <div className={styles.heroContent}>
+                        <span className={styles.eyebrow}>ABOUT TRAINLIVE</span>
 
-                    <h2>
-                        Built by riders,
-                        <br />
-                        for riders.
-                    </h2>
+                        <h2>
+                            Built by riders,
+                            <br />
+                            for riders.
+                        </h2>
 
-                    <p>
-                        Trains in Bangladesh often run to their own clock, and timetables can't keep up. TrainLive turns
-                        what riders already know into a live map everyone can read.
-                    </p>
+                        <p>
+                            Trains in Bangladesh often run to their own clock, and timetables can't keep up. TrainLive turns
+                            what riders already know into a live map everyone can read.
+                        </p>
+                    </div>
                 </section>
 
                 {/* =====================================================
