@@ -10,11 +10,14 @@ function Login() {
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const { login } = useAuth();
+
     const from = location.state?.from;
 
     const stationId = searchParams.get("station");
     const trainNumber = searchParams.get("train");
     const reportIntent = searchParams.get("report") === "true";
+
+    const liveIntent = searchParams.get("live");
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -30,6 +33,7 @@ function Login() {
 
         try {
             await login(email, password);
+
             if (from) {
                 navigate(from, {
                     replace: true,
@@ -40,6 +44,14 @@ function Login() {
 
             if (reportIntent) {
                 navigate("/?report=true", {
+                    replace: true,
+                });
+
+                return;
+            }
+
+            if (liveIntent === "show" || liveIntent === "share") {
+                navigate(`/?live=${liveIntent}`, {
                     replace: true,
                 });
 
@@ -87,6 +99,8 @@ function Login() {
 
         if (reportIntent) {
             params.set("report", "true");
+        } else if (liveIntent === "show" || liveIntent === "share") {
+            params.set("live", liveIntent);
         } else if (trainNumber) {
             params.set("train", trainNumber);
         } else if (stationId) {
@@ -111,6 +125,8 @@ function Login() {
 
         if (reportIntent) {
             params.set("report", "true");
+        } else if (liveIntent === "show" || liveIntent === "share") {
+            params.set("live", liveIntent);
         } else if (trainNumber) {
             params.set("train", trainNumber);
         } else if (stationId) {

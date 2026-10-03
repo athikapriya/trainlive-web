@@ -1,0 +1,671 @@
+.live-controls {
+    position: absolute;
+    top: 76px;
+    right: 16px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.live-control {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 42px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+.live-control:hover {
+    /* transform: translateY(-1px); */
+    box-shadow: 0 6px 18px rgba(18, 32, 25, 0.15);
+}
+
+.live-control:active {
+    transform: translateY(0);
+}
+
+.live-control:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.live-control.active {
+    border-color: rgba(46, 111, 142, 0.25);
+    background: var(--teal-soft);
+    color: var(--teal);
+}
+
+.live-control.active.sharing {
+    border-color: rgba(30, 138, 91, 0.25);
+    background: var(--green-soft);
+    color: var(--green);
+}
+
+.live-control-icon {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.5;
+}
+
+.live-control.active .live-control-dot {
+    animation: live-control-pulse 1.8s ease-in-out infinite;
+}
+
+.live-train-marker {
+    background: transparent;
+    border: none;
+}
+
+.live-train-marker-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: var(--green);
+    color: var(--green-soft);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+    font-size: 20px;
+}
+
+@keyframes live-control-pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 3px rgba(46, 111, 142, 0.12);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(46, 111, 142, 0.04);
+    }
+}
+
+/* Train picker */
+
+.live-picker-backdrop,
+.live-confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(3px);
+}
+
+.live-picker {
+    display: flex;
+    flex-direction: column;
+    width: min(440px, 100%);
+    max-height: min(450px, calc(100dvh - 40px));
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+}
+
+.live-picker-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 20px 14px;
+}
+
+.live-picker-header h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.live-picker-header p {
+    margin: 5px 0 0;
+    color: var(--text-soft);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.live-picker-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-soft);
+    font-size: 25px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.live-picker-close:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.live-picker-search {
+    width: calc(100% - 40px);
+    min-height: 44px;
+    margin: 0 20px 12px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    outline: none;
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+}
+
+.live-picker-search::placeholder {
+    color: var(--text-faint);
+}
+
+.live-picker-search:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+.live-picker-results {
+    overflow-y: auto;
+    padding: 0 10px 10px;
+}
+
+.live-picker-message {
+    padding: 30px 20px;
+    color: var(--text-soft);
+    text-align: center;
+    font-size: 14px;
+}
+
+.live-picker-message.error {
+    color: var(--red);
+}
+
+.live-train-option {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+    padding: 13px 10px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.live-train-option:hover {
+    background: var(--surface-2);
+}
+
+.live-train-number {
+    min-width: 48px;
+    color: var(--teal);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.live-train-info {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.live-train-name {
+    overflow: hidden;
+    color: var(--text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.live-train-name-bn {
+    overflow: hidden;
+    color: var(--text-soft);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: "Noto Sans Bengali", sans-serif;
+    font-size: 12px;
+}
+
+.live-train-name-en {
+    overflow: hidden;
+    color: var(--text-soft);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+}
+
+.live-train-route {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow: hidden;
+    color: var(--text-soft);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: "Noto Sans Bengali", sans-serif;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.live-train-route-arrow {
+    flex: 0 0 auto;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.live-train-direction {
+    padding: 4px 7px;
+    border-radius: 6px;
+    background: var(--surface-2);
+    color: var(--text-soft);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* Share confirmation */
+
+.live-confirm {
+    width: min(420px, 100%);
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+}
+
+.live-confirm-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    border-radius: 50%;
+    background: var(--green-soft);
+}
+
+.live-confirm-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 6px rgba(30, 138, 91, 0.1);
+}
+
+.live-confirm-content h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.live-confirm-content > p {
+    margin: 7px 0 0;
+    color: var(--text-soft);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.live-confirm-train {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0;
+    padding: 13px;
+    border-radius: 12px;
+    background: var(--surface-2);
+}
+
+.live-confirm-train-number {
+    color: var(--teal);
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.live-confirm-train-info {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.live-confirm-train-info strong {
+    overflow: hidden;
+    color: var(--text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.live-confirm-train-info span {
+    color: var(--text-soft);
+    font-family: "Noto Sans Bengali", sans-serif;
+    font-size: 12px;
+}
+
+.live-confirm-direction {
+    color: var(--text-soft);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.live-confirm-note {
+    margin-top: 16px !important;
+    color: var(--text-soft) !important;
+    font-size: 12px !important;
+}
+
+.live-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    margin-top: 22px;
+}
+
+.live-confirm-cancel,
+.live-confirm-submit {
+    min-height: 42px;
+    padding: 0 15px;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.live-confirm-cancel {
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--text);
+}
+
+.live-confirm-cancel:hover {
+    background: var(--surface-2);
+}
+
+.live-confirm-submit {
+    border: 0;
+    background: var(--green);
+    color: #ffffff;
+}
+
+.live-confirm-cancel:disabled,
+.live-confirm-submit:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Small screens */
+
+@media (max-width: 640px) {
+    .live-controls {
+        top: 72px;
+        right: 12px;
+        left: 18px;
+        flex-direction: row;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+    }
+
+    .live-controls::-webkit-scrollbar {
+        display: none;
+    }
+
+    .live-control {
+        min-height: 30px;
+        padding: 0 9px;
+        font-size: 10.5px;
+    }
+
+    .live-picker-backdrop,
+    .live-confirm-backdrop {
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+    }
+
+    .live-picker,
+    .live-confirm {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: min(100%, 420px);
+        max-height: calc(100dvh - 32px);
+        margin: 0;
+        border-radius: 18px;
+    }
+
+    .live-picker {
+        max-height: calc(100dvh - 32px);
+    }
+
+    .live-picker-results {
+        max-height: min(52vh, 420px);
+        padding-right: 6px;
+        padding-left: 6px;
+    }
+
+    .live-confirm {
+        padding: 22px 18px calc(18px + env(safe-area-inset-bottom));
+    }
+
+    .live-picker-header {
+        padding: 18px 16px 12px;
+    }
+
+    .live-picker-search {
+        width: calc(100% - 32px);
+        margin-right: 16px;
+        margin-left: 16px;
+    }
+
+    .live-confirm-actions {
+        flex-direction: column-reverse;
+    }
+
+    .live-confirm-cancel,
+    .live-confirm-submit {
+        width: 100%;
+    }
+
+    .live-status-panel {
+        top: 120px !important;
+        left: 12px;
+        width: min(310px, calc(100vw - 24px));
+    }
+
+    .live-status-section {
+        padding: 12px;
+    }
+
+    .live-status-heading-text strong {
+        font-size: 11px;
+    }
+
+    .live-status-heading-text span {
+        font-size: 10.5px;
+    }
+
+    .live-control-icon{
+        height: 16px;
+        width: 16px;
+    }
+
+    .live-picker-header h2, .live-confirm-content h2{
+        font-size: 16px;
+    }
+    
+    .live-picker-header p, .live-confirm-content > p{
+        font-size: 12px;
+    }
+
+    .live-train-number, .live-train-name, .live-confirm-train-number{
+        font-size: 13px;
+    }
+
+    .live-confirm-icon{
+        height: 25px;
+        width: 25px;
+    }
+
+    .live-confirm-dot{
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Live status */
+
+.live-status-panel {
+    position: absolute;
+    top: 76px;
+    left: 16px;
+    z-index: 1000;
+    width: min(310px, calc(100vw - 32px));
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+}
+
+.live-status-section {
+    padding: 14px;
+}
+
+.live-status-section + .live-status-section {
+    border-top: 1px solid var(--line);
+}
+
+.live-status-section.sharing {
+    background: rgba(30, 138, 91, 0.025);
+}
+
+.live-status-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.live-status-dot,
+.live-status-sharing-dot {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    margin-top: 5px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 0 4px var(--teal-soft);
+}
+
+.live-status-sharing-dot {
+    background: var(--green);
+    box-shadow: 0 0 0 4px var(--green-soft);
+}
+
+.live-status-heading-text {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.live-status-heading-text strong {
+    overflow: hidden;
+    color: var(--text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.live-status-heading-text span {
+    color: var(--text-soft);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.live-status-message {
+    margin-top: 10px;
+    color: var(--text-soft);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.live-status-message.error {
+    color: var(--red);
+}
+
+.live-status-stop {
+    width: 100%;
+    min-height: 34px;
+    margin-top: 11px;
+    border: 1px solid rgba(46, 111, 142, 0.18);
+    border-radius: 9px;
+    background: var(--teal-soft);
+    color: var(--teal);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.live-status-stop:hover {
+    background: var(--surface-2);
+}
+
+.live-status-stop.sharing {
+    border-color: rgba(30, 138, 91, 0.18);
+    background: var(--green-soft);
+    color: var(--green);
+}
+
+.live-status-stop.sharing:hover {
+    background: var(--surface-2);
+}
+
+.live-status-stop:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}

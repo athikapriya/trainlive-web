@@ -12,7 +12,7 @@ function Register() {
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const { login } = useAuth();
-    
+
     const stateFrom = location.state?.from;
     const queryFrom = searchParams.get("from");
 
@@ -21,6 +21,8 @@ function Register() {
     const stationId = searchParams.get("station");
     const trainNumber = searchParams.get("train");
     const reportIntent = searchParams.get("report") === "true";
+
+    const liveIntent = searchParams.get("live");
 
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
@@ -62,6 +64,7 @@ function Register() {
 
         if (password !== confirmPassword) {
             setError("Passwords do not match.");
+
             return;
         }
 
@@ -69,6 +72,7 @@ function Register() {
 
         try {
             await registerUser(fullName, email, password, confirmPassword);
+
             await login(email, password);
 
             if (from) {
@@ -81,6 +85,14 @@ function Register() {
 
             if (reportIntent) {
                 navigate("/?report=true", {
+                    replace: true,
+                });
+
+                return;
+            }
+
+            if (liveIntent === "show" || liveIntent === "share") {
+                navigate(`/?live=${liveIntent}`, {
                     replace: true,
                 });
 
@@ -126,6 +138,8 @@ function Register() {
 
         if (reportIntent) {
             params.set("report", "true");
+        } else if (liveIntent === "show" || liveIntent === "share") {
+            params.set("live", liveIntent);
         } else if (trainNumber) {
             params.set("train", trainNumber);
         } else if (stationId) {
