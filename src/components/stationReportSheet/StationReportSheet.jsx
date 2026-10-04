@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FiChevronDown } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
+import { FiChevronDown, FiShare2 } from "react-icons/fi";
 
 import useAuth from "../../hooks/useAuth";
 import { getStationReports, getReportVote, voteOnReport } from "../../services/reportApi";
@@ -42,7 +42,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                     accessToken,
                     signal: controller.signal,
                 });
-                
+
                 if (controller.signal.aborted) {
                     return;
                 }
@@ -155,6 +155,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                 }
 
                 const savedList = data.results || data || [];
+
                 const saved = savedList.find((item) => Number(item.station) === Number(station.id));
 
                 if (saved) {
@@ -171,6 +172,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
 
                 console.error("Saved station loading failed:", error);
                 console.error("Saved station error data:", error.data);
+
                 setIsSaved(false);
                 setSavedStationId(null);
             }
@@ -192,6 +194,36 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
         navigate(`/login?station=${encodeURIComponent(station.id)}`);
     };
 
+    const handleShareReport = async (report) => {
+        const url = `${window.location.origin}/reports/${report.id}`;
+
+        const title = `${report.train?.name || "TrainLive"} report`;
+
+        const text = report.note?.trim()
+            ? report.note
+            : `Community report from ${station?.name_en || station?.name || "this station"}`;
+
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title,
+                    text,
+                    url,
+                });
+
+                return;
+            }
+
+            await navigator.clipboard.writeText(url);
+        } catch (error) {
+            if (error.name === "AbortError") {
+                return;
+            }
+
+            console.error("Share report failed:", error);
+        }
+    };
+
     const handleSaveStation = async () => {
         if (isSaving || !station?.id) {
             return;
@@ -210,13 +242,19 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
             setIsSaving(true);
 
             if (isSaved && savedStationId) {
-                await deleteSavedStation(savedStationId, { accessToken });
+                await deleteSavedStation(savedStationId, {
+                    accessToken,
+                });
+
                 setIsSaved(false);
                 setSavedStationId(null);
+
                 return;
             }
 
-            const saved = await saveStation(station.id, { accessToken });
+            const saved = await saveStation(station.id, {
+                accessToken,
+            });
 
             setIsSaved(true);
             setSavedStationId(saved.id);
@@ -251,7 +289,9 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
         try {
             setVotingReport(report.id);
 
-            await voteOnReport(report.id, vote, { accessToken });
+            await voteOnReport(report.id, vote, {
+                accessToken,
+            });
 
             setVotes((current) => ({
                 ...current,
@@ -265,6 +305,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                     }
 
                     const previousVote = currentVote;
+
                     let rightVotes = item.right_votes || 0;
                     let wrongVotes = item.wrong_votes || 0;
 
@@ -285,6 +326,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                     }
 
                     const total = rightVotes + wrongVotes;
+
                     const trust = total > 0 ? Math.round((rightVotes / total) * 100) : null;
 
                     return {
@@ -331,6 +373,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                     <div className={styles.stationInfo}>
                         <div className={styles.stationTitleRow}>
                             <span className={styles.stationDot} />
+
                             <h2>{station.name}</h2>
                         </div>
 
@@ -391,7 +434,8 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                             <br />
                                             Please vote ✓ if the report is correct and ✕ if it is incorrect.
                                             <br />
-                                            ETA is estimated from the latest community report and may vary with actual train movement.
+                                            ETA is estimated from the latest community report and may vary with actual
+                                            train movement.
                                         </span>
 
                                         <span className={styles.infoBangla}>কমিউনিটি-ভিত্তিক রিপোর্ট</span>
@@ -402,7 +446,8 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                             <br />
                                             রিপোর্টটি সঠিক হলে ✓ এবং ভুল হলে ✕ ভোট দিন।
                                             <br />
-                                            ETA সর্বশেষ কমিউনিটি রিপোর্টের ভিত্তিতে আনুমানিক; ট্রেনের প্রকৃত চলাচলের কারণে সময় পরিবর্তিত হতে পারে।
+                                            ETA সর্বশেষ কমিউনিটি রিপোর্টের ভিত্তিতে আনুমানিক; ট্রেনের প্রকৃত চলাচলের
+                                            কারণে সময় পরিবর্তিত হতে পারে।
                                         </span>
                                     </span>
                                 </span>
@@ -424,6 +469,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                     {!isLoading && error === "LOAD_FAILED" && (
                         <div className={styles.empty}>
                             <div className={styles.emptyIcon}>⚠️</div>
+
                             <h3>Unable to load reports</h3>
                         </div>
                     )}
@@ -431,7 +477,9 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                     {!isLoading && !error && reports.length === 0 && (
                         <div className={styles.empty}>
                             <div className={styles.emptyIcon}>📍</div>
+
                             <h3>No reports today</h3>
+
                             <p>No one has reported an update from this station today.</p>
                         </div>
                     )}
@@ -451,6 +499,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                                     <div className={styles.reportTop}>
                                                         <div>
                                                             <strong>{report.train?.name}</strong>
+
                                                             {report.train?.name_bn && (
                                                                 <span className={styles.trainNameBn}>
                                                                     {report.train.name_bn}
@@ -487,11 +536,15 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                 }
 
                                 const isExpanded = expandedReport === report.id;
-                                const delay = getDelayInfo(report, styles);
+
+                                const delay = report.event_type !== "UPDATE" ? getDelayInfo(report, styles) : null;
+
                                 const myVote = votes[report.id];
 
                                 const rightVotes = report.right_votes || 0;
+
                                 const wrongVotes = report.wrong_votes || 0;
+
                                 const totalVotes = rightVotes + wrongVotes;
 
                                 const trust =
@@ -506,10 +559,17 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                         key={report.id}
                                         className={`${styles.reportCard} ${isExpanded ? styles.expanded : ""}`}
                                     >
-                                        <button
-                                            type="button"
+                                        <div
                                             className={styles.reportMain}
                                             onClick={() => toggleReport(report.id)}
+                                            role="button"
+                                            tabIndex={0}
+                                            onKeyDown={(event) => {
+                                                if (event.key === "Enter" || event.key === " ") {
+                                                    event.preventDefault();
+                                                    toggleReport(report.id);
+                                                }
+                                            }}
                                         >
                                             <div className={styles.trainIcon}>
                                                 <span>{report.train?.number}</span>
@@ -527,14 +587,29 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                                         )}
                                                     </div>
 
-                                                    <span
-                                                        className={`${styles.eventPill} ${getEventClass(
-                                                            report.event_type,
-                                                            styles
-                                                        )}`}
-                                                    >
-                                                        {getEventLabel(report.event_type)}
-                                                    </span>
+                                                    <div className={styles.reportTopActions}>
+                                                        <span
+                                                            className={`${styles.eventPill} ${getEventClass(
+                                                                report.event_type,
+                                                                styles
+                                                            )}`}
+                                                        >
+                                                            {getEventLabel(report.event_type)}
+                                                        </span>
+
+                                                        <button
+                                                            type="button"
+                                                            className={styles.shareButton}
+                                                            aria-label="Share report"
+                                                            title="Share report"
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                handleShareReport(report);
+                                                            }}
+                                                        >
+                                                            <FiShare2 size={15} strokeWidth={2} />
+                                                        </button>
+                                                    </div>
                                                 </div>
 
                                                 <div className={styles.trainMeta}>Train {report.train?.number}</div>
@@ -545,12 +620,13 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                                     {report.event_time_ago && (
                                                         <>
                                                             <span>·</span>
+
                                                             <RelativeTime timestamp={report.event_time} />
                                                         </>
                                                     )}
                                                 </div>
 
-                                                {report.note?.trim() && (
+                                                {report.note?.trim() && report.event_type !== "UPDATE" && (
                                                     <div className={styles.reportNotePreview}>
                                                         <span>Update:</span> {report.note}
                                                     </div>
@@ -566,62 +642,81 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                                     }
                                                 />
                                             </div>
-                                        </button>
-
-                                        <div className={styles.statusRow}>
-                                            <span className={`${styles.delayBadge} ${delay.className}`}>
-                                                {delay.label}
-                                            </span>
-
-                                            {report.scheduled_time && (
-                                                <span className={styles.scheduled}>
-                                                    Scheduled {report.scheduled_time}
-                                                </span>
-                                            )}
                                         </div>
+
+                                        {report.event_type !== "UPDATE" && (
+                                            <div className={styles.statusRow}>
+                                                <span className={`${styles.delayBadge} ${delay.className}`}>
+                                                    {delay.label}
+                                                </span>
+
+                                                {report.scheduled_time && (
+                                                    <span className={styles.scheduled}>
+                                                        Scheduled {report.scheduled_time}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
 
                                         {(() => {
                                             const currentStationId = report.station?.id;
+
                                             const stops = report.eta?.stops || [];
+
                                             const currentStopIndex = stops.findIndex(
                                                 (stop) => Number(stop.station?.id) === Number(currentStationId)
                                             );
+
                                             const nextStop =
-                                                currentStopIndex !== -1
-                                                    ? stops[currentStopIndex + 1]
-                                                    : null;
+                                                currentStopIndex !== -1 ? stops[currentStopIndex + 1] : null;
+
                                             if (!nextStop) {
                                                 return null;
                                             }
 
                                             return (
                                                 <div className={styles.nextStopRow}>
-                                                    <span className={styles.nextStop}>
-                                                        Next stop: {nextStop.station?.name_en || nextStop.station?.name}
-                                                    </span>
-
-                                                    {nextStop.eta_arrival && (
-                                                        <span className={styles.nextStopEta}>
-                                                            ETA: {nextStop.eta_arrival}
+                                                    <div className={styles.nextStopInfo}>
+                                                        <span className={styles.nextStop}>
+                                                            Next stop:{" "}
+                                                            {nextStop.station?.name_en || nextStop.station?.name}
                                                         </span>
+
+                                                        {nextStop.eta_arrival && (
+                                                            <span className={styles.nextStopEta}>
+                                                                ETA: {nextStop.eta_arrival}
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    {report.train?.number && (
+                                                        <Link
+                                                            to={`/trains/${encodeURIComponent(report.train.number)}`}
+                                                            className={styles.trainDetailsLink}
+                                                            onClick={(event) => event.stopPropagation()}
+                                                        >
+                                                            Train details →
+                                                        </Link>
                                                     )}
                                                 </div>
                                             );
                                         })()}
 
                                         <div className={styles.reportBangla}>
-                                            {report.status_summary?.text && (
+                                            {report.event_type === "UPDATE" && report.note?.trim() ? (
                                                 <div className={styles.statusSummary}>
-                                                    <div>
-                                                        {report.status_summary.text}
-                                                    </div>
-                                        
-                                                    {report.status_summary.next_station_text && (
-                                                        <div>
-                                                            {report.status_summary.next_station_text}
-                                                        </div>
-                                                    )}
+                                                    <div className={styles.updateSummary}>{report.note}</div>
                                                 </div>
+                                            ) : (
+                                                report.status_summary?.text && (
+                                                    <div className={styles.statusSummary}>
+                                                        <div>{report.status_summary.text}</div>
+
+                                                        {report.status_summary.next_station_text && (
+                                                            <div>{report.status_summary.next_station_text}</div>
+                                                        )}
+                                                    </div>
+                                                )
                                             )}
                                         </div>
 
@@ -664,28 +759,35 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                                 <div className={styles.detailGrid}>
                                                     <div className={styles.detailItem}>
                                                         <span>Event</span>
+
                                                         <strong>{getEventLabel(report.event_type)}</strong>
                                                     </div>
 
                                                     <div className={styles.detailItem}>
                                                         <span>Reported</span>
+
                                                         <strong>{report.event_time_display}</strong>
                                                     </div>
 
                                                     <div className={styles.detailItem}>
                                                         <span>Scheduled</span>
+
                                                         <strong>{report.scheduled_time || "—"}</strong>
                                                     </div>
 
-                                                    <div className={styles.detailItem}>
-                                                        <span>Delay</span>
-                                                        <strong>{delay.label}</strong>
-                                                    </div>
+                                                    {report.event_type !== "UPDATE" && (
+                                                        <div className={styles.detailItem}>
+                                                            <span>Delay</span>
+
+                                                            <strong>{delay.label}</strong>
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {report.note?.trim() && (
                                                     <div className={styles.note}>
                                                         <span>Traveller note</span>
+
                                                         <p>{report.note}</p>
                                                     </div>
                                                 )}
@@ -694,6 +796,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
                                                     <div className={styles.trustHeader}>
                                                         <div>
                                                             <span>Community trust</span>
+
                                                             <small>Based on traveller votes</small>
                                                         </div>
 

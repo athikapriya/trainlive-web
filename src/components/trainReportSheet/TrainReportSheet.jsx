@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FiChevronDown } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
+import { FiChevronDown, FiShare2 } from "react-icons/fi";
 
 import useAuth from "../../hooks/useAuth";
 import { getReportVote, voteOnReport } from "../../services/reportApi";
@@ -39,6 +39,7 @@ function getReportTitle(report) {
 function TrainReportSheet({ train, reports: initialReports = [], highlightReportId = null, onClose }) {
     const navigate = useNavigate();
     const { isAuthenticated, accessToken } = useAuth();
+
     const [reports, setReports] = useState(initialReports);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -229,6 +230,36 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
         }
 
         navigate(`/login?train=${encodeURIComponent(train.number)}`);
+    };
+
+    const handleShareReport = async (report) => {
+        const url = `${window.location.origin}/reports/${report.id}`;
+
+        const title = `${report.train?.name || train?.name || "TrainLive"} report`;
+
+        const text = report.note?.trim()
+            ? report.note
+            : `Community report for ${train?.name || `Train ${train?.number || ""}`}`;
+
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title,
+                    text,
+                    url,
+                });
+
+                return;
+            }
+
+            await navigator.clipboard.writeText(url);
+        } catch (error) {
+            if (error.name === "AbortError") {
+                return;
+            }
+
+            console.error("Share report failed:", error);
+        }
     };
 
     const handleSaveTrain = async () => {
@@ -432,7 +463,8 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                             <br />
                                             Please vote ✓ if the report is correct and ✕ if it is incorrect.
                                             <br />
-                                            ETA is estimated from the latest community report and may vary with actual train movement.
+                                            ETA is estimated from the latest community report and may vary with actual
+                                            train movement.
                                         </span>
 
                                         <span className={styles.infoBangla}>কমিউনিটি-ভিত্তিক রিপোর্ট</span>
@@ -443,7 +475,8 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                             <br />
                                             রিপোর্টটি সঠিক হলে ✓ এবং ভুল হলে ✕ ভোট দিন।
                                             <br />
-                                            ETA সর্বশেষ কমিউনিটি রিপোর্টের ভিত্তিতে আনুমানিক; ট্রেনের প্রকৃত চলাচলের কারণে সময় পরিবর্তিত হতে পারে।
+                                            ETA সর্বশেষ কমিউনিটি রিপোর্টের ভিত্তিতে আনুমানিক; ট্রেনের প্রকৃত চলাচলের
+                                            কারণে সময় পরিবর্তিত হতে পারে।
                                         </span>
                                     </span>
                                 </span>
@@ -472,7 +505,9 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                     {!isLoading && !error && reports.length === 0 && (
                         <div className={styles.empty}>
                             <div className={styles.emptyIcon}>🚆</div>
+
                             <h3>No reports yet</h3>
+
                             <p>No one has reported an update for this train in the last 24 hours.</p>
                         </div>
                     )}
@@ -525,11 +560,15 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                 }
 
                                 const isExpanded = expandedReport === report.id;
-                                const delay = getDelayInfo(report, styles);
+
+                                const delay = report.event_type !== "UPDATE" ? getDelayInfo(report, styles) : null;
+
                                 const myVote = votes[report.id];
 
                                 const rightVotes = report.right_votes || 0;
+
                                 const wrongVotes = report.wrong_votes || 0;
+
                                 const totalVotes = rightVotes + wrongVotes;
 
                                 const trust =
@@ -544,10 +583,17 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                         key={report.id}
                                         className={`${styles.reportCard} ${isExpanded ? styles.expanded : ""}`}
                                     >
-                                        <button
-                                            type="button"
+                                        <div
                                             className={styles.reportMain}
                                             onClick={() => toggleReport(report.id)}
+                                            role="button"
+                                            tabIndex={0}
+                                            onKeyDown={(event) => {
+                                                if (event.key === "Enter" || event.key === " ") {
+                                                    event.preventDefault();
+                                                    toggleReport(report.id);
+                                                }
+                                            }}
                                         >
                                             <div className={styles.trainIcon}>
                                                 <span>{getStationCode(station)}</span>
@@ -557,14 +603,29 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                                 <div className={styles.reportTop}>
                                                     <strong>{getReportTitle(report)}</strong>
 
-                                                    <span
-                                                        className={`${styles.eventPill} ${getEventClass(
-                                                            report.event_type,
-                                                            styles
-                                                        )}`}
-                                                    >
-                                                        {getEventLabel(report.event_type)}
-                                                    </span>
+                                                    <div className={styles.reportTopActions}>
+                                                        <span
+                                                            className={`${styles.eventPill} ${getEventClass(
+                                                                report.event_type,
+                                                                styles
+                                                            )}`}
+                                                        >
+                                                            {getEventLabel(report.event_type)}
+                                                        </span>
+
+                                                        <button
+                                                            type="button"
+                                                            className={styles.shareButton}
+                                                            aria-label="Share report"
+                                                            title="Share report"
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                handleShareReport(report);
+                                                            }}
+                                                        >
+                                                            <FiShare2 size={15} strokeWidth={2} />
+                                                        </button>
+                                                    </div>
                                                 </div>
 
                                                 {station?.name_en && (
@@ -577,12 +638,13 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                                     {report.event_time_ago && (
                                                         <>
                                                             <span>·</span>
+
                                                             <RelativeTime timestamp={report.event_time} />
                                                         </>
                                                     )}
                                                 </div>
 
-                                                {report.note?.trim() && (
+                                                {report.note?.trim() && report.event_type !== "UPDATE" && (
                                                     <div className={styles.reportNotePreview}>
                                                         <span>Update:</span> {report.note}
                                                     </div>
@@ -598,61 +660,81 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                                     }
                                                 />
                                             </div>
-                                        </button>
-
-                                        <div className={styles.statusRow}>
-                                            <span className={`${styles.delayBadge} ${delay.className}`}>
-                                                {delay.label}
-                                            </span>
-
-                                            {report.scheduled_time && (
-                                                <span className={styles.scheduled}>
-                                                    Scheduled {report.scheduled_time}
-                                                </span>
-                                            )}
                                         </div>
 
+                                        {report.event_type !== "UPDATE" && (
+                                            <div className={styles.statusRow}>
+                                                <span className={`${styles.delayBadge} ${delay.className}`}>
+                                                    {delay.label}
+                                                </span>
+
+                                                {report.scheduled_time && (
+                                                    <span className={styles.scheduled}>
+                                                        Scheduled {report.scheduled_time}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+
                                         {(() => {
-                                            const currentStationId = report.station?.id
+                                            const currentStationId = report.station?.id;
+
                                             const stops = report.eta?.stops || [];
+
                                             const currentStopIndex = stops.findIndex(
                                                 (stop) => Number(stop.station?.id) === Number(currentStationId)
                                             );
+
                                             const nextStop =
-                                                currentStopIndex !== -1
-                                                    ? stops[currentStopIndex + 1]
-                                                    : null;
+                                                currentStopIndex !== -1 ? stops[currentStopIndex + 1] : null;
+
                                             if (!nextStop) {
                                                 return null;
                                             }
+
                                             return (
                                                 <div className={styles.nextStopRow}>
-                                                    <span className={styles.nextStop}>
-                                                        Next stop: {nextStop.station?.name_en || nextStop.station?.name}
-                                                    </span>
-
-                                                    {nextStop.eta_arrival && (
-                                                        <span className={styles.nextStopEta}>
-                                                            ETA: {nextStop.eta_arrival}
+                                                    <div className={styles.nextStopInfo}>
+                                                        <span className={styles.nextStop}>
+                                                            Next stop:{" "}
+                                                            {nextStop.station?.name_en || nextStop.station?.name}
                                                         </span>
+
+                                                        {nextStop.eta_arrival && (
+                                                            <span className={styles.nextStopEta}>
+                                                                ETA: {nextStop.eta_arrival}
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    {report.train?.number && (
+                                                        <Link
+                                                            to={`/trains/${encodeURIComponent(report.train.number)}`}
+                                                            className={styles.trainDetailsLink}
+                                                            onClick={(event) => event.stopPropagation()}
+                                                        >
+                                                            Train details →
+                                                        </Link>
                                                     )}
                                                 </div>
                                             );
                                         })()}
 
                                         <div className={styles.reportBangla}>
-                                            {report.status_summary?.text && (
+                                            {report.event_type === "UPDATE" && report.note?.trim() ? (
                                                 <div className={styles.statusSummary}>
-                                                    <div>
-                                                        {report.status_summary.text}
-                                                    </div>
-
-                                                    {report.status_summary.next_station_text && (
-                                                        <div>
-                                                            {report.status_summary.next_station_text}
-                                                        </div>
-                                                    )}
+                                                    <div className={styles.updateSummary}>{report.note}</div>
                                                 </div>
+                                            ) : (
+                                                report.status_summary?.text && (
+                                                    <div className={styles.statusSummary}>
+                                                        <div>{report.status_summary.text}</div>
+
+                                                        {report.status_summary.next_station_text && (
+                                                            <div>{report.status_summary.next_station_text}</div>
+                                                        )}
+                                                    </div>
+                                                )
                                             )}
                                         </div>
 
@@ -695,28 +777,35 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                                 <div className={styles.detailGrid}>
                                                     <div className={styles.detailItem}>
                                                         <span>Event</span>
+
                                                         <strong>{getEventLabel(report.event_type)}</strong>
                                                     </div>
 
                                                     <div className={styles.detailItem}>
                                                         <span>Reported</span>
+
                                                         <strong>{report.event_time_display}</strong>
                                                     </div>
 
                                                     <div className={styles.detailItem}>
                                                         <span>Scheduled</span>
+
                                                         <strong>{report.scheduled_time || "—"}</strong>
                                                     </div>
 
-                                                    <div className={styles.detailItem}>
-                                                        <span>Delay</span>
-                                                        <strong>{delay.label}</strong>
-                                                    </div>
+                                                    {report.event_type !== "UPDATE" && (
+                                                        <div className={styles.detailItem}>
+                                                            <span>Delay</span>
+
+                                                            <strong>{delay.label}</strong>
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {report.note?.trim() && (
                                                     <div className={styles.note}>
                                                         <span>Traveller note</span>
+
                                                         <p>{report.note}</p>
                                                     </div>
                                                 )}
@@ -725,6 +814,7 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
                                                     <div className={styles.trustHeader}>
                                                         <div>
                                                             <span>Community trust</span>
+
                                                             <small>Based on traveller votes</small>
                                                         </div>
 
@@ -742,6 +832,7 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
 
                                                     <div className={styles.trustStats}>
                                                         <span>✓ {rightVotes} সঠিক</span>
+
                                                         <span>✕ {wrongVotes} ভুল</span>
                                                     </div>
                                                 </div>
