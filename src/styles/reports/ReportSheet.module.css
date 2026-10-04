@@ -2,7 +2,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 78px;
+    bottom: 77px;
     z-index: 1999;
     display: flex;
     align-items: flex-end;
@@ -11,7 +11,7 @@
 
 .sheet {
     width: 100%;
-    max-height: 62vh;
+    max-height: 68vh;
     display: flex;
     flex-direction: column;
     background: var(--surface);
@@ -567,7 +567,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text-soft);
-    font-size: 9px;
+    font-size: 9.5px;
     font-weight: 700;
 }
 
@@ -987,7 +987,68 @@
     color: var(--text);
     font-size: 11px;
     line-height: 1.45;
+    font-weight: 400;
+    font-family: "Noto Sans Bengali", sans-serif;
+}
+
+.updateSummary {
+    font-family: "Noto Sans Bengali", sans-serif;
+    font-size: 11px;
+    line-height: 1.55;
     font-weight: 500;
+    color: var(--text);
+}
+
+.nextStopRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.nextStopInfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.trainDetailsLink {
+    flex-shrink: 0;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    color: var(--teal);
+}
+
+.trainDetailsLink:hover {
+    text-decoration: underline;
+}
+
+.reportTopActions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.shareButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.shareButton:hover {
+    background: var(--surface-soft);
+    color: var(--teal);
 }
 
 /* =========================================================

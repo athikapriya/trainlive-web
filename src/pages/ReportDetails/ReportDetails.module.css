@@ -1,0 +1,115 @@
+.content {
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 18px 0 20px;
+    background: var(--bg);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-bottom: 18px;
+    padding: 7px 10px;
+
+    border: 1px solid var(--line);
+    border-radius: 9px;
+
+    background: var(--surface);
+    color: var(--text-soft);
+
+    font: inherit;
+    font-size: 11px;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease,
+        transform 160ms ease;
+}
+
+.backButton:hover {
+    background: var(--surface-2);
+    border-color: var(--line-strong);
+    color: var(--text);
+}
+
+.backButton:active {
+    transform: translateY(1px);
+}
+
+.loadingState {
+    min-height: 300px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    color: var(--text-soft);
+    font-size: 11px;
+}
+
+.spinner {
+    width: 15px;
+    height: 15px;
+
+    border: 2px solid var(--line);
+    border-top-color: var(--green);
+
+    border-radius: 50%;
+
+    animation: reportDetailsSpin 700ms linear infinite;
+}
+
+@keyframes reportDetailsSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.errorState {
+    padding: 20px;
+
+    border: 1px solid var(--red);
+    border-radius: 12px;
+
+    background: var(--red-soft);
+    color: var(--red);
+}
+
+.errorIcon {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 10px;
+
+    border-radius: 9px;
+
+    background: var(--surface);
+}
+
+.errorTitle {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.errorMessage {
+    margin-top: 5px;
+
+    font-size: 10px;
+    line-height: 1.5;
+}

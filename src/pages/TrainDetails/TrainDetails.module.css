@@ -1,3 +1,15 @@
+.content {
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 18px 0 20px;
+    background: var(--bg);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
 /* =========================================================
    Navigation
 ========================================================= */
@@ -921,6 +933,11 @@
     background: var(--red-soft);
     color: var(--red);
     font-size: 11px;
+}
+
+.reportCardHighlighted {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
 }
 
 /* =========================================================

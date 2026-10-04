@@ -106,3 +106,21 @@ export async function createReport(
 
     return response.json();
 }
+
+
+export async function getReport(reportId, { accessToken = null, signal } = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/reports/${encodeURIComponent(reportId)}/`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            ...getAuthHeaders(accessToken),
+        },
+        signal,
+    });
+
+    if (!response.ok) {
+        throw await parseError(response);
+    }
+
+    return response.json();
+}

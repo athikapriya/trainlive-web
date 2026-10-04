@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+
 import {
     FiArrowLeft,
     FiArrowRight,
@@ -13,6 +14,7 @@ import {
 
 import useAuth from "../../hooks/useAuth";
 import PageHeader from "../../layouts/PageHeader/PageHeader";
+import PageFooter from "../../layouts/PageFooter/PageFooter";
 
 import { getTrain, getTrainHistory, getTrainReports } from "../../services/trainApi";
 
@@ -22,6 +24,7 @@ import styles from "./TrainDetails.module.css";
 /* =========================================================
    Station helpers
 ========================================================= */
+
 function getStationName(station) {
     if (!station) return "Unknown station";
 
@@ -41,6 +44,7 @@ function getStationEnglishName(station) {
 /* =========================================================
    Time helpers
 ========================================================= */
+
 function timeToMinutes(time) {
     if (!time) return null;
 
@@ -93,6 +97,7 @@ function formatDuration(minutes) {
 /* =========================================================
    ETA helpers
 ========================================================= */
+
 function getEtaStopMap(report) {
     const eta = report?.eta;
 
@@ -183,6 +188,7 @@ function isEtaStillActive(destinationEta) {
 /* =========================================================
    Route schedule
 ========================================================= */
+
 function buildRouteSchedule(stops = []) {
     if (!stops.length) {
         return {
@@ -281,6 +287,7 @@ function buildRouteSchedule(stops = []) {
 /* =========================================================
    Report helpers
 ========================================================= */
+
 function getTodayDateKey() {
     return new Intl.DateTimeFormat("en-CA", {
         timeZone: "Asia/Dhaka",
@@ -327,6 +334,7 @@ function formatReportTime(value) {
 /* =========================================================
    History helpers
 ========================================================= */
+
 function getHistoryBarClass(day) {
     if (day.status === "ON_TIME") {
         return styles.historyOnTime;
@@ -393,23 +401,35 @@ function getHistoryTooltip(day) {
 /* =========================================================
    Component
 ========================================================= */
+
 function TrainDetails() {
     const { trainNumber } = useParams();
     const navigate = useNavigate();
 
-    const { user, accessToken } = useAuth();
+    const [searchParams] = useSearchParams();
+
+    const { user, accessToken, isLoading: authLoading } = useAuth();
+
+    const highlightReportId = searchParams.get("report");
 
     const [train, setTrain] = useState(null);
     const [history, setHistory] = useState(null);
     const [reports, setReports] = useState([]);
+    const [highlightedReportId, setHighlightedReportId] = useState(null);
 
     const [historyDays, setHistoryDays] = useState(7);
 
     const [loading, setLoading] = useState(true);
+
     const [historyLoading, setHistoryLoading] = useState(false);
+
     const [error, setError] = useState("");
 
     const [, setEtaClock] = useState(0);
+
+    /* =====================================================
+       ETA clock
+    ===================================================== */
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -419,19 +439,34 @@ function TrainDetails() {
         return () => clearInterval(interval);
     }, []);
 
+    /* =====================================================
+       Authentication
+       
+       IMPORTANT:
+       Wait for auth restoration before redirecting.
+       ===================================================== */
+
     useEffect(() => {
+        if (authLoading) {
+            return;
+        }
+
         if (!user) {
             navigate("/login", {
                 replace: true,
                 state: {
-                    from: `/trains/${trainNumber}`,
+                    from: `/trains/${trainNumber}${highlightReportId ? `?report=${highlightReportId}` : ""}`,
                 },
             });
         }
-    }, [user, trainNumber, navigate]);
+    }, [authLoading, user, trainNumber, highlightReportId, navigate]);
+
+    /* =====================================================
+       Train + today's reports
+    ===================================================== */
 
     useEffect(() => {
-        if (!user || !accessToken) {
+        if (authLoading || !user || !accessToken) {
             return undefined;
         }
 
@@ -444,14 +479,18 @@ function TrainDetails() {
 
                 const trainData = await getTrain(trainNumber);
 
-                if (controller.signal.aborted) return;
+                if (controller.signal.aborted) {
+                    return;
+                }
 
                 const reportsData = await getTrainReports(trainData.id, {
                     accessToken,
                     signal: controller.signal,
                 });
 
-                if (controller.signal.aborted) return;
+                if (controller.signal.aborted) {
+                    return;
+                }
 
                 const allReports = Array.isArray(reportsData) ? reportsData : reportsData?.results || [];
 
@@ -464,7 +503,9 @@ function TrainDetails() {
                 setTrain(trainData);
                 setReports(todaysReports);
             } catch (err) {
-                if (err.name === "AbortError") return;
+                if (err.name === "AbortError") {
+                    return;
+                }
 
                 console.error("Failed to load train details:", err);
 
@@ -479,10 +520,14 @@ function TrainDetails() {
         loadTrain();
 
         return () => controller.abort();
-    }, [trainNumber, user, accessToken]);
+    }, [trainNumber, user, accessToken, authLoading]);
+
+    /* =====================================================
+       Train history
+    ===================================================== */
 
     useEffect(() => {
-        if (!user || !accessToken) {
+        if (authLoading || !user || !accessToken) {
             return undefined;
         }
 
@@ -497,11 +542,15 @@ function TrainDetails() {
                     signal: controller.signal,
                 });
 
-                if (controller.signal.aborted) return;
+                if (controller.signal.aborted) {
+                    return;
+                }
 
                 setHistory(historyData);
             } catch (err) {
-                if (err.name === "AbortError") return;
+                if (err.name === "AbortError") {
+                    return;
+                }
 
                 console.error("Failed to load train history:", err);
 
@@ -518,7 +567,40 @@ function TrainDetails() {
         loadHistory();
 
         return () => controller.abort();
-    }, [trainNumber, historyDays, user, accessToken]);
+    }, [trainNumber, historyDays, user, accessToken, authLoading]);
+
+    /* =====================================================
+       Shared report highlighting
+    ===================================================== */
+
+    useEffect(() => {
+        if (!highlightReportId || !reports.length) {
+            return;
+        }
+
+        const reportExists = reports.some((report) => report.id === highlightReportId);
+
+        if (!reportExists) {
+            return;
+        }
+
+        setHighlightedReportId(highlightReportId);
+
+        const timer = setTimeout(() => {
+            const reportElement = document.querySelector(`[data-report-id="${highlightReportId}"]`);
+
+            reportElement?.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+        }, 200);
+
+        return () => clearTimeout(timer);
+    }, [highlightReportId, reports]);
+
+    /* =====================================================
+       Derived data
+    ===================================================== */
 
     const routeSchedule = useMemo(() => buildRouteSchedule(train?.stops || []), [train?.stops]);
 
@@ -563,459 +645,522 @@ function TrainDetails() {
 
     const latestReport = reports[0] || null;
 
-    if (!user) {
-        return null;
-    }
+    /* =====================================================
+       Header data
+       Header remains mounted even while train is loading.
+    ===================================================== */
 
-    if (loading) {
-        return (
-            <div className={pageStyles.page}>
-                <div className={styles.loadingState}>
-                    <div className={styles.spinner} />
-                    <span>Loading train details...</span>
-                </div>
-            </div>
-        );
-    }
+    const headerTitle = train?.name || `Train ${trainNumber}`;
 
-    if (error) {
-        return (
-            <div className={pageStyles.page}>
-                <PageHeader title="Train details" subtitle="Unable to load this train" />
+    const headerSubtitle = train?.name_bn || "Train details";
 
-                <div className={pageStyles.content}>
-                    <div className={pageStyles.contentInner}>
-                        <div className={styles.errorState}>{error}</div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    const offDay = train?.off_day?.trim() || "No off day";
 
-    if (!train) {
-        return (
-            <div className={pageStyles.page}>
-                <PageHeader title="Train details" subtitle="Train not found" />
+    /* =====================================================
+       Stable render tree
 
-                <div className={pageStyles.content}>
-                    <div className={pageStyles.contentInner}>
-                        <div className={styles.errorState}>Train not found.</div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    const offDay = train.off_day?.trim() ? train.off_day : "No off day";
+       IMPORTANT:
+       No `if (!user) return null`.
+       No loading early return.
+       PageHeader stays mounted.
+    ===================================================== */
 
     return (
         <div className={pageStyles.page}>
-            <PageHeader title={train.name || `Train ${train.number}`} subtitle={train.name_bn || ""}>
-                <div className={styles.headerMeta}>
-                    <span className={styles.trainNumber}>{train.number}</span>
+            <PageHeader title={headerTitle} subtitle={headerSubtitle}>
+                {train && (
+                    <div className={styles.headerMeta}>
+                        <span className={styles.trainNumber}>{train.number}</span>
 
-                    <span className={styles.metaPill}>{train.direction === "UP" ? "↑ UP" : "↓ DOWN"}</span>
+                        <span className={styles.metaPill}>{train.direction === "UP" ? "↑ UP" : "↓ DOWN"}</span>
 
-                    <span className={styles.metaPill}>Off day: {offDay}</span>
-                </div>
+                        <span className={styles.metaPill}>Off day: {offDay}</span>
+                    </div>
+                )}
             </PageHeader>
 
-            <div className={pageStyles.content}>
+            <div className={styles.content}>
                 <div className={pageStyles.contentInner}>
                     {/* =================================================
-                        Back navigation
+                        Authentication loading
                     ================================================= */}
-                    <button type="button" className={styles.backButton} onClick={() => navigate(-1)}>
-                        <FiArrowLeft size={15} />
-                        <span>Back to trains</span>
-                    </button>
+
+                    {authLoading && (
+                        <div className={styles.loadingState}>
+                            <div className={styles.spinner} />
+
+                            <span>Loading train details...</span>
+                        </div>
+                    )}
 
                     {/* =================================================
-                        Train hero
+                        Normal train loading
                     ================================================= */}
-                    <section className={styles.trainHero}>
-                        <div className={styles.heroGlow} />
 
-                        <div className={styles.heroTop}>
-                            <div className={styles.trainBadge}>
-                                <FiNavigation size={17} />
-                            </div>
+                    {!authLoading && loading && (
+                        <div className={styles.loadingState}>
+                            <div className={styles.spinner} />
 
-                            <div className={styles.heroStatus}>
-                                <span className={styles.statusDot} />
-                                <span>Community tracked</span>
-                            </div>
+                            <span>Loading train details...</span>
                         </div>
-
-                        <div className={styles.heroNumber}>{train.number}</div>
-
-                        <div className={styles.heroName}>{train.name || `Train ${train.number}`}</div>
-
-                        {train.name_bn && <div className={styles.heroNameBn}>{train.name_bn}</div>}
-
-                        {originStop && destinationStop && (
-                            <div className={styles.heroJourney}>
-                                <div className={styles.heroStation}>
-                                    <span>From</span>
-                                    <strong>{getStationName(originStop.station)}</strong>
-                                </div>
-
-                                <div className={styles.heroArrow}>
-                                    <FiArrowRight size={16} />
-                                </div>
-
-                                <div className={`${styles.heroStation} ${styles.heroStationRight}`}>
-                                    <span>To</span>
-                                    <strong>{getStationName(destinationStop.station)}</strong>
-                                </div>
-                            </div>
-                        )}
-                    </section>
+                    )}
 
                     {/* =================================================
-                        Journey snapshot
+                        Error
                     ================================================= */}
-                    <section className={`${styles.section} ${styles.snapshotSection}`}>
-                        <div className={styles.snapshotGrid}>
-                            <div className={styles.snapshotItem}>
-                                <span>Departure</span>
-                                <strong>{originStop ? formatScheduleTime(originStop.scheduled_departure) : "—"}</strong>
-                            </div>
 
-                            <div className={styles.snapshotDivider} />
-
-                            <div className={styles.snapshotItem}>
-                                <span>Arrival</span>
-                                <strong>
-                                    {destinationStop ? formatScheduleTime(destinationStop.scheduled_arrival) : "—"}
-                                </strong>
-                            </div>
-
-                            <div className={styles.snapshotDivider} />
-
-                            <div className={styles.snapshotItem}>
-                                <span>Journey</span>
-                                <strong>
-                                    {routeSchedule.totalDuration !== null
-                                        ? formatDuration(routeSchedule.totalDuration)
-                                        : "—"}
-                                </strong>
-                            </div>
+                    {!authLoading && !loading && error && (
+                        <div>
+                            <div className={styles.errorState}>{error}</div>
                         </div>
+                    )}
 
-                        {latestReport && (
-                            <div className={styles.latestActivity}>
-                                <div className={styles.latestActivityIcon}>
-                                    <FiRadio size={13} />
-                                </div>
+                    {/* =================================================
+                        Train not found
+                    ================================================= */}
 
-                                <div className={styles.latestActivityContent}>
-                                    <div className={styles.latestActivityLabel}>Latest community update</div>
+                    {!authLoading && !loading && !error && !train && (
+                        <div className={styles.errorState}>Train not found.</div>
+                    )}
 
-                                    <div className={styles.latestActivityText}>
-                                        {latestReport.event_type === "ARRIVED"
-                                            ? "Arrived"
-                                            : latestReport.event_type === "DEPARTED"
-                                              ? "Departed"
-                                              : "Train update"}
+                    {/* =================================================
+                        Main train details
+                    ================================================= */}
 
-                                        {latestReport.station ? ` · ${getStationName(latestReport.station)}` : ""}
+                    {!authLoading && !loading && !error && train && (
+                        <>
+                            {/* Back navigation */}
+
+                            <button type="button" className={styles.backButton} onClick={() => navigate(-1)}>
+                                <FiArrowLeft size={15} />
+
+                                <span>Back to trains</span>
+                            </button>
+
+                            {/* Train hero */}
+
+                            <section className={styles.trainHero}>
+                                <div className={styles.heroGlow} />
+
+                                <div className={styles.heroTop}>
+                                    <div className={styles.trainBadge}>
+                                        <FiNavigation size={17} />
+                                    </div>
+
+                                    <div className={styles.heroStatus}>
+                                        <span className={styles.statusDot} />
+
+                                        <span>Community tracked</span>
                                     </div>
                                 </div>
 
-                                <span className={styles.latestActivityTime}>
-                                    {formatReportTime(latestReport.event_time)}
-                                </span>
-                            </div>
-                        )}
-                    </section>
+                                <div className={styles.heroNumber}>{train.number}</div>
 
-                    {/* =================================================
-                        Journey history
-                    ================================================= */}
+                                <div className={styles.heroName}>{train.name || `Train ${train.number}`}</div>
 
-                    <section className={`${styles.section} ${styles.historySection}`}>
-                        <div className={styles.sectionHeader}>
-                            <div>
-                                <div className={styles.sectionLabel}>Journey history</div>
+                                {train.name_bn && <div className={styles.heroNameBn}>{train.name_bn}</div>}
 
-                                <h2 className={styles.sectionTitle}>Delay history</h2>
-                            </div>
+                                {originStop && destinationStop && (
+                                    <div className={styles.heroJourney}>
+                                        <div className={styles.heroStation}>
+                                            <span>From</span>
 
-                            <div className={styles.historyInfo}>
-                                <FiInfo size={13} />
-                                <span>Hover a bar for details</span>
-                            </div>
-                        </div>
+                                            <strong>{getStationName(originStop.station)}</strong>
+                                        </div>
 
-                        <div className={styles.historySelector} role="group" aria-label="History range">
-                            {[7, 14].map((days) => (
-                                <button
-                                    key={days}
-                                    type="button"
-                                    className={`${styles.historyOption} ${
-                                        historyDays === days ? styles.historyOptionActive : ""
-                                    }`}
-                                    onClick={() => setHistoryDays(days)}
-                                    aria-pressed={historyDays === days}
-                                >
-                                    {days} days
-                                </button>
-                            ))}
-                        </div>
+                                        <div className={styles.heroArrow}>
+                                            <FiArrowRight size={16} />
+                                        </div>
 
-                        <div
-                            className={`${styles.historyScroll} ${
-                                historyDays === 14 ? styles.historyScrollFourteen : ""
-                            }`}
-                        >
-                            <div
-                                className={`${styles.historyChart} ${historyLoading ? styles.historyChartLoading : ""}`}
-                            >
-                                {historyItems.length ? (
-                                    historyItems.map((day) => {
-                                        const tooltip = getHistoryTooltip(day);
+                                        <div className={`${styles.heroStation} ${styles.heroStationRight}`}>
+                                            <span>To</span>
 
-                                        return (
-                                            <div key={day.service_date} className={styles.historyColumn}>
-                                                <div className={styles.historyBarArea}>
-                                                    <div
-                                                        className={`${styles.historyBar} ${getHistoryBarClass(day)}`}
-                                                        style={{
-                                                            height: getHistoryBarHeight(day),
-                                                        }}
-                                                        title={tooltip}
-                                                        aria-label={tooltip}
-                                                    />
-                                                </div>
-
-                                                <div className={styles.historyDate}>
-                                                    {formatHistoryDate(day.service_date)}
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                ) : (
-                                    <div className={styles.historyEmpty}>No history available.</div>
+                                            <strong>{getStationName(destinationStop.station)}</strong>
+                                        </div>
+                                    </div>
                                 )}
-                            </div>
-                        </div>
+                            </section>
 
-                        <div className={styles.historyLegend}>
-                            <span>
-                                <i className={`${styles.legendDot} ${styles.legendOnTime}`} />
-                                On time
-                            </span>
+                            {/* Journey snapshot */}
 
-                            <span>
-                                <i className={`${styles.legendDot} ${styles.legendLow}`} />
-                                1–44 min
-                            </span>
+                            <section className={`${styles.section} ${styles.snapshotSection}`}>
+                                <div className={styles.snapshotGrid}>
+                                    <div className={styles.snapshotItem}>
+                                        <span>Departure</span>
 
-                            <span>
-                                <i className={`${styles.legendDot} ${styles.legendHigh}`} />
-                                45+ min
-                            </span>
-                        </div>
-                    </section>
+                                        <strong>
+                                            {originStop ? formatScheduleTime(originStop.scheduled_departure) : "—"}
+                                        </strong>
+                                    </div>
 
-                    {/* =================================================
-                        Route
-                    ================================================= */}
+                                    <div className={styles.snapshotDivider} />
 
-                    <section className={styles.section}>
-                        <div className={styles.sectionHeader}>
-                            <div>
-                                <div className={styles.sectionLabel}>Route</div>
+                                    <div className={styles.snapshotItem}>
+                                        <span>Arrival</span>
 
-                                <h2 className={styles.sectionTitle}>Schedule</h2>
-                            </div>
+                                        <strong>
+                                            {destinationStop
+                                                ? formatScheduleTime(destinationStop.scheduled_arrival)
+                                                : "—"}
+                                        </strong>
+                                    </div>
 
-                            {routeSchedule.totalDuration !== null && (
-                                <div className={styles.totalDuration}>
-                                    <FiClock size={13} />
-                                    <span>{formatDuration(routeSchedule.totalDuration)}</span>
+                                    <div className={styles.snapshotDivider} />
+
+                                    <div className={styles.snapshotItem}>
+                                        <span>Journey</span>
+
+                                        <strong>
+                                            {routeSchedule.totalDuration !== null
+                                                ? formatDuration(routeSchedule.totalDuration)
+                                                : "—"}
+                                        </strong>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
 
-                        {showEta && (
-                            <div className={styles.etaDisclaimer}>
-                                <FiInfo size={12} />
+                                {latestReport && (
+                                    <div className={styles.latestActivity}>
+                                        <div className={styles.latestActivityIcon}>
+                                            <FiRadio size={13} />
+                                        </div>
 
-                                <span>
-                                    ETA is estimated from the latest community report and may vary with actual train
-                                    movement.
-                                </span>
-                            </div>
-                        )}
+                                        <div className={styles.latestActivityContent}>
+                                            <div className={styles.latestActivityLabel}>Latest community update</div>
 
-                        {routeSchedule.rows.length ? (
-                            <div className={styles.routeTimeline}>
-                                {routeSchedule.rows.map((stop, index) => {
-                                    const station = stop.station;
+                                            <div className={styles.latestActivityText}>
+                                                {latestReport.event_type === "ARRIVED"
+                                                    ? "Arrived"
+                                                    : latestReport.event_type === "DEPARTED"
+                                                      ? "Departed"
+                                                      : "Train update"}
 
-                                    const isOrigin = index === 0;
-
-                                    const isDestination = index === routeSchedule.rows.length - 1;
-
-                                    const etaArrival = showEta ? getEtaArrival(stop, etaStopMap) : null;
-
-                                    const etaDeparture = showEta ? getEtaDeparture(stop, etaStopMap) : null;
-
-                                    return (
-                                        <div key={`${train.id}-${stop.stop_order}`} className={styles.routeItem}>
-                                            <div className={styles.routeRail}>
-                                                <div
-                                                    className={`${styles.stationMarker} ${
-                                                        isOrigin ? styles.stationOrigin : ""
-                                                    } ${isDestination ? styles.stationDestination : ""}`}
-                                                >
-                                                    {stop.stop_order}
-                                                </div>
-
-                                                {!isDestination && <div className={styles.railLine} />}
+                                                {latestReport.station
+                                                    ? ` · ${getStationName(latestReport.station)}`
+                                                    : ""}
                                             </div>
+                                        </div>
 
-                                            <div className={styles.routeContent}>
-                                                <div className={styles.stationTop}>
-                                                    <div className={styles.stationNames}>
-                                                        <div className={styles.stationName}>
-                                                            {getStationName(station)}
+                                        <span className={styles.latestActivityTime}>
+                                            {formatReportTime(latestReport.event_time)}
+                                        </span>
+                                    </div>
+                                )}
+                            </section>
+
+                            {/* Journey history */}
+
+                            <section className={`${styles.section} ${styles.historySection}`}>
+                                <div className={styles.sectionHeader}>
+                                    <div>
+                                        <div className={styles.sectionLabel}>Journey history</div>
+
+                                        <h2 className={styles.sectionTitle}>Delay history</h2>
+                                    </div>
+
+                                    <div className={styles.historyInfo}>
+                                        <FiInfo size={13} />
+
+                                        <span>Hover a bar for details</span>
+                                    </div>
+                                </div>
+
+                                <div className={styles.historySelector} role="group" aria-label="History range">
+                                    {[7, 14].map((days) => (
+                                        <button
+                                            key={days}
+                                            type="button"
+                                            className={`${styles.historyOption} ${
+                                                historyDays === days ? styles.historyOptionActive : ""
+                                            }`}
+                                            onClick={() => setHistoryDays(days)}
+                                            aria-pressed={historyDays === days}
+                                        >
+                                            {days} days
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div
+                                    className={`${styles.historyScroll} ${
+                                        historyDays === 14 ? styles.historyScrollFourteen : ""
+                                    }`}
+                                >
+                                    <div
+                                        className={`${styles.historyChart} ${
+                                            historyLoading ? styles.historyChartLoading : ""
+                                        }`}
+                                    >
+                                        {historyItems.length ? (
+                                            historyItems.map((day) => {
+                                                const tooltip = getHistoryTooltip(day);
+
+                                                return (
+                                                    <div key={day.service_date} className={styles.historyColumn}>
+                                                        <div className={styles.historyBarArea}>
+                                                            <div
+                                                                className={`${styles.historyBar} ${getHistoryBarClass(
+                                                                    day
+                                                                )}`}
+                                                                style={{
+                                                                    height: getHistoryBarHeight(day),
+                                                                }}
+                                                                title={tooltip}
+                                                                aria-label={tooltip}
+                                                            />
                                                         </div>
 
-                                                        {getStationEnglishName(station) && (
-                                                            <div className={styles.stationNameEn}>
-                                                                {station.name_en}
-                                                            </div>
-                                                        )}
+                                                        <div className={styles.historyDate}>
+                                                            {formatHistoryDate(day.service_date)}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <div className={styles.historyEmpty}>No history available.</div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className={styles.historyLegend}>
+                                    <span>
+                                        <i className={`${styles.legendDot} ${styles.legendOnTime}`} />
+                                        On time
+                                    </span>
+
+                                    <span>
+                                        <i className={`${styles.legendDot} ${styles.legendLow}`} />
+                                        1–44 min
+                                    </span>
+
+                                    <span>
+                                        <i className={`${styles.legendDot} ${styles.legendHigh}`} />
+                                        45+ min
+                                    </span>
+                                </div>
+                            </section>
+
+                            {/* Route */}
+
+                            <section className={styles.section}>
+                                <div className={styles.sectionHeader}>
+                                    <div>
+                                        <div className={styles.sectionLabel}>Route</div>
+
+                                        <h2 className={styles.sectionTitle}>Schedule</h2>
+                                    </div>
+
+                                    {routeSchedule.totalDuration !== null && (
+                                        <div className={styles.totalDuration}>
+                                            <FiClock size={13} />
+
+                                            <span>{formatDuration(routeSchedule.totalDuration)}</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {showEta && (
+                                    <div className={styles.etaDisclaimer}>
+                                        <FiInfo size={12} />
+
+                                        <span>
+                                            ETA is estimated from the latest community report and may vary with actual
+                                            train movement.
+                                        </span>
+                                    </div>
+                                )}
+
+                                {routeSchedule.rows.length ? (
+                                    <div className={styles.routeTimeline}>
+                                        {routeSchedule.rows.map((stop, index) => {
+                                            const station = stop.station;
+
+                                            const isOrigin = index === 0;
+
+                                            const isDestination = index === routeSchedule.rows.length - 1;
+
+                                            const etaArrival = showEta ? getEtaArrival(stop, etaStopMap) : null;
+
+                                            const etaDeparture = showEta ? getEtaDeparture(stop, etaStopMap) : null;
+
+                                            return (
+                                                <div
+                                                    key={`${train.id}-${stop.stop_order}`}
+                                                    className={styles.routeItem}
+                                                >
+                                                    <div className={styles.routeRail}>
+                                                        <div
+                                                            className={`${styles.stationMarker} ${
+                                                                isOrigin ? styles.stationOrigin : ""
+                                                            } ${isDestination ? styles.stationDestination : ""}`}
+                                                        >
+                                                            {stop.stop_order}
+                                                        </div>
+
+                                                        {!isDestination && <div className={styles.railLine} />}
                                                     </div>
 
-                                                    <span className={styles.stopNumber}>STOP {stop.stop_order}</span>
+                                                    <div className={styles.routeContent}>
+                                                        <div className={styles.stationTop}>
+                                                            <div className={styles.stationNames}>
+                                                                <div className={styles.stationName}>
+                                                                    {getStationName(station)}
+                                                                </div>
+
+                                                                {getStationEnglishName(station) && (
+                                                                    <div className={styles.stationNameEn}>
+                                                                        {station.name_en}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+
+                                                            <span className={styles.stopNumber}>
+                                                                STOP {stop.stop_order}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className={styles.scheduleTimes}>
+                                                            <div className={styles.scheduleTime}>
+                                                                <span>Arrival</span>
+
+                                                                <strong>
+                                                                    {formatScheduleTime(stop.scheduled_arrival)}
+                                                                </strong>
+
+                                                                {etaArrival && (
+                                                                    <small className={styles.etaTime}>
+                                                                        ETA {etaArrival}
+                                                                    </small>
+                                                                )}
+                                                            </div>
+
+                                                            <div className={styles.scheduleTime}>
+                                                                <span>Departure</span>
+
+                                                                <strong>
+                                                                    {formatScheduleTime(stop.scheduled_departure)}
+                                                                </strong>
+
+                                                                {etaDeparture && (
+                                                                    <small className={styles.etaTime}>
+                                                                        ETD {etaDeparture}
+                                                                    </small>
+                                                                )}
+                                                            </div>
+
+                                                            {stop.haltMinutes !== null && (
+                                                                <div className={styles.haltTime}>
+                                                                    <FiClock size={11} />
+
+                                                                    <span>{formatDuration(stop.haltMinutes)} halt</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className={styles.emptyState}>No stop information available.</div>
+                                )}
+                            </section>
+
+                            {/* Community reports */}
+
+                            <section className={styles.section}>
+                                <div className={styles.sectionHeader}>
+                                    <div>
+                                        <div className={styles.sectionLabel}>Today</div>
+
+                                        <h2 className={styles.sectionTitle}>Community reports</h2>
+                                    </div>
+
+                                    <div className={styles.reportCount}>
+                                        {reports.length} {reports.length === 1 ? "report" : "reports"}
+                                    </div>
+                                </div>
+
+                                {reports.length ? (
+                                    <div className={styles.reportsList}>
+                                        {reports.map((report) => (
+                                            <div
+                                                key={report.id}
+                                                data-report-id={report.id}
+                                                className={`${styles.reportCard} ${
+                                                    highlightedReportId === report.id
+                                                        ? styles.reportCardHighlighted
+                                                        : ""
+                                                }`}
+                                            >
+                                                <div className={styles.reportIcon}>
+                                                    <FiMessageCircle size={14} />
                                                 </div>
 
-                                                <div className={styles.scheduleTimes}>
-                                                    <div className={styles.scheduleTime}>
-                                                        <span>Arrival</span>
+                                                <div className={styles.reportContent}>
+                                                    <div className={styles.reportTop}>
+                                                        <div className={styles.reportEvent}>
+                                                            {report.event_type === "ARRIVED"
+                                                                ? "Arrived"
+                                                                : report.event_type === "DEPARTED"
+                                                                  ? "Departed"
+                                                                  : "Update"}
+                                                        </div>
 
-                                                        <strong>{formatScheduleTime(stop.scheduled_arrival)}</strong>
-
-                                                        {etaArrival && (
-                                                            <small className={styles.etaTime}>ETA {etaArrival}</small>
-                                                        )}
+                                                        <div className={styles.reportTime}>
+                                                            {formatReportTime(report.event_time)}
+                                                        </div>
                                                     </div>
 
-                                                    <div className={styles.scheduleTime}>
-                                                        <span>Departure</span>
+                                                    {report.station && (
+                                                        <div className={styles.reportStationWrap}>
+                                                            <FiMapPin size={11} />
 
-                                                        <strong>{formatScheduleTime(stop.scheduled_departure)}</strong>
+                                                            <div>
+                                                                <div className={styles.reportStation}>
+                                                                    {getStationName(report.station)}
+                                                                </div>
 
-                                                        {etaDeparture && (
-                                                            <small className={styles.etaTime}>ETD {etaDeparture}</small>
-                                                        )}
-                                                    </div>
+                                                                {getStationEnglishName(report.station) && (
+                                                                    <div className={styles.reportStationEn}>
+                                                                        {report.station.name_en}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )}
 
-                                                    {stop.haltMinutes !== null && (
-                                                        <div className={styles.haltTime}>
-                                                            <FiClock size={11} />
+                                                    {report.note && (
+                                                        <div className={styles.reportNote}>{report.note}</div>
+                                                    )}
 
-                                                            <span>{formatDuration(stop.haltMinutes)} halt</span>
+                                                    {typeof report.delay_minutes === "number" && (
+                                                        <div
+                                                            className={`${styles.reportDelay} ${
+                                                                report.delay_minutes >= 45
+                                                                    ? styles.reportDelayHigh
+                                                                    : report.delay_minutes > 0
+                                                                      ? styles.reportDelayLow
+                                                                      : styles.reportDelayOnTime
+                                                            }`}
+                                                        >
+                                                            {report.delay_minutes > 0
+                                                                ? `+${formatDuration(report.delay_minutes)} late`
+                                                                : "On time"}
                                                         </div>
                                                     )}
                                                 </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <div className={styles.emptyState}>No stop information available.</div>
-                        )}
-                    </section>
-
-                    {/* =================================================
-                        Community reports
-                    ================================================= */}
-
-                    <section className={styles.section}>
-                        <div className={styles.sectionHeader}>
-                            <div>
-                                <div className={styles.sectionLabel}>Today</div>
-
-                                <h2 className={styles.sectionTitle}>Community reports</h2>
-                            </div>
-
-                            <div className={styles.reportCount}>
-                                {reports.length} {reports.length === 1 ? "report" : "reports"}
-                            </div>
-                        </div>
-
-                        {reports.length ? (
-                            <div className={styles.reportsList}>
-                                {reports.map((report) => (
-                                    <div key={report.id} className={styles.reportCard}>
-                                        <div className={styles.reportIcon}>
-                                            <FiMessageCircle size={14} />
-                                        </div>
-
-                                        <div className={styles.reportContent}>
-                                            <div className={styles.reportTop}>
-                                                <div className={styles.reportEvent}>
-                                                    {report.event_type === "ARRIVED"
-                                                        ? "Arrived"
-                                                        : report.event_type === "DEPARTED"
-                                                          ? "Departed"
-                                                          : "Update"}
-                                                </div>
-
-                                                <div className={styles.reportTime}>
-                                                    {formatReportTime(report.event_time)}
-                                                </div>
-                                            </div>
-
-                                            {report.station && (
-                                                <div className={styles.reportStationWrap}>
-                                                    <FiMapPin size={11} />
-
-                                                    <div>
-                                                        <div className={styles.reportStation}>
-                                                            {getStationName(report.station)}
-                                                        </div>
-
-                                                        {getStationEnglishName(report.station) && (
-                                                            <div className={styles.reportStationEn}>
-                                                                {report.station.name_en}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {report.note && <div className={styles.reportNote}>{report.note}</div>}
-
-                                            {typeof report.delay_minutes === "number" && (
-                                                <div
-                                                    className={`${styles.reportDelay} ${
-                                                        report.delay_minutes >= 45
-                                                            ? styles.reportDelayHigh
-                                                            : report.delay_minutes > 0
-                                                              ? styles.reportDelayLow
-                                                              : styles.reportDelayOnTime
-                                                    }`}
-                                                >
-                                                    {report.delay_minutes > 0
-                                                        ? `+${formatDuration(report.delay_minutes)} late`
-                                                        : "On time"}
-                                                </div>
-                                            )}
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className={styles.emptyState}>No reports for this train today.</div>
-                        )}
-                    </section>
+                                ) : (
+                                    <div className={styles.emptyState}>No reports for this train today.</div>
+                                )}
+                            </section>
+                        </>
+                    )}
+
+                    <PageFooter />
+
                 </div>
             </div>
         </div>

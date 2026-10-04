@@ -13,6 +13,7 @@ import ForgotPassword from './pages/Auth/ForgetPassword';
 import ResetPassword from "./pages/Auth/ResetPassword";
 import ChangePassword from './pages/Auth/ChangePassword'
 import TrainDetails from "./pages/TrainDetails/TrainDetails";
+import ReportDetails from "./pages/ReportDetails/ReportDetails";
 import ContactUs from "./pages/ContactUs/ContactUs";
 import Reviews from "./pages/Reviews/Reviews";
 import FAQ from "./pages/FAQ/FAQ";
@@ -38,6 +39,8 @@ function App() {
                     <Route path="/privacy" element={<Privacy />} />
                     <Route path="/terms" element={<Terms />} />
                     <Route path="/about" element={<About />} />
+                    <Route path="/reports/:reportId" element={<ReportDetails />}
+                    />
                 </Route>
 
                 {/* Authentication */}
