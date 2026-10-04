@@ -2,7 +2,6 @@ import { StationIcon, SearchTrainIcon } from "../icons/ReactIcons";
 
 import styles from "./SearchResult.module.css";
 
-
 function SearchResult({ station, train, onClick }) {
     const isStation = Boolean(station);
 
@@ -12,14 +11,6 @@ function SearchResult({ station, train, onClick }) {
 
     const firstStop = sortedStops[0];
     const lastStop = sortedStops[sortedStops.length - 1];
-    const reportCount = isStation ? station.report_count_today : train.report_count_today;
-
-    const reportText =
-        reportCount === 0
-            ? "No reports today"
-            : `${reportCount} ${
-                  reportCount === 1 ? "report" : "reports"
-              } today`;
 
     return (
         <button type="button" className={styles.searchResult} onClick={onClick}>
@@ -43,10 +34,6 @@ function SearchResult({ station, train, onClick }) {
                                 {station.name_en}
                             </div>
                         )}
-
-                        <div className={styles.searchResultReports}>
-                            {reportText}
-                        </div>
                     </>
                 ) : (
                     <>
@@ -71,26 +58,21 @@ function SearchResult({ station, train, onClick }) {
                                         firstStop.station.name}
                                 </span>
 
-                                <span className={ styles.searchResultRouteArrow}>
+                                <span className={styles.searchResultRouteArrow}>
                                     →
                                 </span>
 
                                 <span>
-                                    {lastStop.station.name_en || lastStop.station.name}
+                                    {lastStop.station.name_en ||
+                                        lastStop.station.name}
                                 </span>
                             </div>
                         )}
-
-                        <div className={styles.searchResultReports}>
-                            {reportText}
-                        </div>
                     </>
                 )}
             </div>
 
-            <span className={styles.searchResultArrow}>
-                ›
-            </span>
+            <span className={styles.searchResultArrow}>›</span>
         </button>
     );
 }
