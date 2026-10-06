@@ -5,13 +5,14 @@
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .live-control {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 8px;
+
     min-height: 42px;
     padding: 0 14px;
     border: 1px solid var(--line);
@@ -27,16 +28,16 @@
     transition:
         transform 0.18s ease,
         box-shadow 0.18s ease,
-        background 0.18s ease;
+        background 0.18s ease,
+        border-color 0.18s ease;
 }
 
 .live-control:hover {
-    /* transform: translateY(-1px); */
     box-shadow: 0 6px 18px rgba(18, 32, 25, 0.15);
 }
 
 .live-control:active {
-    transform: translateY(0);
+    transform: scale(0.97);
 }
 
 .live-control:disabled {
@@ -433,129 +434,6 @@
     cursor: not-allowed;
 }
 
-/* Small screens */
-
-@media (max-width: 640px) {
-    .live-controls {
-        top: 72px;
-        right: 12px;
-        left: 18px;
-        flex-direction: row;
-        gap: 8px;
-        overflow-x: auto;
-        padding-bottom: 2px;
-        scrollbar-width: none;
-    }
-
-    .live-controls::-webkit-scrollbar {
-        display: none;
-    }
-
-    .live-control {
-        min-height: 35px;
-        padding: 0 13px;
-        font-size: 13px;
-    }
-
-    .live-picker-backdrop,
-    .live-confirm-backdrop {
-        align-items: center;
-        justify-content: center;
-        padding: 16px;
-    }
-
-    .live-picker,
-    .live-confirm {
-        position: relative;
-        top: auto;
-        right: auto;
-        bottom: auto;
-        left: auto;
-        width: min(100%, 420px);
-        max-height: calc(100dvh - 32px);
-        margin: 0;
-        border-radius: 18px;
-    }
-
-    .live-picker {
-        max-height: calc(100dvh - 32px);
-    }
-
-    .live-picker-results {
-        max-height: min(52vh, 420px);
-        padding-right: 6px;
-        padding-left: 6px;
-    }
-
-    .live-confirm {
-        padding: 22px 18px calc(18px + env(safe-area-inset-bottom));
-    }
-
-    .live-picker-header {
-        padding: 18px 16px 12px;
-    }
-
-    .live-picker-search {
-        width: calc(100% - 32px);
-        margin-right: 16px;
-        margin-left: 16px;
-    }
-
-    .live-confirm-actions {
-        flex-direction: column-reverse;
-    }
-
-    .live-confirm-cancel,
-    .live-confirm-submit {
-        width: 100%;
-    }
-
-    .live-status-panel {
-        top: 120px !important;
-        left: 12px;
-        width: min(310px, calc(100vw - 24px));
-    }
-
-    .live-status-section {
-        padding: 12px;
-    }
-
-    .live-status-heading-text strong {
-        font-size: 11px;
-    }
-
-    .live-status-heading-text span {
-        font-size: 10.5px;
-    }
-
-    .live-control-icon{
-        height: 16px;
-        width: 16px;
-    }
-
-    .live-picker-header h2, .live-confirm-content h2{
-        font-size: 16px;
-    }
-    
-    .live-picker-header p, .live-confirm-content > p{
-        font-size: 12px;
-    }
-
-    .live-train-number, .live-train-name, .live-confirm-train-number{
-        font-size: 13px;
-    }
-
-    .live-confirm-icon{
-        height: 25px;
-        width: 25px;
-    }
-
-    .live-confirm-dot{
-        width: 8px;
-        height: 8px;
-    }
-}
-
 /* Live status */
 
 .live-status-panel {
@@ -636,7 +514,37 @@
 }
 
 .live-status-message.error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     color: var(--red);
+}
+
+.live-status-error-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.live-status-error-close {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    margin-left: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font-size: 20px;
+    line-height: 24px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.live-status-error-close:hover {
+    opacity: 1;
 }
 
 .live-status-stop {
@@ -672,69 +580,145 @@
     cursor: not-allowed;
 }
 
-.live-status-message.error {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+/* Small screens */
 
-.live-status-error-text {
-    flex: 1;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    /* margin-top: 4px; */
-}
+@media (max-width: 640px) {
+    .live-controls {
+        top: 70px;
+        right: 12px;
+        left: 12px;
 
-.live-status-error-close {
-    flex: 0 0 auto;
-    width: 24px;
-    height: 24px;
-    margin-left: auto;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    color: inherit;
-    font-size: 20px;
-    line-height: 24px;
-    text-align: center;
-    cursor: pointer;
-    opacity: 0.75;
-}
+        flex-direction: row;
 
-.live-status-error-close:hover {
-    opacity: 1;
-}
+        gap: 8px;
 
-.live-status-message.error {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+        overflow-x: auto;
 
-.live-status-error-text {
-    flex: 1;
-    min-width: 0;
-    overflow-wrap: anywhere;
-}
+        padding-bottom: 2px;
 
-.live-status-error-close {
-    flex: 0 0 auto;
-    width: 24px;
-    height: 24px;
-    margin-left: auto;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    color: inherit;
-    font-size: 20px;
-    line-height: 24px;
-    text-align: center;
-    cursor: pointer;
-    opacity: 0.75;
-}
+        scrollbar-width: none;
+    }
 
-.live-status-error-close:hover {
-    opacity: 1;
+    .live-controls::-webkit-scrollbar {
+        display: none;
+    }
+
+    .live-control {
+        min-height: 38px;
+
+        padding: 0 13px;
+
+        font-size: 12px;
+    }
+
+    .live-control-icon {
+        width: 17px;
+        height: 17px;
+    }
+
+    .live-picker-backdrop,
+    .live-confirm-backdrop {
+        align-items: center;
+        justify-content: center;
+
+        padding: 16px;
+    }
+
+    .live-picker,
+    .live-confirm {
+        position: relative;
+
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+
+        width: min(100%, 420px);
+
+        max-height: calc(100dvh - 32px);
+
+        margin: 0;
+
+        border-radius: 18px;
+    }
+
+    .live-picker {
+        max-height: calc(100dvh - 32px);
+    }
+
+    .live-picker-results {
+        max-height: min(52vh, 420px);
+
+        padding-right: 6px;
+        padding-left: 6px;
+    }
+
+    .live-confirm {
+        padding: 22px 18px calc(18px + env(safe-area-inset-bottom));
+    }
+
+    .live-picker-header {
+        padding: 18px 16px 12px;
+    }
+
+    .live-picker-search {
+        width: calc(100% - 32px);
+
+        margin-right: 16px;
+        margin-left: 16px;
+    }
+
+    .live-confirm-actions {
+        flex-direction: column-reverse;
+    }
+
+    .live-confirm-cancel,
+    .live-confirm-submit {
+        width: 100%;
+    }
+
+    .live-status-panel {
+        top: 120px !important;
+        left: 12px;
+
+        width: min(310px, calc(100vw - 24px));
+    }
+
+    .live-status-section {
+        padding: 12px;
+    }
+
+    .live-status-heading-text strong {
+        font-size: 11px;
+    }
+
+    .live-status-heading-text span {
+        font-size: 10.5px;
+    }
+
+    .live-picker-header h2,
+    .live-confirm-content h2 {
+        font-size: 16px;
+    }
+
+    .live-picker-header p,
+    .live-confirm-content > p {
+        font-size: 12px;
+    }
+
+    .live-train-number,
+    .live-train-name,
+    .live-confirm-train-number {
+        font-size: 13px;
+    }
+
+    .live-confirm-icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .live-confirm-dot {
+        width: 8px;
+        height: 8px;
+    }
 }
