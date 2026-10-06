@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 
 import { getStations } from "../../services/stationApi";
@@ -9,8 +8,6 @@ import SearchOverlay from "../SearchOverlay/SearchOverlay";
 import useAuth from "../../hooks/useAuth";
 
 function MapSearch({ onStationSelect, onTrainSelect }) {
-    const navigate = useNavigate();
-
     const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -127,13 +124,6 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
         onTrainSelect(train);
     };
 
-    // ====================== profile ======================
-
-    const handleProfileClick = (event) => {
-        event.stopPropagation();
-        navigate("/profile");
-    };
-
     return (
         <>
             {!isOpen && (
@@ -149,19 +139,7 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
                         <span className="map-search-placeholder">Search a station or train</span>
 
                         {!isAuthLoading && isAuthenticated && userInitial && (
-                            <span
-                                className="map-search-avatar"
-                                role="button"
-                                tabIndex={0}
-                                aria-label="Account"
-                                onClick={handleProfileClick}
-                                onKeyDown={(event) => {
-                                    if (event.key === "Enter" || event.key === " ") {
-                                        event.preventDefault();
-                                        handleProfileClick(event);
-                                    }
-                                }}
-                            >
+                            <span className="map-search-avatar" aria-label="Account">
                                 {userInitial}
                             </span>
                         )}

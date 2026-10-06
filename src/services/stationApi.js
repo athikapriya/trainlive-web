@@ -9,9 +9,17 @@ export function getStations(search = "", options = {}) {
     }
 
     const queryString = params.toString();
-    
+
     return apiFetchAll(
         `/api/stations/${queryString ? `?${queryString}` : ""}`,
+        options
+    );
+}
+
+
+export function getAllStations(options = {}) {
+    return apiFetchAll(
+        "/api/stations/",
         options
     );
 }

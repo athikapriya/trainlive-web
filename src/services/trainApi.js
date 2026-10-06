@@ -17,6 +17,14 @@ export function getTrains(search = "", options = {}) {
 }
 
 
+export function getAllTrains(options = {}) {
+    return apiFetchAll(
+        "/api/trains/",
+        options
+    );
+}
+
+
 export function getTrain(trainNumber) {
     return apiFetch(
         `/api/trains/${encodeURIComponent(trainNumber)}/`
@@ -51,15 +59,22 @@ export function getTrainReports(
 }
 
 
-export function getTrainHistory(trainNumber, days = 7, { accessToken = null, signal } = {}) {
+export function getTrainHistory(
+    trainNumber,
+    days = 7,
+    { accessToken = null, signal } = {}
+) {
     const headers = {};
 
     if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;
     }
 
-    return apiFetch(`/api/trains/${encodeURIComponent(trainNumber)}/history/?days=${days}`, {
-        headers,
-        signal,
-    });
+    return apiFetch(
+        `/api/trains/${encodeURIComponent(trainNumber)}/history/?days=${days}`,
+        {
+            headers,
+            signal,
+        }
+    );
 }
