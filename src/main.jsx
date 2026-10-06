@@ -7,6 +7,7 @@ import "./index.css";
 
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 
 const THEME_KEY = "trainlive-theme";
 
@@ -17,7 +18,9 @@ function getInitialTheme() {
         return savedTheme;
     }
 
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
 }
 
 document.documentElement.setAttribute("data-theme", getInitialTheme());
@@ -25,7 +28,9 @@ document.documentElement.setAttribute("data-theme", getInitialTheme());
 createRoot(document.getElementById("root")).render(
     <StrictMode>
         <AuthProvider>
-            <App />
+            <ThemeProvider>
+                <App />
+            </ThemeProvider>
         </AuthProvider>
-    </StrictMode>
+    </StrictMode>,
 );

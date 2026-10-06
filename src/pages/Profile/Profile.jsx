@@ -20,7 +20,7 @@ import {
 } from "react-icons/fi";
 
 import useAuth from "../../Hooks/useAuth";
-import useTheme from "../../Hooks/useTheme";
+import useTheme from "../../hooks/useTheme";
 
 import styles from "./Profile.module.css";
 
