@@ -137,7 +137,7 @@ function Privacy() {
 
                     <PolicyItem title="Location, only when you share live">
                         If you choose <strong>Share live</strong> and confirm you are on a train, we read your device
-                        location. We do this only while sharing is switched on, and only when you are within about 500
+                        location. We do this only while sharing is switched on, and only when you are within about 300
                         metres of that train's route. We do not collect your location in the background or at any other
                         time.
                     </PolicyItem>
@@ -232,8 +232,6 @@ function Privacy() {
                             Live location data is used to place the train marker and is not kept as a personal location
                             history.
                         </li>
-
-                        <li>Account details stay until you delete your account.</li>
 
                         <li>
                             Messages to our support team are kept only as long as needed to handle the request and

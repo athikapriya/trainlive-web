@@ -226,7 +226,7 @@ function Terms() {
                     <p>Share live is optional. You may use it only when you are actually on the train you select.</p>
 
                     <p>
-                        It works only while you are within about 500 metres of that train's route, and you can stop
+                        It works only while you are within about 300 metres of that train's route, and you can stop
                         sharing at any time.
                     </p>
 
@@ -301,7 +301,7 @@ function Terms() {
                     <p>For example, your reports can feed the live map and the 7-day and 14-day punctuality charts.</p>
 
                     <p>
-                        This permission continues for reports already used in summaries after you delete your account.
+                        Your reports may continue to be used in summaries and statistics after you stop using TrainLive.
                         We will not use your content to advertise to others.
                     </p>
                 </section>
@@ -324,7 +324,6 @@ function Terms() {
                         why.
                     </p>
 
-                    <p>You can stop using TrainLive and delete your account at any time by contacting us.</p>
                 </section>
 
                 {/* =====================================================
