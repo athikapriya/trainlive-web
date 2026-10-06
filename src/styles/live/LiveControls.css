@@ -81,9 +81,11 @@
     height: 36px;
     border: 2px solid #ffffff;
     border-radius: 50%;
-    background: var(--green);
-    color: var(--green-soft);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+    background: linear-gradient(145deg, #0f8a61, #075c42);
+    color: #ffffff;
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.22),
+        0 0 0 2px rgba(176, 133, 40, 0.45);
     font-size: 20px;
 }
 
