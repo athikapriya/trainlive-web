@@ -101,11 +101,7 @@ function LiveControls({
 
         setConfirmTrain(null);
 
-        const newSession = await onShareLive(train);
-
-        if (!newSession) {
-            setConfirmTrain(train);
-        }
+        await onShareLive(train);
     };
 
     
