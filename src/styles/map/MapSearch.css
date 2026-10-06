@@ -10,30 +10,11 @@
 .map-search-bar {
     width: 100%;
     max-width: 680px;
-    height: 45px;
+    height: 48px;
     margin: 0 auto;
+    padding: 0 14px 0 17px;
     display: flex;
     align-items: center;
-    padding: 0 18px;
-    border: none;
-    border-radius: 28px;
-    background: var(--surface);a.map-search {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    right: 16px;
-    z-index: 1000;
-    pointer-events: none;
-}
-
-.map-search-bar {
-    width: 100%;
-    max-width: 680px;
-    height: 45px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    padding: 0 14px 0 18px;
     border: 1px solid var(--line);
     border-radius: var(--radius-pill);
     background: var(--surface);
@@ -46,7 +27,8 @@
     transition:
         background 0.15s ease,
         border-color 0.15s ease,
-        box-shadow 0.15s ease;
+        box-shadow 0.15s ease,
+        transform 0.15s ease;
 }
 
 .map-search-bar:hover {
@@ -67,6 +49,7 @@
     color: var(--text-faint);
     font-size: 14px;
     font-weight: 500;
+    line-height: 1;
 }
 
 .map-search-avatar {
@@ -94,45 +77,23 @@
     }
 
     .map-search-bar {
-        height: 44px;
+        height: 46px;
+        padding: 0 12px 0 16px;
+    }
+
+    .map-search-icon {
+        width: 19px;
+        height: 19px;
     }
 
     .map-search-placeholder {
+        margin-left: 11px;
         font-size: 13px;
     }
-}
-    color: var(--text);
-    box-shadow: var(--shadow);
-    pointer-events: auto;
-    cursor: pointer;
-    font-family: inherit;
-    text-align: left;
-}
 
-.map-search-icon {
-    flex-shrink: 0;
-    color: var(--text-soft);
-}
-
-.map-search-placeholder {
-    margin-left: 12px;
-    color: var(--text-faint);
-    font-size: 15px;
-}
-
-.map-search-avatar {
-    width: 32px;
-    height: 32px;
-    flex: 0 0 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: auto;
-    border-radius: 50%;
-    background: var(--accent, #1e8a5b);
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1;
-    user-select: none;
+    .map-search-avatar {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+    }
 }

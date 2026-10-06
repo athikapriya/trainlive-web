@@ -12,8 +12,8 @@
 }
 
 .map-control {
-    width: 30px;
-    height: 30px;
+    width: 48px;
+    height: 48px;
 
     padding: 0;
     border: none;
@@ -26,7 +26,7 @@
     align-items: center;
     justify-content: center;
 
-    font-size: 20px;
+    font-size: 28px;
     font-weight: 500;
 
     box-shadow: var(--shadow);
@@ -36,8 +36,8 @@
         transform 0.15s ease;
 }
 
-.map-control svg{
-    height : 16px;
+.map-control svg {
+    height: 16px;
 }
 
 .map-control:hover {
@@ -62,4 +62,20 @@
 
 .zoom-button + .zoom-button {
     border-top: 1px solid var(--line);
+}
+
+@media (max-width: 600px) {
+    .map-control {
+        width: 42px;
+        height: 42px;
+    }
+
+    .map-control svg {
+        width: 21px;
+        height: 21px;
+    }
+
+    .map-control.zoom-button {
+        font-size: 27px;
+    }
 }
