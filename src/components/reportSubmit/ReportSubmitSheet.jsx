@@ -4,7 +4,7 @@ import { FiChevronDown, FiSearch, FiX } from "react-icons/fi";
 import { getStations } from "../../services/stationApi";
 import { getTrains, getTrain } from "../../services/trainApi";
 import { createReport } from "../../services/reportApi";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../Hooks/useAuth";
 
 import styles from "./ReportSubmitSheet.module.css";
 

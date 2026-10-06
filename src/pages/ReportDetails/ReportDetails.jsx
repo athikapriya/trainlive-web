@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FiArrowLeft, FiFileText } from "react-icons/fi";
 
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../Hooks/useAuth";
 import PageHeader from "../../layouts/PageHeader/PageHeader";
 
 import { getReport } from "../../services/reportApi";

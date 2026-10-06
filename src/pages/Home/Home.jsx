@@ -7,7 +7,7 @@ import StationReportSheet from "../../components/stationReportSheet/StationRepor
 import TrainReportSheet from "../../components/trainReportSheet/TrainReportSheet";
 import LiveControls from "../../components/live/liveControls";
 
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../Hooks/useAuth";
 import useLiveSharing from "../../Hooks/useLiveSharing";
 import useTrainLive from "../../Hooks/useTrainLive";
 

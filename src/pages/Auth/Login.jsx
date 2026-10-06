@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
 
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../Hooks/useAuth";
 import styles from "./auth.module.css";
 
 function Login() {
