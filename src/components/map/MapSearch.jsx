@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 
 import { getStations } from "../../services/stationApi";
@@ -8,6 +9,8 @@ import SearchOverlay from "../SearchOverlay/SearchOverlay";
 import useAuth from "../../hooks/useAuth";
 
 function MapSearch({ onStationSelect, onTrainSelect }) {
+    const navigate = useNavigate();
+
     const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -25,10 +28,7 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
             return "";
         }
 
-        const name =
-            user.full_name?.trim() ||
-            user.email?.trim() ||
-            "";
+        const name = user.full_name?.trim() || user.email?.trim() || "";
 
         return name.charAt(0);
     };
@@ -67,10 +67,7 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
                     return;
                 }
 
-                console.error(
-                    `${searchType} search failed:`,
-                    error
-                );
+                console.error(`${searchType} search failed:`, error);
 
                 if (searchType === "stations") {
                     setStations([]);
@@ -78,13 +75,7 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
                     setTrains([]);
                 }
 
-                setError(
-                    `Unable to search ${
-                        searchType === "stations"
-                            ? "stations"
-                            : "trains"
-                    }.`
-                );
+                setError(`Unable to search ${searchType === "stations" ? "stations" : "trains"}.`);
             } finally {
                 if (!controller.signal.aborted) {
                     setIsLoading(false);
@@ -136,6 +127,13 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
         onTrainSelect(train);
     };
 
+    // ====================== profile ======================
+
+    const handleProfileClick = (event) => {
+        event.stopPropagation();
+        navigate("/profile");
+    };
+
     return (
         <>
             {!isOpen && (
@@ -146,26 +144,27 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
                         onClick={handleOpen}
                         aria-label="Search station or train"
                     >
-                        <FiSearch
-                            className="map-search-icon"
-                            size={18}
-                            aria-hidden="true"
-                        />
+                        <FiSearch className="map-search-icon" size={18} aria-hidden="true" />
 
-                        <span className="map-search-placeholder">
-                            Search a station or train
-                        </span>
+                        <span className="map-search-placeholder">Search a station or train</span>
 
-                        {!isAuthLoading &&
-                            isAuthenticated &&
-                            userInitial && (
-                                <span
-                                    className="map-search-avatar"
-                                    aria-label="Account"
-                                >
-                                    {userInitial}
-                                </span>
-                            )}
+                        {!isAuthLoading && isAuthenticated && userInitial && (
+                            <span
+                                className="map-search-avatar"
+                                role="button"
+                                tabIndex={0}
+                                aria-label="Account"
+                                onClick={handleProfileClick}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        event.preventDefault();
+                                        handleProfileClick(event);
+                                    }
+                                }}
+                            >
+                                {userInitial}
+                            </span>
+                        )}
                     </button>
                 </div>
             )}
