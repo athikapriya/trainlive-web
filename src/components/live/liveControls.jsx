@@ -30,6 +30,7 @@ function LiveControls({
 }) {
     const [pickerMode, setPickerMode] = useState(null);
     const [confirmTrain, setConfirmTrain] = useState(null);
+    const [dismissedError, setDismissedError] = useState(null);
 
     useEffect(() => {
         if (!isAuthenticated || (liveAction !== "show" && liveAction !== "share")) {
@@ -41,12 +42,18 @@ function LiveControls({
         }
 
         setConfirmTrain(null);
-
         setPickerMode(liveAction);
 
         onLiveActionHandled();
     }, [isAuthenticated, isSharing, isStarting, liveAction, onLiveActionHandled]);
 
+    useEffect(() => {
+        const currentError = liveError || sharingError;
+
+        if (currentError) {
+            setDismissedError(null);
+        }
+    }, [liveError, sharingError]);
 
     const handleShowLiveClick = () => {
         if (!isAuthenticated) {
@@ -62,7 +69,6 @@ function LiveControls({
         setPickerMode("show");
     };
 
-
     const handleShareLiveClick = () => {
         if (!isAuthenticated) {
             onRequireAuth("share");
@@ -77,7 +83,6 @@ function LiveControls({
         setPickerMode("share");
     };
 
-
     const handleTrainSelect = (train) => {
         setPickerMode(null);
 
@@ -91,7 +96,6 @@ function LiveControls({
         }
     };
 
-
     const handleConfirmShare = async () => {
         if (!confirmTrain || isStarting) {
             return;
@@ -104,7 +108,6 @@ function LiveControls({
         await onShareLive(train);
     };
 
-    
     const handleCancelConfirmation = () => {
         if (isStarting) {
             return;
@@ -112,6 +115,14 @@ function LiveControls({
 
         setConfirmTrain(null);
     };
+
+    const handleDismissError = () => {
+        setDismissedError(liveError || sharingError);
+    };
+
+    const visibleLiveError = liveError && dismissedError !== liveError ? liveError : null;
+
+    const visibleSharingError = sharingError && dismissedError !== sharingError ? sharingError : null;
 
     return (
         <>
@@ -144,15 +155,16 @@ function LiveControls({
                 liveTrainNumber={liveTrainNumber}
                 liveCount={liveCount}
                 isLiveLoading={isLiveLoading}
-                liveError={liveError}
+                liveError={visibleLiveError}
                 isSharing={isSharing}
                 sharingTrainNumber={sharingTrainNumber}
                 isStarting={isStarting}
                 isStopping={isStopping}
-                sharingError={sharingError}
+                sharingError={visibleSharingError}
                 lastLocation={lastLocation}
                 onStopLive={onStopLive}
                 onStopSharing={onStopSharing}
+                onDismissError={handleDismissError}
             />
 
             {pickerMode && (

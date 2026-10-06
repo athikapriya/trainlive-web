@@ -12,6 +12,7 @@ function LiveStatusPanel({
     lastLocation,
     onStopLive,
     onStopSharing,
+    onDismissError,
 }) {
     const hasSharingError = Boolean(sharingError) && !isSharing;
 
@@ -42,7 +43,20 @@ function LiveStatusPanel({
                         </div>
                     </div>
 
-                    {liveError && <div className="live-status-message error">{liveError}</div>}
+                    {liveError && (
+                        <div className="live-status-message error">
+                            <span className="live-status-error-text">{liveError}</span>
+
+                            <button
+                                type="button"
+                                className="live-status-error-close"
+                                onClick={onDismissError}
+                                aria-label="Dismiss error"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    )}
 
                     {!isLiveLoading && !liveError && liveCount === 0 && (
                         <div className="live-status-message">Be the first to share your location on this train.</div>
@@ -74,7 +88,20 @@ function LiveStatusPanel({
                         </div>
                     </div>
 
-                    {sharingError && <div className="live-status-message error">{sharingError}</div>}
+                    {sharingError && (
+                        <div className="live-status-message error">
+                            <span className="live-status-error-text">{sharingError}</span>
+
+                            <button
+                                type="button"
+                                className="live-status-error-close"
+                                onClick={onDismissError}
+                                aria-label="Dismiss error"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    )}
 
                     {!sharingError && !isStarting && !sharingLocation && (
                         <div className="live-status-message">
@@ -105,7 +132,18 @@ function LiveStatusPanel({
                         </div>
                     </div>
 
-                    <div className="live-status-message error">{sharingError}</div>
+                    <div className="live-status-message error">
+                        <span className="live-status-error-text">{sharingError}</span>
+
+                        <button
+                            type="button"
+                            className="live-status-error-close"
+                            onClick={onDismissError}
+                            aria-label="Dismiss error"
+                        >
+                            ×
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
