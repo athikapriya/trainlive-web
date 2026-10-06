@@ -149,8 +149,6 @@ function Login() {
                     <h1>Sign in</h1>
 
                     <p>Welcome back to TrainLive</p>
-
-                    <p className={styles.bengaliText}>সাইন ইন করে রিপোর্ট দেখুন এবং ট্রেনের সর্বশেষ তথ্য শেয়ার করুন</p>
                 </div>
 
                 <form className={styles.authForm} onSubmit={handleSubmit}>

@@ -40,44 +40,54 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
         }
     }, [isOpen]);
 
+    /* =====================================================
+       Load trains
+    ===================================================== */
+
     useEffect(() => {
         if (selector !== "train") {
             return;
         }
 
-        let isMounted = true;
+        const controller = new AbortController();
 
-        const loadTrains = async () => {
+        const timeoutId = setTimeout(async () => {
             try {
                 setIsLoading(true);
 
-                const data = await getTrains(trainSearch);
+                const data = await getTrains(trainSearch, {
+                    signal: controller.signal,
+                });
 
-                if (!isMounted) {
+                if (controller.signal.aborted) {
                     return;
                 }
 
                 setTrains(data);
             } catch (error) {
-                if (!isMounted) {
+                if (error.name === "AbortError") {
                     return;
                 }
 
                 console.error("Failed to load trains:", error);
+
                 setTrains([]);
             } finally {
-                if (isMounted) {
+                if (!controller.signal.aborted) {
                     setIsLoading(false);
                 }
             }
-        };
-
-        loadTrains();
+        }, 300);
 
         return () => {
-            isMounted = false;
+            clearTimeout(timeoutId);
+            controller.abort();
         };
     }, [selector, trainSearch]);
+
+    /* =====================================================
+       Load stations
+    ===================================================== */
 
     useEffect(() => {
         if (selector !== "station") {
@@ -88,39 +98,45 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
             return;
         }
 
-        let isMounted = true;
+        const controller = new AbortController();
 
-        const loadStations = async () => {
+        const timeoutId = setTimeout(async () => {
             try {
                 setIsLoading(true);
 
-                const data = await getStations(stationSearch);
+                const data = await getStations(stationSearch, {
+                    signal: controller.signal,
+                });
 
-                if (!isMounted) {
+                if (controller.signal.aborted) {
                     return;
                 }
 
                 setStations(data);
             } catch (error) {
-                if (!isMounted) {
+                if (error.name === "AbortError") {
                     return;
                 }
 
                 console.error("Failed to load stations:", error);
+
                 setStations([]);
             } finally {
-                if (isMounted) {
+                if (!controller.signal.aborted) {
                     setIsLoading(false);
                 }
             }
-        };
-
-        loadStations();
+        }, 300);
 
         return () => {
-            isMounted = false;
+            clearTimeout(timeoutId);
+            controller.abort();
         };
     }, [selector, stationSearch, selectedTrain]);
+
+    /* =====================================================
+       Route stations
+    ===================================================== */
 
     const routeStations = useMemo(() => {
         if (!selectedTrain?.stops?.length) {
@@ -146,6 +162,10 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
             .filter(Boolean);
     }, [selectedTrain]);
 
+    /* =====================================================
+       Filter route stations
+    ===================================================== */
+
     const filteredRouteStations = useMemo(() => {
         const query = stationSearch.trim().toLowerCase();
 
@@ -161,6 +181,10 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
         });
     }, [routeStations, stationSearch]);
 
+    /* =====================================================
+       Event type
+    ===================================================== */
+
     const handleEventTypeChange = (type) => {
         setEventType(type);
         setSubmitError("");
@@ -169,6 +193,10 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
             setSelectedStation(null);
         }
     };
+
+    /* =====================================================
+       Selector handlers
+    ===================================================== */
 
     const handleOpenTrainSelector = () => {
         setTrainSearch("");
@@ -224,6 +252,10 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
         setSubmitError("");
     };
 
+    /* =====================================================
+       Submit error
+    ===================================================== */
+
     const getSubmitErrorMessage = (error) => {
         const data = error?.data;
 
@@ -242,7 +274,9 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
                 const minutes = Math.ceil(seconds / 60);
 
                 if (minutes < 60) {
-                    return `You've submitted reports too quickly. Please try again in about ${minutes} minute${minutes === 1 ? "" : "s"}.`;
+                    return `You've submitted reports too quickly. Please try again in about ${minutes} minute${
+                        minutes === 1 ? "" : "s"
+                    }.`;
                 }
 
                 const hours = Math.ceil(minutes / 60);
@@ -267,6 +301,10 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
         return error?.message || "Unable to submit the report. Please try again.";
     };
+
+    /* =====================================================
+       Submit
+    ===================================================== */
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -378,11 +416,19 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
         }
     };
 
+    /* =====================================================
+       Selector data
+    ===================================================== */
+
     const selectorTitle = selector === "train" ? "Select train" : "Select station";
 
     const selectorSubtitle = selector === "train" ? "ট্রেন নির্বাচন করুন" : "স্টেশন নির্বাচন করুন";
 
     const visibleStations = selectedTrain?.stops?.length ? filteredRouteStations : stations;
+
+    /* =====================================================
+       Render
+    ===================================================== */
 
     return (
         <>
@@ -501,7 +547,6 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
                                             ? selectedStation.name || selectedStation.name_en
                                             : "Select station"}
                                     </span>
-
                                     <FiChevronDown size={16} />
                                 </button>
                             </div>

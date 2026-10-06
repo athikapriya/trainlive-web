@@ -26,10 +26,13 @@ function LiveControls({
     onStopLive,
     onShareLive,
     onStopSharing,
+    onDismissSharingStatus,
     onRequireAuth,
 }) {
     const [pickerMode, setPickerMode] = useState(null);
     const [confirmTrain, setConfirmTrain] = useState(null);
+    const [dismissedError, setDismissedError] = useState(null);
+    const [isSharingStatusDismissed, setIsSharingStatusDismissed] = useState(false);
 
     useEffect(() => {
         if (!isAuthenticated || (liveAction !== "show" && liveAction !== "share")) {
@@ -41,12 +44,24 @@ function LiveControls({
         }
 
         setConfirmTrain(null);
-
         setPickerMode(liveAction);
 
         onLiveActionHandled();
     }, [isAuthenticated, isSharing, isStarting, liveAction, onLiveActionHandled]);
 
+    useEffect(() => {
+        const currentError = liveError || sharingError;
+
+        if (currentError) {
+            setDismissedError(null);
+        }
+    }, [liveError, sharingError]);
+
+    useEffect(() => {
+        if (!sharingError) {
+            setIsSharingStatusDismissed(false);
+        }
+    }, [sharingError]);
 
     const handleShowLiveClick = () => {
         if (!isAuthenticated) {
@@ -62,7 +77,6 @@ function LiveControls({
         setPickerMode("show");
     };
 
-
     const handleShareLiveClick = () => {
         if (!isAuthenticated) {
             onRequireAuth("share");
@@ -77,7 +91,6 @@ function LiveControls({
         setPickerMode("share");
     };
 
-
     const handleTrainSelect = (train) => {
         setPickerMode(null);
 
@@ -91,7 +104,6 @@ function LiveControls({
         }
     };
 
-
     const handleConfirmShare = async () => {
         if (!confirmTrain || isStarting) {
             return;
@@ -101,14 +113,11 @@ function LiveControls({
 
         setConfirmTrain(null);
 
-        const newSession = await onShareLive(train);
+        setIsSharingStatusDismissed(false);
 
-        if (!newSession) {
-            setConfirmTrain(train);
-        }
+        await onShareLive(train);
     };
 
-    
     const handleCancelConfirmation = () => {
         if (isStarting) {
             return;
@@ -116,6 +125,21 @@ function LiveControls({
 
         setConfirmTrain(null);
     };
+
+    const handleDismissError = () => {
+        setDismissedError(liveError || sharingError);
+
+        if (sharingError) {
+            setIsSharingStatusDismissed(true);
+            onDismissSharingStatus();
+        }
+    };
+
+    const visibleLiveError = liveError && dismissedError !== liveError ? liveError : null;
+
+    const visibleSharingError = sharingError && dismissedError !== sharingError ? sharingError : null;
+
+    const showSharingStatus = isSharing && !isSharingStatusDismissed;
 
     return (
         <>
@@ -148,15 +172,16 @@ function LiveControls({
                 liveTrainNumber={liveTrainNumber}
                 liveCount={liveCount}
                 isLiveLoading={isLiveLoading}
-                liveError={liveError}
-                isSharing={isSharing}
+                liveError={visibleLiveError}
+                isSharing={showSharingStatus}
                 sharingTrainNumber={sharingTrainNumber}
                 isStarting={isStarting}
                 isStopping={isStopping}
-                sharingError={sharingError}
+                sharingError={visibleSharingError}
                 lastLocation={lastLocation}
                 onStopLive={onStopLive}
                 onStopSharing={onStopSharing}
+                onDismissError={handleDismissError}
             />
 
             {pickerMode && (

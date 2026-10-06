@@ -480,7 +480,7 @@ function StationReportSheet({ station, highlightReportId = null, onClose }) {
 
                             <h3>No reports today</h3>
 
-                            <p>No one has reported an update from this station today.</p>
+                            <p>Be the first to share update on this station.</p>
                         </div>
                     )}
 

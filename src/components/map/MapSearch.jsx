@@ -25,10 +25,7 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
             return "";
         }
 
-        const name =
-            user.full_name?.trim() ||
-            user.email?.trim() ||
-            "";
+        const name = user.full_name?.trim() || user.email?.trim() || "";
 
         return name.charAt(0);
     };
@@ -67,10 +64,7 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
                     return;
                 }
 
-                console.error(
-                    `${searchType} search failed:`,
-                    error
-                );
+                console.error(`${searchType} search failed:`, error);
 
                 if (searchType === "stations") {
                     setStations([]);
@@ -78,13 +72,7 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
                     setTrains([]);
                 }
 
-                setError(
-                    `Unable to search ${
-                        searchType === "stations"
-                            ? "stations"
-                            : "trains"
-                    }.`
-                );
+                setError(`Unable to search ${searchType === "stations" ? "stations" : "trains"}.`);
             } finally {
                 if (!controller.signal.aborted) {
                     setIsLoading(false);
@@ -146,26 +134,15 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
                         onClick={handleOpen}
                         aria-label="Search station or train"
                     >
-                        <FiSearch
-                            className="map-search-icon"
-                            size={18}
-                            aria-hidden="true"
-                        />
+                        <FiSearch className="map-search-icon" size={18} aria-hidden="true" />
 
-                        <span className="map-search-placeholder">
-                            Search a station or train
-                        </span>
+                        <span className="map-search-placeholder">Search a station or train</span>
 
-                        {!isAuthLoading &&
-                            isAuthenticated &&
-                            userInitial && (
-                                <span
-                                    className="map-search-avatar"
-                                    aria-label="Account"
-                                >
-                                    {userInitial}
-                                </span>
-                            )}
+                        {!isAuthLoading && isAuthenticated && userInitial && (
+                            <span className="map-search-avatar" aria-label="Account">
+                                {userInitial}
+                            </span>
+                        )}
                     </button>
                 </div>
             )}

@@ -508,7 +508,7 @@ function TrainReportSheet({ train, reports: initialReports = [], highlightReport
 
                             <h3>No reports yet</h3>
 
-                            <p>No one has reported an update for this train in the last 24 hours.</p>
+                            <p>Be the first to share update on this train.</p>
                         </div>
                     )}
 
