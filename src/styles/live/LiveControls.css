@@ -452,9 +452,9 @@
     }
 
     .live-control {
-        min-height: 30px;
-        padding: 0 9px;
-        font-size: 10.5px;
+        min-height: 35px;
+        padding: 0 13px;
+        font-size: 13px;
     }
 
     .live-picker-backdrop,
