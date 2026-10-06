@@ -26,11 +26,13 @@ function LiveControls({
     onStopLive,
     onShareLive,
     onStopSharing,
+    onDismissSharingStatus,
     onRequireAuth,
 }) {
     const [pickerMode, setPickerMode] = useState(null);
     const [confirmTrain, setConfirmTrain] = useState(null);
     const [dismissedError, setDismissedError] = useState(null);
+    const [isSharingStatusDismissed, setIsSharingStatusDismissed] = useState(false);
 
     useEffect(() => {
         if (!isAuthenticated || (liveAction !== "show" && liveAction !== "share")) {
@@ -54,6 +56,12 @@ function LiveControls({
             setDismissedError(null);
         }
     }, [liveError, sharingError]);
+
+    useEffect(() => {
+        if (!sharingError) {
+            setIsSharingStatusDismissed(false);
+        }
+    }, [sharingError]);
 
     const handleShowLiveClick = () => {
         if (!isAuthenticated) {
@@ -105,6 +113,8 @@ function LiveControls({
 
         setConfirmTrain(null);
 
+        setIsSharingStatusDismissed(false);
+
         await onShareLive(train);
     };
 
@@ -118,11 +128,18 @@ function LiveControls({
 
     const handleDismissError = () => {
         setDismissedError(liveError || sharingError);
+
+        if (sharingError) {
+            setIsSharingStatusDismissed(true);
+            onDismissSharingStatus();
+        }
     };
 
     const visibleLiveError = liveError && dismissedError !== liveError ? liveError : null;
 
     const visibleSharingError = sharingError && dismissedError !== sharingError ? sharingError : null;
+
+    const showSharingStatus = isSharing && !isSharingStatusDismissed;
 
     return (
         <>
@@ -156,7 +173,7 @@ function LiveControls({
                 liveCount={liveCount}
                 isLiveLoading={isLiveLoading}
                 liveError={visibleLiveError}
-                isSharing={isSharing}
+                isSharing={showSharingStatus}
                 sharingTrainNumber={sharingTrainNumber}
                 isStarting={isStarting}
                 isStopping={isStopping}

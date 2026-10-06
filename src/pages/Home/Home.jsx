@@ -345,6 +345,10 @@ function Home() {
         setSharingTrainRoute(null);
     };
 
+    const handleDismissSharingStatus = () => {
+        setSharingTrainRoute(null);
+    };
+
     /*
      * Authentication → Live continuation
      *
@@ -406,6 +410,7 @@ function Home() {
                 onStopLive={handleStopLive}
                 onShareLive={handleShareLive}
                 onStopSharing={handleStopSharing}
+                onDismissSharingStatus={handleDismissSharingStatus}
                 onRequireAuth={(action) => {
                     navigate(`/login?live=${action}`);
                 }}
