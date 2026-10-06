@@ -5,7 +5,7 @@ import { getStations } from "../../services/stationApi";
 import { getTrains } from "../../services/trainApi";
 
 import SearchOverlay from "../SearchOverlay/SearchOverlay";
-import useAuth from "../../Hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 
 function MapSearch({ onStationSelect, onTrainSelect }) {
     const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();

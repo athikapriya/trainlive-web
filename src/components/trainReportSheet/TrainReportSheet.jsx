@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiChevronDown, FiShare2 } from "react-icons/fi";
 
-import useAuth from "../../Hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import { getReportVote, voteOnReport } from "../../services/reportApi";
 import { getTrainReports } from "../../services/trainApi";
 import { getSavedTrains, saveTrain, deleteSavedTrain } from "../../services/savedApi";

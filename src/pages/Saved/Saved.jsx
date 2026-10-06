@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FiChevronRight, FiMapPin, FiStar } from "react-icons/fi";
 import { MdTrain } from "react-icons/md";
 
-import useAuth from "../../Hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import PageHeader from "../../layouts/PageHeader/PageHeader";
 import { getSavedStations, getSavedTrains, deleteSavedStation, deleteSavedTrain } from "../../services/savedApi";
 

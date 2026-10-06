@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
-import useAuth from "../../Hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import BottomNav from "../../components/navigation/BottomNav";
 import ReportSubmitSheet from "../../components/reportSubmit/ReportSubmitSheet";
 

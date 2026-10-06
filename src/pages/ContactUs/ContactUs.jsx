@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft, FiCheck, FiMessageCircle } from "react-icons/fi";
 
-import useAuth from "../../Hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import { submitContactMessage } from "../../services/contactApi";
 import styles from "./ContactUs.module.css";
 

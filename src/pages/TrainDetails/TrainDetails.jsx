@@ -12,7 +12,7 @@ import {
     FiRadio,
 } from "react-icons/fi";
 
-import useAuth from "../../Hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import PageHeader from "../../layouts/PageHeader/PageHeader";
 import PageFooter from "../../layouts/PageFooter/PageFooter";
 

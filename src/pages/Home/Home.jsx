@@ -7,9 +7,9 @@ import StationReportSheet from "../../components/stationReportSheet/StationRepor
 import TrainReportSheet from "../../components/trainReportSheet/TrainReportSheet";
 import LiveControls from "../../components/live/liveControls";
 
-import useAuth from "../../Hooks/useAuth";
-import useLiveSharing from "../../Hooks/useLiveSharing";
-import useTrainLive from "../../Hooks/useTrainLive";
+import useAuth from "../../hooks/useAuth";
+import useLiveSharing from "../../hooks/useLiveSharing";
+import useTrainLive from "../../hooks/useTrainLive";
 
 import { getStation } from "../../services/stationApi";
 import { getTrain, getTrainReports, getTrainRoute } from "../../services/trainApi";
