@@ -1,4 +1,5 @@
 import { createContext, useCallback, useEffect, useState } from "react";
+
 import { loginUser, logoutUser, getCurrentUser, refreshAccessToken } from "../services/authApi";
 
 export const AuthContext = createContext(null);
@@ -16,6 +17,7 @@ function getStoredRefreshToken() {
 
 function storeTokens(accessToken, refreshToken) {
     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 }
 
@@ -26,21 +28,31 @@ function clearStoredTokens() {
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
+
     const [accessToken, setAccessToken] = useState(getStoredAccessToken);
+
     const [refreshToken, setRefreshToken] = useState(getStoredRefreshToken);
+
     const [isLoading, setIsLoading] = useState(true);
 
     const isAuthenticated = Boolean(user && accessToken);
 
-    /* Clear authentication */
+    // =========================================================
+    // Clear authentication
+    // =========================================================
+
     const clearAuthentication = useCallback(() => {
         clearStoredTokens();
+
         setUser(null);
         setAccessToken(null);
         setRefreshToken(null);
     }, []);
 
-    /* Refresh authentication */
+    // =========================================================
+    // Refresh authentication
+    // =========================================================
+
     const refreshAuthentication = useCallback(async () => {
         const storedRefreshToken = getStoredRefreshToken();
 
@@ -51,37 +63,54 @@ export function AuthProvider({ children }) {
 
         try {
             const data = await refreshAccessToken(storedRefreshToken);
+
             const newAccessToken = data.access;
+
             const newRefreshToken = data.refresh || storedRefreshToken;
 
             storeTokens(newAccessToken, newRefreshToken);
+
             setAccessToken(newAccessToken);
+
             setRefreshToken(newRefreshToken);
 
             return newAccessToken;
-        } catch (error) {
+        } catch {
             clearAuthentication();
             return null;
         }
     }, [clearAuthentication]);
 
-    /* Login */
+    // =========================================================
+    // Login
+    // =========================================================
+
     const login = useCallback(async (email, password) => {
         const data = await loginUser(email, password);
 
         storeTokens(data.access, data.refresh);
+
         setAccessToken(data.access);
+
         setRefreshToken(data.refresh);
+
         setUser(data.user);
 
         return data.user;
     }, []);
 
-    /* Logout */
+    // =========================================================
+    // Logout
+    // =========================================================
+
     const logout = useCallback(async () => {
         const currentAccessToken = accessToken;
+
         const currentRefreshToken = refreshToken;
 
+        /*
+         * Clear the local session immediately.
+         */
         clearAuthentication();
 
         if (!currentAccessToken || !currentRefreshToken) {
@@ -90,52 +119,70 @@ export function AuthProvider({ children }) {
 
         try {
             await logoutUser(currentAccessToken, currentRefreshToken);
-        } catch (error) {
-            // The local session is already cleared.
-            // The server token may already be expired/invalid.
+        } catch {
+            /*
+             * Local session is already cleared.
+             */
         }
     }, [accessToken, refreshToken, clearAuthentication]);
 
-    /* Restore authentication when app starts */
+    // =========================================================
+    // Restore authentication when app starts
+    // =========================================================
+
     useEffect(() => {
         let isMounted = true;
 
         async function restoreAuthentication() {
             const storedAccessToken = getStoredAccessToken();
+
             const storedRefreshToken = getStoredRefreshToken();
 
+            /*
+             * No stored session.
+             */
             if (!storedAccessToken && !storedRefreshToken) {
                 if (isMounted) {
                     setIsLoading(false);
                 }
+
                 return;
             }
 
             try {
-                let currentAccessToken = storedAccessToken;
-
-                // First try the existing access token.
-                if (currentAccessToken) {
+                /*
+                 * First try the existing access token.
+                 */
+                if (storedAccessToken) {
                     try {
-                        const currentUser = await getCurrentUser(currentAccessToken);
+                        const currentUser = await getCurrentUser(storedAccessToken);
 
                         if (isMounted) {
                             setUser(currentUser);
-                            setAccessToken(currentAccessToken);
+
+                            setAccessToken(storedAccessToken);
+
                             setRefreshToken(storedRefreshToken);
                         }
 
                         return;
-                    } catch (error) {
-                        // Access token may have expired.
-                        // Try the refresh token below.
+                    } catch {
+                        /*
+                         * Access token expired.
+                         * Continue with refresh token.
+                         */
                     }
                 }
 
-                // Access token failed, so try refresh.
+                /*
+                 * Access token failed.
+                 * Try refresh token.
+                 */
                 if (storedRefreshToken) {
                     const data = await refreshAccessToken(storedRefreshToken);
+
                     const newAccessToken = data.access;
+
                     const newRefreshToken = data.refresh || storedRefreshToken;
 
                     storeTokens(newAccessToken, newRefreshToken);
@@ -144,11 +191,15 @@ export function AuthProvider({ children }) {
 
                     if (isMounted) {
                         setAccessToken(newAccessToken);
+
                         setRefreshToken(newRefreshToken);
+
                         setUser(currentUser);
                     }
+                } else {
+                    clearAuthentication();
                 }
-            } catch (error) {
+            } catch {
                 if (isMounted) {
                     clearAuthentication();
                 }
@@ -165,6 +216,32 @@ export function AuthProvider({ children }) {
             isMounted = false;
         };
     }, [clearAuthentication]);
+
+    // =========================================================
+    // Handle session expiration from api.js
+    // =========================================================
+
+    useEffect(() => {
+        function handleAuthExpired() {
+            /*
+             * api.js reaches here only when the refresh
+             * token is missing, expired, or invalid.
+             */
+            setUser(null);
+            setAccessToken(null);
+            setRefreshToken(null);
+        }
+
+        window.addEventListener("trainlive-auth-expired", handleAuthExpired);
+
+        return () => {
+            window.removeEventListener("trainlive-auth-expired", handleAuthExpired);
+        };
+    }, []);
+
+    // =========================================================
+    // Context value
+    // =========================================================
 
     const value = {
         user,
