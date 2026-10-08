@@ -61,6 +61,10 @@ function Profile() {
         });
     };
 
+    const handleSavedClick = () => {
+        navigate("/saved");
+    };
+
     const handleContactClick = () => {
         navigate("/contact");
     };
@@ -156,6 +160,20 @@ function Profile() {
                             <h3 className={styles.sectionTitle}>Account</h3>
 
                             <div className={styles.list}>
+                                <button type="button" className={styles.row} onClick={handleSavedClick}>
+                                    <span className={styles.icon}>
+                                        <FiStar />
+                                    </span>
+
+                                    <span className={styles.rowContent}>
+                                        <span className={styles.rowTitle}>Saved</span>
+
+                                        <span className={styles.rowSubtitle}>Your saved stations and trains</span>
+                                    </span>
+
+                                    <FiChevronRight className={styles.chevron} />
+                                </button>
+
                                 <button
                                     type="button"
                                     className={styles.row}
@@ -281,8 +299,6 @@ function SupportSection({ onContactClick, onReviewsClick }) {
             <h3 className={styles.sectionTitle}>Support</h3>
 
             <div className={styles.list}>
-                {/* Contact Us */}
-
                 <button type="button" className={styles.row} onClick={onContactClick}>
                     <span className={styles.icon}>
                         <FiMail />
@@ -296,8 +312,6 @@ function SupportSection({ onContactClick, onReviewsClick }) {
 
                     <FiChevronRight className={styles.chevron} />
                 </button>
-
-                {/* Rate & Review */}
 
                 <button type="button" className={styles.row} onClick={onReviewsClick}>
                     <span className={styles.icon}>
@@ -334,8 +348,6 @@ function SettingsSection({
             <h3 className={styles.sectionTitle}>Settings</h3>
 
             <div className={styles.list}>
-                {/* Appearance */}
-
                 <button type="button" className={styles.row} onClick={onAppearanceClick}>
                     <span className={styles.icon}>
                         <FiSun />
@@ -352,8 +364,6 @@ function SettingsSection({
                     <FiChevronRight className={styles.chevron} />
                 </button>
 
-                {/* FAQ */}
-
                 <button type="button" className={styles.row} onClick={onFAQClick}>
                     <span className={styles.icon}>
                         <FiHelpCircle />
@@ -368,8 +378,6 @@ function SettingsSection({
                     <FiChevronRight className={styles.chevron} />
                 </button>
 
-                {/* Privacy Policy */}
-
                 <button type="button" className={styles.row} onClick={onPrivacyClick}>
                     <span className={styles.icon}>
                         <FiShield />
@@ -382,8 +390,6 @@ function SettingsSection({
                     <FiChevronRight className={styles.chevron} />
                 </button>
 
-                {/* Terms */}
-
                 <button type="button" className={styles.row} onClick={onTermsClick}>
                     <span className={styles.icon}>
                         <FiLock />
@@ -395,8 +401,6 @@ function SettingsSection({
 
                     <FiChevronRight className={styles.chevron} />
                 </button>
-
-                {/* About */}
 
                 <button type="button" className={styles.row} onClick={onAboutClick}>
                     <span className={styles.icon}>

@@ -38,7 +38,7 @@
 }
 
 .tabActive {
-    border-bottom-color: var(--green-soft);
+    border-bottom-color: rgba(255, 255, 255, 0.68);
     color: #ffffff;
     font-weight: 700;
 }
