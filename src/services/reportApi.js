@@ -41,6 +41,48 @@ export async function getStationReports(stationId, { accessToken = null, signal 
     return response.json();
 }
 
+/*
+=========================================================
+Recent Reports
+=========================================================
+*/
+export async function getRecentReports({ accessToken = null, signal } = {}) {
+    let url = `${API_BASE_URL}/api/reports/`;
+
+    const reports = [];
+
+    while (url) {
+        const response = await fetch(url, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                ...getAuthHeaders(accessToken),
+            },
+            signal,
+        });
+
+        if (!response.ok) {
+            throw await parseError(response);
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+            reports.push(...data);
+            break;
+        }
+
+        if (Array.isArray(data.results)) {
+            reports.push(...data.results);
+        }
+
+        url = data.next || null;
+    }
+
+    return reports;
+}
+
+
 export async function getReportVote(reportId, { accessToken = null, signal } = {}) {
     const response = await fetch(`${API_BASE_URL}/api/reports/${reportId}/vote/`, {
         method: "GET",

@@ -12,4 +12,4 @@ export { default as SearchIcon } from "./SearchIcon";
 export {default as SavedIcon } from './SavedIcon'
 
 // react icons
-export { ShowLiveIcon, ShareLiveIcon, MyLocationIcon, LayersIcon, SearchTrainIcon, StationIcon } from "./ReactIcons";
+export { ShowLiveIcon, ShareLiveIcon, MyLocationIcon, LayersIcon, SearchTrainIcon, StationIcon, ReportIcon } from "./ReactIcons";

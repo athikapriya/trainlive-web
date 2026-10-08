@@ -4,8 +4,8 @@ import MainLayout from "./layouts/MainLayout/MainLayout";
 
 import Home from "./pages/Home/Home";
 import Trains from "./pages/Trains/Trains";
-import Saved from "./pages/Saved/Saved";
 import Profile from "./pages/Profile/Profile";
+import Reports from "./pages/Reports/Reports";
 
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -14,6 +14,7 @@ import ResetPassword from "./pages/Auth/ResetPassword";
 import ChangePassword from './pages/Auth/ChangePassword'
 import TrainDetails from "./pages/TrainDetails/TrainDetails";
 import ReportDetails from "./pages/ReportDetails/ReportDetails";
+import Saved from "./pages/Saved/Saved";
 import ContactUs from "./pages/ContactUs/ContactUs";
 import Reviews from "./pages/Reviews/Reviews";
 import FAQ from "./pages/FAQ/FAQ";
@@ -32,6 +33,7 @@ function App() {
                     <Route path="/trains" element={<Trains />} />
                     <Route path="/trains/:trainNumber" element={<TrainDetails />} />
                     <Route path="/saved" element={<Saved />} />
+                    <Route path="/reports" element={<Reports />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/contact" element={<ContactUs />} />
                     <Route path="/reviews" element={<Reviews />} />

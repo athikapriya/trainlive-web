@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-import { HomeIcon, TrainIcon, UserIcon, PlusIcon, SavedIcon } from "../icons";
+import { HomeIcon, TrainIcon, UserIcon, PlusIcon, ReportIcon } from "../icons";
 
 import styles from "./BottomNav.module.css";
 
@@ -21,9 +21,9 @@ function BottomNav({ onReport }) {
                 <PlusIcon size={22} strokeWidth={2.4} />
             </button>
 
-            <NavLink to="/saved" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ""}`}>
-                <SavedIcon size={21} />
-                <span>Saved</span>
+            <NavLink to="/reports" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ""}`}>
+                <ReportIcon size={21} />
+                <span>Reports</span>
             </NavLink>
 
             <NavLink to="/profile" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ""}`}>

@@ -4,6 +4,7 @@ import { MdMyLocation } from "react-icons/md";
 import { FiLayers } from "react-icons/fi";
 import { IoLocationOutline } from "react-icons/io5";
 import { PiTrainFill } from "react-icons/pi";
+import { TbMessageReport } from "react-icons/tb";
 
 export function ShowLiveIcon({ size = 20, strokeWidth = 2 }) {
   return (
@@ -54,6 +55,15 @@ export function StationIcon({ size = 20, strokeWidth = 2 }) {
 
 export function SearchTrainIcon({ size = 20, strokeWidth = 2 }) {
     return <PiTrainFill 
+      size={size}
+      strokeWidth={strokeWidth}
+      aria-hidden="true"
+    />;
+}
+
+
+export function ReportIcon({ size = 20, strokeWidth = 2 }) {
+    return <TbMessageReport 
       size={size}
       strokeWidth={strokeWidth}
       aria-hidden="true"

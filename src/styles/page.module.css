@@ -53,5 +53,6 @@
     .contentInner {
         width: 100%;
         padding: 17px 14px 0;
+        padding-top: 0px;
     }
 }

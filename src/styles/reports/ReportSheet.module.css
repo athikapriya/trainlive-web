@@ -356,7 +356,7 @@
 .reportMain {
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: start;
     gap: 9px;
     padding: 9px 10px;
     border: none;
@@ -385,6 +385,7 @@
     border-radius: 9px;
     background: var(--green, var(--text));
     color: var(--accent, #ffffff);
+    margin-top: 6px;
 }
 
 .trainIcon span {
