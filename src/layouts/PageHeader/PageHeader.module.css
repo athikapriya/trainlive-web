@@ -1,6 +1,7 @@
 .header {
     width: 100%;
     flex: 0 0 auto;
+
     background: var(--rail2);
     color: #ffffff;
 }
@@ -11,12 +12,69 @@
     padding: 18px 0 0;
 }
 
+/* =========================
+   TITLE
+   ========================= */
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
 .title {
+    min-width: 0;
+
     font-size: 19px;
     line-height: 1.25;
     font-weight: 700;
     letter-spacing: -0.02em;
 }
+
+/* =========================
+   BACK BUTTON
+   ========================= */
+
+.backButton {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+
+    cursor: pointer;
+
+    transition:
+        background-color 160ms ease,
+        transform 120ms ease;
+}
+
+.backButton:hover {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.backButton:active {
+    transform: scale(0.92);
+}
+
+.backButton:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.75);
+    outline-offset: 2px;
+}
+
+/* =========================
+   SUBTITLE
+   ========================= */
 
 .subtitle {
     margin-top: 3px;
@@ -25,11 +83,17 @@
     line-height: 1.4;
 }
 
+/* =========================
+   BOTTOM CONTENT
+   ========================= */
 .bottom {
     margin-top: 16px;
     margin-bottom: 10px;
 }
 
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (min-width: 481px) and (max-width: 899px) {
     .inner {
         width: 80%;

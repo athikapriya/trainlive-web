@@ -387,7 +387,7 @@ function Saved() {
     if (authLoading || isLoading) {
         return (
             <main className={pageStyles.page}>
-                <PageHeader title="Saved" subtitle="Your stations & trains">
+                <PageHeader title="Saved" subtitle="Your stations & trains" showBack>
                     {renderTabs()}
                 </PageHeader>
 
@@ -418,13 +418,19 @@ function Saved() {
 
     return (
         <main className={pageStyles.page}>
-            <PageHeader title="Saved" subtitle="Your stations & trains">
+            <PageHeader
+                title="Saved"
+                subtitle="Your stations & trains"
+                showBack
+            >
                 {renderTabs()}
             </PageHeader>
 
             <div className={pageStyles.content}>
                 <div className={pageStyles.contentInner}>
-                    {activeTab === "stations" ? renderStationList() : renderTrainList()}
+                    {activeTab === "stations"
+                        ? renderStationList()
+                        : renderTrainList()}
                 </div>
             </div>
 
