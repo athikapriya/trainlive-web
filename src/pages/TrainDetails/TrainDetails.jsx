@@ -1,16 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import {
-    FiArrowLeft,
-    FiArrowRight,
-    FiClock,
-    FiInfo,
-    FiMapPin,
-    FiMessageCircle,
-    FiNavigation,
-    FiRadio,
-} from "react-icons/fi";
+import { FiArrowRight, FiClock, FiInfo, FiMapPin, FiMessageCircle, FiNavigation, FiRadio } from "react-icons/fi";
 
 import useAuth from "../../hooks/useAuth";
 import PageHeader from "../../layouts/PageHeader/PageHeader";
@@ -218,7 +209,6 @@ function buildRouteSchedule(stops = []) {
 
     const rows = sortedStops.map((stop, index) => {
         let arrivalMinutes = timeToMinutes(stop.scheduled_arrival);
-
         let departureMinutes = timeToMinutes(stop.scheduled_departure);
 
         if (index === 0) {
@@ -420,7 +410,6 @@ function TrainDetails() {
     const [historyDays, setHistoryDays] = useState(7);
 
     const [loading, setLoading] = useState(true);
-
     const [historyLoading, setHistoryLoading] = useState(false);
 
     const [error, setError] = useState("");
@@ -441,10 +430,7 @@ function TrainDetails() {
 
     /* =====================================================
        Authentication
-       
-       IMPORTANT:
-       Wait for auth restoration before redirecting.
-       ===================================================== */
+    ===================================================== */
 
     useEffect(() => {
         if (authLoading) {
@@ -647,27 +633,19 @@ function TrainDetails() {
 
     /* =====================================================
        Header data
-       Header remains mounted even while train is loading.
     ===================================================== */
 
     const headerTitle = train?.name || `Train ${trainNumber}`;
-
     const headerSubtitle = train?.name_bn || "Train details";
-
     const offDay = train?.off_day?.trim() || "No off day";
 
     /* =====================================================
-       Stable render tree
-
-       IMPORTANT:
-       No `if (!user) return null`.
-       No loading early return.
-       PageHeader stays mounted.
+       Render
     ===================================================== */
 
     return (
         <div className={pageStyles.page}>
-            <PageHeader title={headerTitle} subtitle={headerSubtitle}>
+            <PageHeader title={headerTitle} subtitle={headerSubtitle} showBack>
                 {train && (
                     <div className={styles.headerMeta}>
                         <span className={styles.trainNumber}>{train.number}</span>
@@ -681,62 +659,38 @@ function TrainDetails() {
 
             <div className={styles.content}>
                 <div className={pageStyles.contentInner}>
-                    {/* =================================================
-                        Authentication loading
-                    ================================================= */}
+                    {/* Authentication loading */}
 
                     {authLoading && (
                         <div className={styles.loadingState}>
                             <div className={styles.spinner} />
-
                             <span>Loading train details...</span>
                         </div>
                     )}
 
-                    {/* =================================================
-                        Normal train loading
-                    ================================================= */}
+                    {/* Train loading */}
 
                     {!authLoading && loading && (
                         <div className={styles.loadingState}>
                             <div className={styles.spinner} />
-
                             <span>Loading train details...</span>
                         </div>
                     )}
 
-                    {/* =================================================
-                        Error
-                    ================================================= */}
+                    {/* Error */}
 
-                    {!authLoading && !loading && error && (
-                        <div>
-                            <div className={styles.errorState}>{error}</div>
-                        </div>
-                    )}
+                    {!authLoading && !loading && error && <div className={styles.errorState}>{error}</div>}
 
-                    {/* =================================================
-                        Train not found
-                    ================================================= */}
+                    {/* Train not found */}
 
                     {!authLoading && !loading && !error && !train && (
                         <div className={styles.errorState}>Train not found.</div>
                     )}
 
-                    {/* =================================================
-                        Main train details
-                    ================================================= */}
+                    {/* Main train details */}
 
                     {!authLoading && !loading && !error && train && (
                         <>
-                            {/* Back navigation */}
-
-                            <button type="button" className={styles.backButton} onClick={() => navigate(-1)}>
-                                <FiArrowLeft size={15} />
-
-                                <span>Back to trains</span>
-                            </button>
-
                             {/* Train hero */}
 
                             <section className={styles.trainHero}>
@@ -749,7 +703,6 @@ function TrainDetails() {
 
                                     <div className={styles.heroStatus}>
                                         <span className={styles.statusDot} />
-
                                         <span>Community tracked</span>
                                     </div>
                                 </div>
@@ -859,7 +812,6 @@ function TrainDetails() {
 
                                     <div className={styles.historyInfo}>
                                         <FiInfo size={13} />
-
                                         <span>Hover a bar for details</span>
                                     </div>
                                 </div>
@@ -952,7 +904,6 @@ function TrainDetails() {
                                     {routeSchedule.totalDuration !== null && (
                                         <div className={styles.totalDuration}>
                                             <FiClock size={13} />
-
                                             <span>{formatDuration(routeSchedule.totalDuration)}</span>
                                         </div>
                                     )}
@@ -1158,10 +1109,11 @@ function TrainDetails() {
                             </section>
                         </>
                     )}
-
-                    <PageFooter />
-
                 </div>
+
+                {/* Full-width footer: intentionally outside contentInner */}
+
+                {!authLoading && !loading && !error && train && <PageFooter />}
             </div>
         </div>
     );
