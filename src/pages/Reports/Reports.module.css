@@ -7,7 +7,7 @@
 
 .searchWrapper {
     position: relative;
-    width: min(100%, 320px);
+    width: 100%;
 }
 
 .searchIcon {
@@ -275,6 +275,6 @@
 
 @media (min-width: 768px) {
     .searchWrapper {
-        width: min(320px, 100%);
+        width: 100%;
     }
 }
