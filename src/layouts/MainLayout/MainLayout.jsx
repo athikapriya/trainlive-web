@@ -17,6 +17,7 @@ function MainLayout() {
 
     const hideBottomNav =
         location.pathname === "/profile" ||
+        location.pathname === "/saved" ||
         location.pathname === "/contact" ||
         location.pathname === "/reviews" ||
         location.pathname === "/faq" ||
