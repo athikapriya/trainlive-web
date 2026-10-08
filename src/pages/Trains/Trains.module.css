@@ -94,8 +94,6 @@
 
     overflow-x: auto;
     scrollbar-width: none;
-
-    margin-bottom: 10px;
 }
 
 .filterRow::-webkit-scrollbar {

@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
-import { getStations } from "../../services/stationApi";
-import { getTrains } from "../../services/trainApi";
+import { getAllStations } from "../../services/stationApi";
+import { getAllTrains } from "../../services/trainApi";
 
 import SearchOverlay from "../SearchOverlay/SearchOverlay";
 import useAuth from "../../hooks/useAuth";
@@ -13,8 +13,10 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
     const [isOpen, setIsOpen] = useState(false);
     const [searchType, setSearchType] = useState("stations");
     const [query, setQuery] = useState("");
-    const [stations, setStations] = useState([]);
-    const [trains, setTrains] = useState([]);
+
+    const [allStations, setAllStations] = useState([]);
+    const [allTrains, setAllTrains] = useState([]);
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -32,64 +34,110 @@ function MapSearch({ onStationSelect, onTrainSelect }) {
 
     const userInitial = getUserInitial();
 
-    // ====================== search api section ======================
+    // ====================== load search data ======================
 
     useEffect(() => {
         if (!isOpen) {
             return;
         }
 
+        if (allStations.length > 0 && allTrains.length > 0) {
+            return;
+        }
+
         const controller = new AbortController();
 
-        const timeoutId = setTimeout(async () => {
+        async function loadSearchData() {
             try {
                 setIsLoading(true);
                 setError(null);
 
-                if (searchType === "stations") {
-                    const data = await getStations(query, {
-                        signal: controller.signal,
-                    });
+                const [stations, trains] = await Promise.all([
+                    allStations.length === 0
+                        ? getAllStations({
+                              signal: controller.signal,
+                          })
+                        : Promise.resolve(allStations),
 
-                    setStations(data);
-                } else {
-                    const data = await getTrains(query, {
-                        signal: controller.signal,
-                    });
+                    allTrains.length === 0
+                        ? getAllTrains({
+                              signal: controller.signal,
+                          })
+                        : Promise.resolve(allTrains),
+                ]);
 
-                    setTrains(data);
+                if (controller.signal.aborted) {
+                    return;
+                }
+
+                if (allStations.length === 0) {
+                    setAllStations(Array.isArray(stations) ? stations : []);
+                }
+
+                if (allTrains.length === 0) {
+                    setAllTrains(Array.isArray(trains) ? trains : []);
                 }
             } catch (error) {
                 if (error.name === "AbortError") {
                     return;
                 }
 
-                console.error(`${searchType} search failed:`, error);
+                console.error("Failed to load search data:", error);
 
-                if (searchType === "stations") {
-                    setStations([]);
-                } else {
-                    setTrains([]);
-                }
-
-                setError(`Unable to search ${searchType === "stations" ? "stations" : "trains"}.`);
+                setError("Unable to load search data. Please try again.");
             } finally {
                 if (!controller.signal.aborted) {
                     setIsLoading(false);
                 }
             }
-        }, 300);
+        }
 
-        return () => {
-            clearTimeout(timeoutId);
-            controller.abort();
-        };
-    }, [isOpen, searchType, query]);
+        loadSearchData();
+
+        return () => controller.abort();
+    }, [isOpen, allStations.length, allTrains.length]);
+
+    // ====================== frontend search ======================
+
+    const stations = useMemo(() => {
+        const search = query.trim().toLowerCase();
+
+        if (!search) {
+            return allStations;
+        }
+
+        return allStations.filter((station) => {
+            const name = String(station.name || "").toLowerCase();
+            const nameEn = String(station.name_en || "").toLowerCase();
+
+            return name.includes(search) || nameEn.includes(search);
+        });
+    }, [allStations, query]);
+
+    const trains = useMemo(() => {
+        const search = query.trim().toLowerCase();
+
+        if (!search) {
+            return allTrains;
+        }
+
+        return allTrains.filter((train) => {
+            const number = String(train.number || "").toLowerCase();
+
+            const name = String(train.name || "").toLowerCase();
+
+            const nameBn = String(train.name_bn || "").toLowerCase();
+
+            return number.includes(search) || name.includes(search) || nameBn.includes(search);
+        });
+    }, [allTrains, query]);
 
     // ====================== open / close ======================
 
     const handleOpen = () => {
         setIsOpen(true);
+        setQuery("");
+        setError(null);
     };
 
     const handleClose = () => {

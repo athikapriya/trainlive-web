@@ -22,7 +22,6 @@ function Trains() {
     const [activeFilter, setActiveFilter] = useState("all");
 
     const [searchInput, setSearchInput] = useState("");
-    const [search, setSearch] = useState("");
 
     const [currentTime, setCurrentTime] = useState(() => new Date());
 
@@ -30,7 +29,7 @@ function Trains() {
     const [error, setError] = useState(null);
 
     /* =====================================================
-       Load trains
+       Load all trains once
     ===================================================== */
 
     useEffect(() => {
@@ -41,7 +40,13 @@ function Trains() {
                 setIsLoading(true);
                 setError(null);
 
-                const response = await getTrains(search, {
+                /*
+                 * Fetch the complete train list once.
+                 *
+                 * Search is handled locally below, so typing
+                 * in the search box does not make API requests.
+                 */
+                const response = await getTrains("", {
                     signal: controller.signal,
                 });
 
@@ -70,19 +75,7 @@ function Trains() {
         loadTrains();
 
         return () => controller.abort();
-    }, [search]);
-
-    /* =====================================================
-       Search debounce
-    ===================================================== */
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setSearch(searchInput.trim());
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }, [searchInput]);
+    }, []);
 
     /* =====================================================
        Clock
@@ -110,6 +103,26 @@ function Trains() {
     }, [trains, currentTime]);
 
     /* =====================================================
+       Frontend search
+    ===================================================== */
+
+    const searchedTrains = useMemo(() => {
+        const query = searchInput.trim().toLowerCase();
+
+        if (!query) {
+            return trainsWithStatus;
+        }
+
+        return trainsWithStatus.filter((train) => {
+            const number = String(train.number || "").toLowerCase();
+            const name = String(train.name || "").toLowerCase();
+            const nameBn = String(train.name_bn || "").toLowerCase();
+
+            return number.includes(query) || name.includes(query) || nameBn.includes(query);
+        });
+    }, [trainsWithStatus, searchInput]);
+
+    /* =====================================================
        Summary
     ===================================================== */
 
@@ -118,7 +131,7 @@ function Trains() {
         let delayed = 0;
         let scheduled = 0;
 
-        for (const train of trainsWithStatus) {
+        for (const train of searchedTrains) {
             const status = train.displayStatus.status;
 
             if (status === "ON_TIME" || status === "DELAYED") {
@@ -139,7 +152,7 @@ function Trains() {
             delayed,
             scheduled,
         };
-    }, [trainsWithStatus]);
+    }, [searchedTrains]);
 
     /* =====================================================
        Filter
@@ -147,15 +160,15 @@ function Trains() {
 
     const filteredTrains = useMemo(() => {
         if (activeFilter === "ontime") {
-            return trainsWithStatus.filter((train) => train.displayStatus.status === "ON_TIME");
+            return searchedTrains.filter((train) => train.displayStatus.status === "ON_TIME");
         }
 
         if (activeFilter === "delayed") {
-            return trainsWithStatus.filter((train) => train.displayStatus.status === "DELAYED");
+            return searchedTrains.filter((train) => train.displayStatus.status === "DELAYED");
         }
 
-        return trainsWithStatus;
-    }, [trainsWithStatus, activeFilter]);
+        return searchedTrains;
+    }, [searchedTrains, activeFilter]);
 
     /* =====================================================
        Handlers

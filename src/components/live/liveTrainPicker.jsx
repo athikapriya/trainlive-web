@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { getTrains } from "../../services/trainApi";
+import { getAllTrains } from "../../services/trainApi";
 
 function getStationName(station) {
     if (!station) {
@@ -32,7 +32,6 @@ function getFirstLastStops(train) {
     const lastStop = stops[stops.length - 1];
 
     const firstStation = firstStop?.station || firstStop;
-
     const lastStation = lastStop?.station || lastStop;
 
     return {
@@ -60,23 +59,29 @@ function LiveTrainPicker({ mode, onSelect, onClose }) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        let isMounted = true;
+    /* =====================================================
+       Load trains once
+    ===================================================== */
 
-        const loadTrains = async () => {
+    useEffect(() => {
+        const controller = new AbortController();
+
+        async function loadTrains() {
             try {
                 setIsLoading(true);
                 setError(null);
 
-                const results = await getTrains(search);
+                const results = await getAllTrains({
+                    signal: controller.signal,
+                });
 
-                if (!isMounted) {
+                if (controller.signal.aborted) {
                     return;
                 }
 
-                setTrains(results);
+                setTrains(Array.isArray(results) ? results : []);
             } catch (loadError) {
-                if (!isMounted) {
+                if (loadError.name === "AbortError") {
                     return;
                 }
 
@@ -85,19 +90,38 @@ function LiveTrainPicker({ mode, onSelect, onClose }) {
                 setError("Unable to load trains.");
                 setTrains([]);
             } finally {
-                if (isMounted) {
+                if (!controller.signal.aborted) {
                     setIsLoading(false);
                 }
             }
-        };
+        }
 
-        const timeoutId = window.setTimeout(loadTrains, search.trim() ? 250 : 0);
+        loadTrains();
 
-        return () => {
-            isMounted = false;
-            window.clearTimeout(timeoutId);
-        };
-    }, [search]);
+        return () => controller.abort();
+    }, []);
+
+    /* =====================================================
+       Frontend search
+    ===================================================== */
+
+    const filteredTrains = useMemo(() => {
+        const query = search.trim().toLowerCase();
+
+        if (!query) {
+            return trains;
+        }
+
+        return trains.filter((train) => {
+            const number = String(train.number || "").toLowerCase();
+
+            const name = String(train.name || "").toLowerCase();
+
+            const nameBn = String(train.name_bn || "").toLowerCase();
+
+            return number.includes(query) || name.includes(query) || nameBn.includes(query);
+        });
+    }, [trains, search]);
 
     const isShareMode = mode === "share";
 
@@ -138,13 +162,13 @@ function LiveTrainPicker({ mode, onSelect, onClose }) {
 
                     {!isLoading && error && <div className="live-picker-message error">{error}</div>}
 
-                    {!isLoading && !error && trains.length === 0 && (
+                    {!isLoading && !error && filteredTrains.length === 0 && (
                         <div className="live-picker-message">No trains found.</div>
                     )}
 
                     {!isLoading &&
                         !error &&
-                        trains.map((train) => {
+                        filteredTrains.map((train) => {
                             const { first, last } = getFirstLastStops(train);
 
                             const displayName = getTrainDisplayName(train);
@@ -170,7 +194,9 @@ function LiveTrainPicker({ mode, onSelect, onClose }) {
                                         {first && last && (
                                             <span className="live-train-route">
                                                 {first}
+
                                                 <span className="live-train-route-arrow">→</span>
+
                                                 {last}
                                             </span>
                                         )}

@@ -42,20 +42,20 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
     /* =====================================================
        Load trains
-    ===================================================== */
+       ===================================================== */
 
     useEffect(() => {
-        if (selector !== "train") {
+        if (!isOpen || selector !== "train" || trains.length > 0) {
             return;
         }
 
         const controller = new AbortController();
 
-        const timeoutId = setTimeout(async () => {
+        async function loadTrains() {
             try {
                 setIsLoading(true);
 
-                const data = await getTrains(trainSearch, {
+                const data = await getTrains("", {
                     signal: controller.signal,
                 });
 
@@ -63,7 +63,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
                     return;
                 }
 
-                setTrains(data);
+                setTrains(Array.isArray(data) ? data : []);
             } catch (error) {
                 if (error.name === "AbortError") {
                     return;
@@ -77,17 +77,36 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
                     setIsLoading(false);
                 }
             }
-        }, 300);
+        }
 
-        return () => {
-            clearTimeout(timeoutId);
-            controller.abort();
-        };
-    }, [selector, trainSearch]);
+        loadTrains();
+
+        return () => controller.abort();
+    }, [isOpen, selector, trains.length]);
+
+    /* =====================================================
+       Frontend train search
+       ===================================================== */
+
+    const filteredTrains = useMemo(() => {
+        const query = trainSearch.trim().toLowerCase();
+
+        if (!query) {
+            return trains;
+        }
+
+        return trains.filter((train) => {
+            const number = String(train.number || "").toLowerCase();
+            const name = String(train.name || "").toLowerCase();
+            const nameBn = String(train.name_bn || "").toLowerCase();
+
+            return number.includes(query) || name.includes(query) || nameBn.includes(query);
+        });
+    }, [trains, trainSearch]);
 
     /* =====================================================
        Load stations
-    ===================================================== */
+       ===================================================== */
 
     useEffect(() => {
         if (selector !== "station") {
@@ -100,7 +119,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
         const controller = new AbortController();
 
-        const timeoutId = setTimeout(async () => {
+        async function loadStations() {
             try {
                 setIsLoading(true);
 
@@ -126,17 +145,16 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
                     setIsLoading(false);
                 }
             }
-        }, 300);
+        }
 
-        return () => {
-            clearTimeout(timeoutId);
-            controller.abort();
-        };
+        loadStations();
+
+        return () => controller.abort();
     }, [selector, stationSearch, selectedTrain]);
 
     /* =====================================================
        Route stations
-    ===================================================== */
+       ===================================================== */
 
     const routeStations = useMemo(() => {
         if (!selectedTrain?.stops?.length) {
@@ -164,7 +182,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
     /* =====================================================
        Filter route stations
-    ===================================================== */
+       ===================================================== */
 
     const filteredRouteStations = useMemo(() => {
         const query = stationSearch.trim().toLowerCase();
@@ -183,7 +201,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
     /* =====================================================
        Event type
-    ===================================================== */
+       ===================================================== */
 
     const handleEventTypeChange = (type) => {
         setEventType(type);
@@ -196,7 +214,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
     /* =====================================================
        Selector handlers
-    ===================================================== */
+       ===================================================== */
 
     const handleOpenTrainSelector = () => {
         setTrainSearch("");
@@ -254,7 +272,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
     /* =====================================================
        Submit error
-    ===================================================== */
+       ===================================================== */
 
     const getSubmitErrorMessage = (error) => {
         const data = error?.data;
@@ -304,7 +322,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
     /* =====================================================
        Submit
-    ===================================================== */
+       ===================================================== */
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -418,7 +436,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
     /* =====================================================
        Selector data
-    ===================================================== */
+       ===================================================== */
 
     const selectorTitle = selector === "train" ? "Select train" : "Select station";
 
@@ -428,7 +446,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
 
     /* =====================================================
        Render
-    ===================================================== */
+       ===================================================== */
 
     return (
         <>
@@ -547,6 +565,7 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
                                             ? selectedStation.name || selectedStation.name_en
                                             : "Select station"}
                                     </span>
+
                                     <FiChevronDown size={16} />
                                 </button>
                             </div>
@@ -653,10 +672,10 @@ function ReportSubmitSheet({ isOpen, onClose, onSubmitted }) {
                                 {isLoading ? (
                                     <div className={styles.selectorMessage}>Loading…</div>
                                 ) : selector === "train" ? (
-                                    trains.length === 0 ? (
+                                    filteredTrains.length === 0 ? (
                                         <div className={styles.selectorMessage}>No trains found</div>
                                     ) : (
-                                        trains.map((train) => (
+                                        filteredTrains.map((train) => (
                                             <button
                                                 key={train.id}
                                                 type="button"
