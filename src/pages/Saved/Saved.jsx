@@ -5,6 +5,8 @@ import { MdTrain } from "react-icons/md";
 
 import useAuth from "../../hooks/useAuth";
 import PageHeader from "../../layouts/PageHeader/PageHeader";
+import PageFooter from '../../layouts/PageFooter/PageFooter';
+
 import { getSavedStations, getSavedTrains, deleteSavedStation, deleteSavedTrain } from "../../services/savedApi";
 
 import styles from "./Saved.module.css";
@@ -273,8 +275,8 @@ function Saved() {
                                 <span>
                                     {savedStation.report_count_today > 0
                                         ? `${savedStation.report_count_today} ${
-                                            savedStation.report_count_today === 1 ? "report" : "reports"
-                                        } today`
+                                              savedStation.report_count_today === 1 ? "report" : "reports"
+                                          } today`
                                         : "No reports today"}
                                 </span>
 
@@ -368,8 +370,8 @@ function Saved() {
                                 <span>
                                     {savedTrain.report_count_today > 0
                                         ? `${savedTrain.report_count_today} ${
-                                            savedTrain.report_count_today === 1 ? "report" : "reports"
-                                        } today`
+                                              savedTrain.report_count_today === 1 ? "report" : "reports"
+                                          } today`
                                         : "No reports today"}
                                 </span>
 
@@ -425,6 +427,8 @@ function Saved() {
                     {activeTab === "stations" ? renderStationList() : renderTrainList()}
                 </div>
             </div>
+
+            <PageFooter />
         </main>
     );
 }
