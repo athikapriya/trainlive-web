@@ -722,3 +722,82 @@
         height: 8px;
     }
 }
+
+
+.live-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 6px 9px;
+    border: 1px solid rgba(239, 68, 68, 0.22);
+    border-radius: 999px;
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.live-status-dot {
+    margin-top: -0.005px;
+    position: relative;
+    width: 6px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    animation: live-heartbeat 1.8s ease-in-out infinite;
+}
+
+.live-status-dot::after {
+    content: none;
+}
+
+@keyframes live-heartbeat {
+    0%,
+    100% {
+        /* transform: scale(1); */
+        opacity: 1;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    50% {
+        /* transform: scale(1.18); */
+        opacity: 0.82;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.06);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .live-status-dot {
+        animation: none;
+    }
+}
+
+
+.live-status-text {
+    color: #ef4444;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    line-height: 1;
+}
+
+
+
+@keyframes live-pulse {
+    0% {
+        transform: scale(0.7);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1.8);
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .live-status-dot,
+    .live-status-dot::after {
+        animation: none;
+    }
+}

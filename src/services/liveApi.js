@@ -43,3 +43,14 @@ export async function stopLive(sessionId, accessToken) {
         body: JSON.stringify({}),
     });
 }
+
+
+export async function getActiveLiveTrains(accessToken, { signal } = {}) {
+    return apiFetch("/api/live/trains/active/", {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+        signal,
+    });
+}
